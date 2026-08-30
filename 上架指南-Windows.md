@@ -59,47 +59,36 @@ mobile/
 
 ---
 
-## 3. 第二步：把代码推到 GitHub
+## 3. 第二步：代码推到 GitHub（✅ 已完成）
 
-在 `mobile/` 目录里打开 PowerShell：
+仓库已创建并推送：**https://github.com/inspiredhuang-ops/aicam-ios** （Public）
+隐私政策已通过 GitHub Pages 上线：**https://inspiredhuang-ops.github.io/aicam-ios/privacy-policy.md**
 
-```powershell
-cd "C:\Users\Jiade\AppData\Roaming\TRAE SOLO CN\ModularData\ai-agent\work-mode-projects\6a8570d84ba0c9bb57fbb1a6\mobile"
-
-# 先刷新一次网页快照（改了 index.html 才需要，没改也可以跑）
-node scripts\sync-web.mjs
-
-git init
-git add .
-git commit -m "AICAM iOS: Capacitor wrapper + Codemagic pipeline"
-```
-
-然后到 https://github.com/new 建一个**私有仓库**（名字如 `aicam-ios`），按页面提示关联并推送：
-
-```powershell
-git remote add origin https://github.com/你的用户名/aicam-ios.git
-git branch -M main
-git push -u origin main
-```
+> 以后更新代码：改完根目录 `index.html` 后，在 `mobile/` 目录运行：
+> ```powershell
+> node scripts\sync-web.mjs
+> git add .
+> git commit -m "update"
+> git push
+> ```
+> Codemagic 会自动检测到推送并开始构建。
 
 ---
 
-## 4. 第三步：配置 Codemagic（约 15 分钟，之后全自动）
+## 4. 第三步：配置 Codemagic（约 10 分钟，之后全自动）
 
-1. 打开 https://codemagic.io ，用 GitHub 账号登录，授权后 **Add application**，选 `aicam-ios` 仓库。
-   Codemagic 会自动识别根目录的 `codemagic.yaml`。
-2. 进入 App 设置：
-   - **Environment variables** → 新建变量组，名字必须叫 `app_store_credentials`，加 3 个变量（都勾选 **Secure**）：
-     | 变量名 | 值 |
-     |---|---|
-     | `APP_STORE_CONNECT_PRIVATE_KEY` | 用记事本打开 `.p8` 文件，**完整粘贴全部内容**（含 BEGIN/END 行） |
-     | `APP_STORE_CONNECT_KEY_IDENTIFIER` | 第 2 步记下的 Key ID |
-     | `APP_STORE_CONNECT_ISSUER_ID` | 第 2 步记下的 Issuer ID |
-   - **Code signing → iOS**：选择 **Automatic code signing**，它会自动创建证书和描述文件。
-   - 打开 `codemagic.yaml`，把最下面 `your-email@example.com` 改成你的邮箱（接收构建结果）。
-3. 回到 Codemagic 页面，点 **Start new build**，分支选 `main`，工作流选 `AICAM iOS -> TestFlight`。
+> 代码已在 GitHub：https://github.com/inspiredhuang-ops/aicam-ios ，隐私政策已上线，本节直接从 Codemagic 开始。
 
-构建约 15–25 分钟。成功后 IPA 会**自动上传到 TestFlight**。
+1. 打开 https://codemagic.io ，用 GitHub 账号登录（授权时允许访问 `aicam-ios` 仓库），点 **Add application**，选择 `aicam-ios` 仓库，项目类型选其他/自动即可。Codemagic 会自动识别根目录的 `codemagic.yaml`。
+2. **添加 Apple 密钥（只需做一次，签名和发布都用它）**：
+   - 左下角点你的头像 → **Team settings** → **Integrations**（或 Developer Portal）→ 找到 **Apple Developer Portal** → **Manage keys** → **Add key**
+   - **Key name 必须填 `aicam_key`**（要和 `codemagic.yaml` 里的名称一致）
+   - 粘贴第 2 步记下的 **Issuer ID**、**Key ID**，并上传下载的 **`.p8`** 私钥文件 → 保存
+   - Codemagic 会用这条密钥自动创建发布证书和描述文件，无需手动管理
+3. 把 `codemagic.yaml` 最下面的 `your-email@example.com` 改成你的邮箱（接收构建成功/失败通知），提交推送（或在 GitHub 网页直接改）。
+4. 回到 Codemagic 的 App 页面，点 **Start new build**，分支选 `main`，工作流选 `AICAM iOS -> TestFlight`。
+
+构建约 15–25 分钟。成功后 IPA 会**自动上传到 TestFlight**，无需任何手动操作。
 
 ---
 
