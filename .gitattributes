@@ -1,0 +1,4 @@
+# 云端构建在 macOS 上执行，脚本必须用 LF 换行
+*.sh text eol=lf
+codemagic.yaml text eol=lf
+*.mjs text eol=lf

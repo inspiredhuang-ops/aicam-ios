@@ -1,0 +1,11 @@
+{
+  "appId": "com.aicam.app",
+  "appName": "AICAM",
+  "webDir": "www",
+  "backgroundColor": "#000000",
+  "ios": {
+    "scheme": "AICAM",
+    "contentInset": "always",
+    "limitsNavigationsToAppBoundDomains": true
+  }
+}

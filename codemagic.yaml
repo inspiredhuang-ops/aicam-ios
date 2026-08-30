@@ -1,0 +1,71 @@
+# Codemagic 云端构建流水线（Windows 上无需 Mac）
+# 本文件位于 Git 仓库根目录（即把 mobile/ 作为仓库根）。
+# 推送到 GitHub 后，在 https://codemagic.io 关联仓库即可识别。
+#
+# 首次使用需在 Codemagic 网页 App 设置里完成：
+#   1) Environment variables -> 新建变量组 app_store_credentials，加入 3 个 Secure 变量：
+#        APP_STORE_CONNECT_PRIVATE_KEY     (App Store Connect API 私钥 .p8 的完整内容)
+#        APP_STORE_CONNECT_KEY_IDENTIFIER  (Key ID，如 2X9R4HVP5B)
+#        APP_STORE_CONNECT_ISSUER_ID       (Issuer ID)
+#   2) Code signing -> iOS -> 选择 "Automatic code signing"，勾选上传到 App Store Connect。
+#   3) 把下方通知邮箱改成你自己的。
+
+workflows:
+  ios-build:
+    name: AICAM iOS -> TestFlight
+    instance_type: mac_m2
+    max_build_duration: 45
+    environment:
+      groups:
+        - app_store_credentials
+      node: v22
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: 同步网页资源（web/ 快照 -> www/）
+        script: |
+          npm install
+          node scripts/sync-web.mjs
+      - name: 添加并同步 iOS 平台
+        script: |
+          npm exec cap add ios || true
+          npm exec cap sync ios
+      - name: 注入相机/麦克风/相册权限说明
+        script: |
+          chmod +x scripts/inject-plist.sh
+          bash scripts/inject-plist.sh
+      - name: 生成 App 图标与启动页
+        script: |
+          npm exec capacitor-assets generate --ios || true
+      - name: 安装 Pods
+        working_directory: ios/App
+        script: |
+          pod install
+      - name: 归档并导出 IPA（自动签名）
+        script: |
+          xcode-project use-profiles
+          xcodebuild build \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath build/AICAM.xcarchive \
+            archive
+          xcodebuild -exportArchive \
+            -archivePath build/AICAM.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist /Users/builder/export_options.plist
+    artifacts:
+      - build/ipa/**/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+      email:
+        recipients:
+          - your-email@example.com   # TODO: 改成你的邮箱
+        notify:
+          success: true
+          failure: true

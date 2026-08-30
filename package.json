@@ -1,0 +1,24 @@
+{
+  "name": "aicam-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AICAM - AI filter camera, wrapped with Capacitor for iOS",
+  "scripts": {
+    "sync": "node scripts/sync-web.mjs",
+    "add:ios": "cap add ios",
+    "sync:ios": "cap sync ios",
+    "assets": "capacitor-assets generate --ios",
+    "open:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor-community/media": "^7.0.1",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/filesystem": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/share": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.1.0",
+    "@capacitor/cli": "^7.0.0"
+  }
+}

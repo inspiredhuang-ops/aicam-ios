@@ -1,0 +1,10 @@
+# 依赖与云端生成产物（不提交）
+node_modules/
+www/
+ios/
+android/
+build/
+*.log
+.DS_Store
+
+# 需要提交：web/（网页快照）、assets/（icon.png、splash.png）、scripts/、codemagic.yaml
