@@ -118,7 +118,9 @@ git push -u origin main
 
 - **截图**：必需 6.9 英寸（1290×2796）和 6.5 英寸（1242×2688）各一套。用真机 TestFlight 版截图，或用网页版截 iPhone 尺寸的图。
 - **描述、关键词、分类**：建议分类「摄影与录像」。
-- **隐私政策 URL**：**必须提供**一个可公开访问的网址。隐私政策已写好，就在仓库根目录 `privacy-policy.md`（英文，内容覆盖：相机/麦克风/相册用途、画面本地处理、可选云端滤镜只发缩略图、不收集任何个人数据）。发布方法：把仓库设为 **Public** → GitHub 仓库 **Settings → Pages → Source 选 main 分支根目录 → Save**，约 1 分钟后政策地址为 `https://你的用户名.github.io/aicam-ios/privacy-policy.html`，填到 App Store Connect 即可。（代码可公开：仓库内没有任何密钥，API Key 只存在用户手机上，签名密钥存在 Codemagic 后台。）
+- **隐私政策 URL**：**必须提供**一个可公开访问的网址。隐私政策已写好并已发布上线，直接在 App Store Connect 填这个地址：
+  **https://inspiredhuang-ops.github.io/aicam-ios/privacy-policy.md**
+  （英文，内容覆盖：相机/麦克风/相册用途、画面本地处理、可选云端滤镜只发缩略图、不收集任何个人数据。仓库为 Public，Pages 已配置 main 分支根目录；代码可公开——仓库内没有任何密钥，API Key 只存在用户手机上，签名密钥存在 Codemagic 后台。）
 - **App 隐私问卷**：
   - 相机：用于拍摄，不用于追踪
   - 麦克风：用于录像
