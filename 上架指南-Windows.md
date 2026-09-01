@@ -22,7 +22,7 @@
 ```
 mobile/
 ├── package.json            # Capacitor 依赖
-├── capacitor.config.json   # App 配置（appId: com.aicam.app，名称 AICAM）
+├── capacitor.config.json   # App 配置（appId: com.aicam.camera，名称 AICAM）
 ├── codemagic.yaml          # 云端构建流水线（自动打包+上传 TestFlight）
 ├── scripts/
 │   ├── sync-web.mjs        # 把根目录网页同步进打包目录
@@ -43,7 +43,7 @@ mobile/
 1. **注册开发者账号**：https://developer.apple.com/programs/ ，付款后等审核（通常 1–2 天，有时即时开通）。
 2. **创建 App ID**：登录 https://identifiers.apple.com ，
    - Identifiers → ＋ → App IDs → App
-   - Bundle ID 填 `com.aicam.app`（要和 `capacitor.config.json` 里一致；想改就两边一起改）
+   - Bundle ID 填 `com.aicam.camera`（已注册；要和 `capacitor.config.json` 里一致；想改就两边一起改）
    - Capabilities 勾选：Push Notifications 不需要；默认即可
 3. **创建 App Store Connect API 密钥**（给 Codemagic 自动签名上传用）：
    - 打开 https://appstoreconnect.apple.com/access/integrations/api
@@ -54,7 +54,7 @@ mobile/
      - **私钥文件 `.p8`**（只能下载一次，用记事本打开能看到内容）
 4. **创建 App 记录**：https://appstoreconnect.apple.com → 我的 App → ＋ → 新建 App
    - 平台 iOS，名称填 `AICAM`（若被占用换 `AICAM Filter Camera`）
-   - 主语言 English，Bundle ID 选 `com.aicam.app`
+   - 主语言 English，Bundle ID 选 `com.aicam.camera`
    - SKU 随便填，如 `aicam001`
 
 ---
