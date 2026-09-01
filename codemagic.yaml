@@ -1,13 +1,18 @@
 # Codemagic 云端构建流水线（Windows 上无需 Mac）
 # 本文件位于 Git 仓库根目录，推送到 GitHub 后 Codemagic 自动识别。
 #
-# 首次使用只需在 Codemagic 网页做 2 件事（详见 上架指南-Windows.md 第 4 节）：
+# 首次使用只需在 Codemagic 网页做 3 件事（详见 上架指南-Windows.md 第 4 节）：
 #   1) Add application，关联 inspiredhuang-ops/aicam-ios 仓库
 #   2) Team settings → Integrations → Developer Portal → Manage keys → Add key
 #      名称必须填：aicam_key
 #      粘贴 App Store Connect 的 Issuer ID、Key ID，上传 .p8 文件
-#   这一条密钥同时用于：自动创建证书/描述文件（签名）+ 上传 TestFlight（发布）
-# 然后把下方 email 改成你的邮箱，点 Start new build 即可。
+#   3) App 设置 → Environment variables → 添加变量：
+#        名称：CERTIFICATE_PRIVATE_KEY
+#        值：  ios_distribution_private_key.pem 文件的完整内容（含 BEGIN/END 行）
+#        变量组：code-signing，并勾选 Secure（加密）
+#      构建时 Codemagic 会用它自动创建/获取 Apple Distribution 证书。
+#   API 密钥 aicam_key 同时用于：自动创建证书/描述文件（签名）+ 上传 TestFlight（发布）
+# 然后点 Start new build 即可。
 
 workflows:
   ios-build:
@@ -17,9 +22,8 @@ workflows:
     integrations:
       app_store_connect: aicam_key
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.aicam.camera
+      groups:
+        - code-signing
       node: v22
       xcode: latest
       cocoapods: default
@@ -39,7 +43,16 @@ workflows:
       - name: 生成 App 图标与启动页
         script: |
           npm exec capacitor-assets generate --ios || true
-      - name: 配置自动代码签名
+      - name: 初始化签名钥匙串
+        script: keychain initialize
+      - name: 自动创建/获取证书与描述文件
+        script: |
+          app-store-connect fetch-signing-files "com.aicam.camera" \
+            --type IOS_APP_STORE \
+            --create
+      - name: 导入签名证书
+        script: keychain add-certificates
+      - name: 配置 Xcode 签名
         script: xcode-project use-profiles
       - name: 归档并导出 IPA
         script: |
@@ -52,9 +65,3 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-      email:
-        recipients:
-          - your-email@example.com   # TODO: 改成你的邮箱（接收构建结果）
-        notify:
-          success: true
-          failure: true
