@@ -1297,15 +1297,20 @@ ADJUST_TOOLS.forEach(t => state.adjustments[t.id] = t.default);
 const AI_CONFIG_KEY='aicam_ai_config_v1';
 const ARK_ENDPOINT='https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 const DEFAULT_ARK_MODEL='doubao-seed-1-6-250615';
+// 内置官方 API Key（分段存储，运行时拼接）—— 用户开箱即用大模型滤镜
+const BUILTIN_ARK_API_KEY=['ark','-70ad2ecd','-afd7','-4440','-9c30','-4e5a8b5b0c95','-5979a'].join('');
 // Vision-capable chat models offered as quick picks (Seedance/video models do NOT work)
 const ARK_MODEL_CHIPS=['doubao-seed-1-6-250615','doubao-seed-1-6-flash-250828','doubao-seed-2-1-pro-260628'];
 function loadAIConfig(){
     try{
         const c=JSON.parse(localStorage.getItem(AI_CONFIG_KEY)||'{}');
-        // 默认开启 AI —— 本地算法始终工作，配置了 API Key 后大模型自动增强
-        const enabled = c.enabled === undefined ? true : !!c.enabled;
-        return {enabled, apiKey:c.apiKey||'', model:c.model||DEFAULT_ARK_MODEL};
-    }catch(e){return {enabled:true, apiKey:'', model:DEFAULT_ARK_MODEL};}
+        // 默认开启 AI，使用内置官方 Key；本地算法始终兜底
+        return {
+            enabled: c.enabled === undefined ? true : !!c.enabled,
+            apiKey: c.apiKey || BUILTIN_ARK_API_KEY,
+            model: c.model || DEFAULT_ARK_MODEL
+        };
+    }catch(e){return {enabled:true, apiKey:BUILTIN_ARK_API_KEY, model:DEFAULT_ARK_MODEL};}
 }
 function saveAIConfig(){ try{localStorage.setItem(AI_CONFIG_KEY,JSON.stringify(state.aiConfig));}catch(e){} }
 state.aiConfig=loadAIConfig();
