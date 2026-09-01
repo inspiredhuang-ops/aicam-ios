@@ -3355,8 +3355,26 @@ try{
     requestAnimationFrame(()=>{
         try{ setMode('photo'); setGalTab('photos'); }catch(e){}
     });
-    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia) initCam();
-    else $('permModal').classList.add('show');
+    // 相机能力检测：安全环境（HTTPS / localhost / 真机 App）才能调用摄像头
+    const cameraAvailable = window.isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+    if(cameraAvailable){
+        initCam();
+    }else{
+        // 非安全环境（如手机浏览器访问局域网 HTTP 地址）：摄像头被浏览器禁用，
+        // 引导打开 HTTPS 在线版（摄像头可用），或进入演示模式。
+        const SECURE_URL='https://inspiredhuang-ops.github.io/aicam-ios/';
+        const pm=$('permModal');
+        const title=pm.querySelector('.perm-t');
+        const desc=pm.querySelector('.perm-d');
+        const okBtn=$('permOk');
+        if(title) title.textContent='Camera Blocked on HTTP';
+        if(desc) desc.innerHTML='Phone browsers only allow the camera on HTTPS.<br>Open the secure web version to shoot:<br><span style="color:rgba(255,255,255,0.75)">inspiredhuang-ops.github.io/aicam-ios</span>';
+        if(okBtn){
+            okBtn.textContent='Open Secure Version';
+            okBtn.onclick=()=>{ window.location.href=SECURE_URL; };
+        }
+        pm.classList.add('show');
+    }
     // 相机启动超时兜底：8 秒后仍未进入取景/演示且无弹窗，则主动弹出权限弹窗（可进 Demo）
     setTimeout(()=>{
         try{
