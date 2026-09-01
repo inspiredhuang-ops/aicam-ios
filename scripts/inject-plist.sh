@@ -25,10 +25,10 @@ add_key () {
   fi
 }
 
-add_key "NSCameraUsageDescription" "AICAM uses the camera to preview and capture photos and videos with AI filters."
-add_key "NSMicrophoneUsageDescription" "AICAM uses the microphone to record sound when you capture video."
-add_key "NSPhotoLibraryAddUsageDescription" "AICAM saves the photos and videos you capture to your photo library."
-add_key "NSPhotoLibraryUsageDescription" "AICAM shows your saved photos in the in-app gallery."
+add_key "NSCameraUsageDescription" "TikCam uses the camera to preview and capture photos and videos with AI filters."
+add_key "NSMicrophoneUsageDescription" "TikCam uses the microphone to record sound when you capture video."
+add_key "NSPhotoLibraryAddUsageDescription" "TikCam saves the photos and videos you capture to your photo library."
+add_key "NSPhotoLibraryUsageDescription" "TikCam shows your saved photos in the in-app gallery."
 
 # 出口合规（Export Compliance）：声明 App 仅使用豁免加密（HTTPS），
 # 设为 false 后 TestFlight 不再对每个构建要求手动填写出口合规问卷。

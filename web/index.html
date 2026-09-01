@@ -14,8 +14,9 @@
             background:#0a0a0a; color:#fff; overflow:hidden; height:100vh; width:100vw;
             display:flex; justify-content:center; align-items:center;
         }
-        .prototype-wrap { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:24px; }
-        .proto-header { text-align:center; margin-bottom:20px; }
+        /* 真机原生 App：.prototype-wrap 固定铺满整个屏幕 */
+        .prototype-wrap { position:fixed; inset:0; z-index:1; display:block; padding:0; }
+        .proto-header { display:none; text-align:center; margin-bottom:20px; }
         .proto-badge {
             display:inline-block; background:rgba(255,255,255,0.06); backdrop-filter:blur(12px);
             border:1px solid rgba(255,255,255,0.08); padding:5px 14px; border-radius:100px;
@@ -31,24 +32,21 @@
         .proto-title .t1::before { color:#25F4EE; transform:translate(-1.6px,-1.2px); z-index:-1; }
         .proto-title .t1::after { color:#FE2C55; transform:translate(1.6px,1.2px); z-index:-2; }
         .proto-sub { font-size:11px; color:rgba(255,255,255,0.3); margin-top:6px; letter-spacing:0.5px; font-weight:300; }
-        .proto-main { display:flex; gap:50px; align-items:center; flex-wrap:wrap; justify-content:center; }
+        .proto-main { display:block; width:100%; height:100%; }
 
-        .phone-outer { position:relative; width:290px; padding:8px; }
+        /* 真机默认全屏：手机外壳/边框/刘海全部隐藏，App 直接铺满屏幕。
+           宽屏桌面浏览器的「手机模型展示页」样式见文末 @media (min-width:600px)。 */
+        .phone-outer { position:fixed; inset:0; width:100%; height:100%; padding:0; }
         .phone-frame {
-            width:100%; background:linear-gradient(160deg,#1f1f1f 0%,#141414 40%,#111 60%,#1a1a1a 100%);
-            border-radius:44px; padding:5px;
-            box-shadow:0 0 0 1px rgba(255,255,255,0.04) inset, 0 25px 60px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.4);
+            width:100%; height:100%; background:#fff;
+            border-radius:0; padding:0; box-shadow:none;
             position:relative;
         }
-        .btn-side { position:absolute; background:linear-gradient(180deg,#1e1e1e,#111,#1e1e1e); border-radius:2px; }
-        .btn-power { right:-2px; top:145px; width:3px; height:65px; border-radius:0 2px 2px 0; }
-        .btn-vol-up { left:-2px; top:115px; width:3px; height:35px; border-radius:2px 0 0 2px; }
-        .btn-vol-dn { left:-2px; top:162px; width:3px; height:35px; border-radius:2px 0 0 2px; }
-        .btn-mute { left:-2px; top:82px; width:3px; height:20px; border-radius:2px 0 0 2px; }
+        .btn-side { display:none; }
 
-        .phone-screen { width:100%; aspect-ratio:9/19.5; background:#fff; border-radius:40px; overflow:hidden; position:relative; }
-        .phone-screen::before { content:''; position:absolute; inset:0; border-radius:40px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.05); pointer-events:none; z-index:500; }
-        .dynamic-island { position:absolute; top:8px; left:50%; transform:translateX(-50%); width:88px; height:24px; background:#000; border-radius:13px; z-index:1000; }
+        .phone-screen { width:100%; height:100%; aspect-ratio:auto; background:#fff; border-radius:0; overflow:hidden; position:relative; }
+        .phone-screen::before { display:none; }
+        .dynamic-island { display:none; }
 
         .app { width:100%; height:100%; position:relative; background:#fff; overflow:hidden; display:flex; flex-direction:column; }
 
@@ -892,7 +890,7 @@
         .perm-btn.ghost { background:transparent; color:rgba(255,255,255,0.4); margin-top:10px; font-weight:300; }
 
         /* 右侧说明 */
-        .feat-notes { display:flex; flex-direction:column; gap:14px; max-width:200px; }
+        .feat-notes { display:none; flex-direction:column; gap:14px; max-width:200px; }
         .feat { display:flex; gap:10px; align-items:flex-start; }
         .feat-dot {
             width:28px; height:28px; border-radius:50%; flex-shrink:0;
@@ -902,13 +900,34 @@
         .feat-txt h4 { font-size:12px; font-weight:400; color:rgba(255,255,255,0.8); margin-bottom:2px; letter-spacing:0.3px; }
         .feat-txt p { font-size:10px; color:rgba(255,255,255,0.3); line-height:1.5; font-weight:300; }
 
-        .proto-footer { margin-top:24px; }
+        .proto-footer { display:none; margin-top:24px; }
         .footer-hints { display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
         .hint-item { font-size:9px; color:rgba(255,255,255,0.2); display:flex; align-items:center; gap:5px; font-weight:300; letter-spacing:0.3px; }
         .hint-k { background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px; font-weight:400; font-size:8px; }
 
-        @media (max-width:640px) { .feat-notes{display:none;} }
-        @media (max-width:430px) { .proto-wrap{padding:0;} .phone-outer{width:100vw;height:100vh;} .phone-frame{border-radius:0;height:100%;} .phone-screen{border-radius:0;height:100%;aspect-ratio:auto;} .proto-header{display:none;} .proto-footer{display:none;} }
+        /* ===== 宽屏桌面浏览器（GitHub Pages / 演示）：还原手机模型展示页 ===== */
+        @media (min-width:600px) {
+            .prototype-wrap { position:relative; inset:auto; display:flex; flex-direction:column; align-items:center; padding:24px; }
+            .proto-header { display:block; }
+            .proto-footer { display:block; }
+            .proto-main { display:flex; gap:50px; align-items:center; flex-wrap:wrap; justify-content:center; width:auto; height:auto; }
+            .phone-outer { position:relative; inset:auto; width:290px; height:auto; padding:8px; }
+            .phone-frame {
+                width:100%; height:auto;
+                background:linear-gradient(160deg,#1f1f1f 0%,#141414 40%,#111 60%,#1a1a1a 100%);
+                border-radius:44px; padding:5px;
+                box-shadow:0 0 0 1px rgba(255,255,255,0.04) inset, 0 25px 60px rgba(0,0,0,0.6), 0 8px 25px rgba(0,0,0,0.4);
+            }
+            .btn-side { display:block; position:absolute; background:linear-gradient(180deg,#1e1e1e,#111,#1e1e1e); border-radius:2px; }
+            .btn-power { right:-2px; top:145px; width:3px; height:65px; border-radius:0 2px 2px 0; }
+            .btn-vol-up { left:-2px; top:115px; width:3px; height:35px; border-radius:2px 0 0 2px; }
+            .btn-vol-dn { left:-2px; top:162px; width:3px; height:35px; border-radius:2px 0 0 2px; }
+            .btn-mute { left:-2px; top:82px; width:3px; height:20px; border-radius:2px 0 0 2px; }
+            .phone-screen { aspect-ratio:9/19.5; height:auto; border-radius:40px; }
+            .phone-screen::before { display:block; content:''; position:absolute; inset:0; border-radius:40px; box-shadow:inset 0 0 0 1px rgba(0,0,0,0.05); pointer-events:none; z-index:500; }
+            .dynamic-island { display:block; position:absolute; top:8px; left:50%; transform:translateX(-50%); width:88px; height:24px; background:#000; border-radius:13px; z-index:1000; }
+        }
+        @media (min-width:900px) { .feat-notes { display:flex; } }
     </style>
 </head>
 <body>
@@ -1205,6 +1224,15 @@
                             <div class="perm-d">Allow camera access to start shooting<br>or try demo mode</div>
                             <button class="perm-btn" id="permOk">Allow Access</button>
                             <button class="perm-btn ghost" id="permDemo">Demo Mode</button>
+                        </div>
+
+                        <!-- 致命错误兜底：任何启动异常都给出可见反馈，绝不黑屏 -->
+                        <div class="perm-modal" id="fatalModal">
+                            <div class="perm-ic">!</div>
+                            <div class="perm-t">Something went wrong</div>
+                            <div class="perm-d">The camera didn't start. You can retry,<br>or explore TikCam in demo mode.</div>
+                            <button class="perm-btn" id="fatalRetry">Try Again</button>
+                            <button class="perm-btn ghost" id="fatalDemo">Demo Mode</button>
                         </div>
                     </div>
                 </div>
@@ -3308,17 +3336,39 @@ function endHold(){if(!state.holding)return;state.holding=false;clearTimeout(hol
 photoArea.addEventListener('mousedown',startHold);photoArea.addEventListener('mouseup',endHold);photoArea.addEventListener('mouseleave',endHold);
 photoArea.addEventListener('touchstart',startHold,{passive:false});photoArea.addEventListener('touchend',endHold);
 
-setRatio('4-3');
-setMode('photo');
-renderAdjTools();updateSlider();
-updateFlashUI();
-if(typeof updateZoomPills==='function')updateZoomPills();
-// 延迟初始化模式指示器位置
-requestAnimationFrame(()=>{
+// ===== 启动兜底：任何异常都给出可见、可操作的反馈，绝不黑屏 =====
+const bootStart=Date.now();
+function showFatal(){
+    try{ const m=$('fatalModal'); if(m)m.classList.add('show'); }catch(e){}
+}
+$('fatalRetry').onclick=()=>{ $('fatalModal').classList.remove('show'); initCam(); };
+$('fatalDemo').onclick=()=>{ $('fatalModal').classList.remove('show'); startDemo(); };
+window.addEventListener('error',()=>{ if(Date.now()-bootStart<5000)showFatal(); });
+window.addEventListener('unhandledrejection',()=>{ if(Date.now()-bootStart<5000)showFatal(); });
+
+try{
+    setRatio('4-3');
     setMode('photo');
-    setGalTab('photos');
-});
-if(navigator.mediaDevices?.getUserMedia)initCam();else $('permModal').classList.add('show');
+    renderAdjTools();updateSlider();
+    updateFlashUI();
+    if(typeof updateZoomPills==='function')updateZoomPills();
+    // 延迟初始化模式指示器位置
+    requestAnimationFrame(()=>{
+        try{ setMode('photo'); setGalTab('photos'); }catch(e){}
+    });
+    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia) initCam();
+    else $('permModal').classList.add('show');
+    // 相机启动超时兜底：8 秒后仍未进入取景/演示且无弹窗，则主动弹出权限弹窗（可进 Demo）
+    setTimeout(()=>{
+        try{
+            if(!state.stream && !state.demo
+               && !$('permModal').classList.contains('show')
+               && !$('fatalModal').classList.contains('show')){
+                $('permModal').classList.add('show');
+            }
+        }catch(e){ showFatal(); }
+    },8000);
+}catch(e){ showFatal(); }
 </script>
 </body>
 </html>
