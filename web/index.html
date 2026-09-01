@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>AICam - AI Camera</title>
+    <title>TikCam - AI Beauty Camera</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; -webkit-user-select:none; user-select:none; }
         body {
@@ -21,7 +21,15 @@
             border:1px solid rgba(255,255,255,0.08); padding:5px 14px; border-radius:100px;
             font-size:10px; letter-spacing:2.5px; color:rgba(255,255,255,0.4); margin-bottom:10px;
         }
-        .proto-title { font-size:26px; font-weight:300; letter-spacing:4px; color:rgba(255,255,255,0.95); }
+        .proto-title {
+            font-size:30px; font-weight:800; letter-spacing:1px; color:#fff;
+            display:inline-flex; align-items:center; gap:12px;
+        }
+        .proto-title .brand-mark { width:34px; height:34px; flex:none; }
+        .proto-title .t1 { position:relative; }
+        .proto-title .t1::before, .proto-title .t1::after { content:attr(data-t); position:absolute; left:0; top:0; }
+        .proto-title .t1::before { color:#25F4EE; transform:translate(-1.6px,-1.2px); z-index:-1; }
+        .proto-title .t1::after { color:#FE2C55; transform:translate(1.6px,1.2px); z-index:-2; }
         .proto-sub { font-size:11px; color:rgba(255,255,255,0.3); margin-top:6px; letter-spacing:0.5px; font-weight:300; }
         .proto-main { display:flex; gap:50px; align-items:center; flex-wrap:wrap; justify-content:center; }
 
@@ -44,7 +52,7 @@
 
         .app { width:100%; height:100%; position:relative; background:#fff; overflow:hidden; display:flex; flex-direction:column; }
 
-        /* 顶部白色工具栏 */
+        /* 顶部清爽白色工具栏（Foodie 风格） */
         .top-bar {
             position:relative; z-index:30; background:#fff;
             display:flex; justify-content:space-between; align-items:center;
@@ -52,46 +60,49 @@
             transition:background 0.3s;
         }
         .top-btn {
-            width:36px; height:36px; border-radius:50%;
-            background:transparent; border:none; color:#222;
+            width:38px; height:38px; border-radius:50%;
+            background:transparent; border:none; color:#222; position:relative;
             display:flex; align-items:center; justify-content:center; cursor:pointer;
             transition:all 0.2s;
         }
         .top-btn:active { transform:scale(0.9); opacity:0.6; }
-        .top-btn.on { color:#000; }
-        .top-btn svg { width:20px; height:20px; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+        .top-btn.on { color:#FE2C55; }
+        .top-btn.on.flash-on { color:#FFB300; }
+        .top-btn.on.flash-auto { color:#222; }
+        .top-btn svg { width:21px; height:21px; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; fill:none; }
         .top-btn svg.fill { fill:currentColor; stroke:none; }
+        .top-btn .auto-tag { position:absolute; font-size:7px; font-weight:800; bottom:3px; right:4px; color:#FE2C55; letter-spacing:0; line-height:1; }
 
-        /* 比例按钮：白底黑字黑框，与同行图标按钮风格统一 */
+        /* 比例按钮：白底黑字黑框，清爽干净 */
         .ratio-btn {
             border:1.5px solid #111;
             background:#fff;
             font-size:10px; font-weight:700; letter-spacing:0.5px;
             font-family:-apple-system,sans-serif;
-            border-radius:7px; width:32px; height:26px;
+            border-radius:8px; min-width:34px; height:27px; padding:0 4px;
             color:#111;
         }
         .ratio-btn:active { background:#f0f0f0; transform:scale(0.94); }
 
-        /* 比例选择器 */
+        /* 比例选择器：浅色毛玻璃 */
         .ratio-picker {
             position:absolute; top:90px; left:50%; transform:translateX(-50%) scale(0.9);
-            background:rgba(255,255,255,0.95); backdrop-filter:blur(20px);
-            border-radius:14px; padding:4px; z-index:40;
+            background:rgba(255,255,255,0.96); -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
+            border-radius:15px; padding:4px; z-index:40;
             opacity:0; pointer-events:none; transition:all 0.2s;
             display:flex; flex-direction:column; gap:0;
             border:1px solid rgba(0,0,0,0.06);
-            box-shadow:0 8px 30px rgba(0,0,0,0.12);
+            box-shadow:0 10px 34px rgba(0,0,0,0.14);
         }
         .ratio-picker.show { opacity:1; pointer-events:auto; transform:translateX(-50%) scale(1); }
         .ratio-opt {
-            padding:9px 22px; font-size:12px; color:rgba(0,0,0,0.5); text-align:center;
-            border-radius:10px; cursor:pointer; transition:all 0.15s; font-weight:400; letter-spacing:0.5px;
+            padding:9px 24px; font-size:12px; color:rgba(0,0,0,0.5); text-align:center;
+            border-radius:11px; cursor:pointer; transition:all 0.15s; font-weight:500; letter-spacing:0.5px;
         }
         .ratio-opt:active { background:rgba(0,0,0,0.05); }
-        .ratio-opt.active { color:#000; font-weight:600; }
+        .ratio-opt.active { color:#FE2C55; font-weight:700; }
 
-        /* 取景器容器 - 默认白色背景，和上下工具栏自然衔接 */
+        /* 取景器容器 - 清爽白色背景，与上下工具栏自然衔接 */
         .viewfinder-wrap { position:relative; flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#fff; }
         .viewfinder { position:relative; width:100%; overflow:hidden; transition:all 0.3s ease; background:#000; }
         .viewfinder.ratio-4-3 { padding-bottom:133.33%; max-height:100%; }
@@ -315,6 +326,89 @@
         .proc-ring { width:36px; height:36px; border-radius:50%; border:2px solid rgba(255,255,255,0.15); border-top-color:rgba(255,255,255,0.7); animation:spin 0.8s linear infinite; }
         @keyframes spin { to{transform:rotate(360deg);} }
         .proc-text { font-size:10px; color:rgba(255,255,255,0.7); font-weight:400; letter-spacing:1.5px; }
+
+        /* ====== 网格线（三分构图） ====== */
+        .grid-overlay { position:absolute; inset:0; z-index:6; pointer-events:none; opacity:0; transition:opacity .25s; }
+        .grid-overlay.on { opacity:1; }
+        .grid-overlay .gv { position:absolute; left:0; right:0; height:0.5px; background:rgba(255,255,255,0.55); }
+        .grid-overlay .gv.g1 { top:33.333%; } .grid-overlay .gv.g2 { top:66.666%; }
+        .grid-overlay .gh { position:absolute; top:0; bottom:0; width:0.5px; background:rgba(255,255,255,0.55); }
+        .grid-overlay .gh.h1 { left:33.333%; } .grid-overlay .gh.h2 { left:66.666%; }
+
+        /* ====== 倒计时遮罩 ====== */
+        .countdown-overlay {
+            position:absolute; inset:0; z-index:60; display:none;
+            align-items:center; justify-content:center; pointer-events:none;
+            background:rgba(0,0,0,0.18);
+        }
+        .countdown-overlay.show { display:flex; }
+        .count-num {
+            font-size:96px; font-weight:200; color:#fff;
+            text-shadow:0 4px 30px rgba(0,0,0,0.45);
+            font-variant-numeric:tabular-nums;
+        }
+        .count-num.go { animation:countPop 1s cubic-bezier(.2,.7,.3,1); }
+        @keyframes countPop {
+            0% { opacity:0; transform:scale(1.6); }
+            25% { opacity:1; transform:scale(1); }
+            80% { opacity:1; transform:scale(0.95); }
+            100% { opacity:0; transform:scale(0.8); }
+        }
+
+        /* ====== 变焦档位胶囊（iOS 风格 .5 / 1 / 2 / 3） ====== */
+        .zoom-pills {
+            position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
+            z-index:12; display:flex; align-items:center; gap:8px;
+            padding:5px; border-radius:999px;
+            background:rgba(0,0,0,0.32); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+            opacity:0; pointer-events:none; transition:opacity .25s;
+        }
+        .zoom-pills.on { opacity:1; pointer-events:auto; }
+        .zoom-pill {
+            min-width:34px; height:30px; padding:0 8px; border-radius:999px;
+            border:none; background:transparent; color:rgba(255,255,255,0.85);
+            font-size:12px; font-weight:600; font-variant-numeric:tabular-nums;
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+            transition:all .18s; font-family:inherit;
+        }
+        .zoom-pill.active { background:rgba(255,214,10,0.95); color:#1a1a1a; }
+        .zoom-pill:active { transform:scale(0.92); }
+
+        /* ====== 对焦曝光值提示 ====== */
+        .ev-badge {
+            position:absolute; left:50%; top:50%; z-index:13; pointer-events:none;
+            transform:translate(52px,-50%);
+            background:rgba(0,0,0,0.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+            color:#fff; font-size:11px; font-weight:700; padding:5px 10px; border-radius:999px;
+            opacity:0; transition:opacity .2s; font-variant-numeric:tabular-nums; white-space:nowrap;
+        }
+        .ev-badge.on { opacity:1; }
+
+        /* ====== 顶部按钮上的小角标（倒计时数字 / 闪光 AUTO） ====== */
+        .top-btn .mode-tag {
+            position:absolute; bottom:2px; right:2px; min-width:13px; height:13px; padding:0 3px;
+            border-radius:7px; background:#FE2C55; color:#fff;
+            font-size:8px; font-weight:800; line-height:13px; text-align:center; letter-spacing:0;
+        }
+
+        /* ====== 滤镜强度条（结果页/拍摄页通用，细窄悬浮） ====== */
+        .strength-bar {
+            position:absolute; left:50%; bottom:150px; transform:translateX(-50%);
+            z-index:14; display:flex; align-items:center; gap:10px;
+            background:rgba(0,0,0,0.42); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+            padding:8px 14px; border-radius:999px;
+            opacity:0; pointer-events:none; transition:opacity .25s;
+        }
+        .strength-bar.on { opacity:1; pointer-events:auto; }
+        .strength-bar .sb-lbl { font-size:10px; color:rgba(255,255,255,0.75); font-weight:600; letter-spacing:.5px; white-space:nowrap; }
+        .strength-bar input[type=range] {
+            -webkit-appearance:none; appearance:none; width:120px; height:3px;
+            background:rgba(255,255,255,0.3); border-radius:2px; outline:none;
+        }
+        .strength-bar input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+            background:#fff; cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,0.4);
+        }
 
         /* 结果页 */
         .result-view { position:absolute; inset:0; background:#fff; z-index:200; display:none; flex-direction:column; }
@@ -820,9 +914,17 @@
 <body>
 <div class="prototype-wrap">
     <header class="proto-header">
-        <div class="proto-badge">AI Camera</div>
-        <h1 class="proto-title">AICAM</h1>
-        <p class="proto-sub">AI-generated · Infinite filters</p>
+        <div class="proto-badge">AI BEAUTY CAMERA</div>
+        <h1 class="proto-title">
+            <svg class="brand-mark" viewBox="0 0 1024 1024" aria-hidden="true">
+                <g transform="translate(-17,-13)"><g fill="#25F4EE"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g></g>
+                <g transform="translate(17,13)"><g fill="#FE2C55"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g></g>
+                <g fill="#fff"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g>
+                <circle cx="512" cy="548" r="166" fill="#000"/><circle cx="512" cy="548" r="80" fill="#fff"/>
+            </svg>
+            <span class="t1" data-t="TikCam">TikCam</span>
+        </h1>
+        <p class="proto-sub">AI-generated · Infinite beauty filters</p>
     </header>
 
     <main class="proto-main">
@@ -837,7 +939,14 @@
                     <div class="app" id="appEl">
                         <div class="top-bar">
                             <button class="top-btn" id="btnFlash" title="Flash">
-                                <svg class="fill" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+                                <svg id="flashIcon" class="fill" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+                            </button>
+                            <button class="top-btn" id="btnTimer" title="Timer">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2.5h6"/></svg>
+                                <span class="mode-tag" id="timerTag" style="display:none;">3</span>
+                            </button>
+                            <button class="top-btn" id="btnGrid" title="Grid">
+                                <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.5 3.5v17M14.5 3.5v17M3.5 9.5h17M3.5 14.5h17"/></svg>
                             </button>
                             <button class="top-btn ratio-btn" id="btnRatio" title="Ratio">4:3</button>
                             <button class="top-btn" id="btnGenAI" title="New filter">
@@ -864,6 +973,22 @@
                                     </div>
                                     <div class="ai-scan" id="aiScan"></div>
                                     <div class="flash-overlay" id="flashEl"></div>
+
+                                    <!-- 三分构图网格线 -->
+                                    <div class="grid-overlay" id="gridOverlay">
+                                        <span class="gv g1"></span><span class="gv g2"></span>
+                                        <span class="gh h1"></span><span class="gh h2"></span>
+                                    </div>
+                                    <!-- 倒计时遮罩 -->
+                                    <div class="countdown-overlay" id="countdownOverlay"><div class="count-num" id="countNum">3</div></div>
+                                    <!-- 变焦档位胶囊 -->
+                                    <div class="zoom-pills" id="zoomPills">
+                                        <button class="zoom-pill" data-z="1">1×</button>
+                                        <button class="zoom-pill" data-z="2">2×</button>
+                                        <button class="zoom-pill" data-z="3">3×</button>
+                                    </div>
+                                    <!-- 对焦曝光值提示 -->
+                                    <div class="ev-badge" id="evBadge">EV 0</div>
 
                                     <!-- 点按对焦框（主流相机交互） -->
                                     <div class="focus-ring" id="focusRing">
@@ -1087,11 +1212,11 @@
         </div>
 
         <div class="feat-notes">
-            <div class="feat"><div class="feat-dot">▣</div><div class="feat-txt"><h4>Photo & Video</h4><p>Switch between PHOTO and VIDEO modes</p></div></div>
-            <div class="feat"><div class="feat-dot">▢</div><div class="feat-txt"><h4>Flexible Ratio</h4><p>4:3 default, 1:1, 16:9, Full screen</p></div></div>
-            <div class="feat"><div class="feat-dot">✦</div><div class="feat-txt"><h4>AI Infinite Filters</h4><p>Every swipe generates a unique style</p></div></div>
-            <div class="feat"><div class="feat-dot">◉</div><div class="feat-txt"><h4>Scene Aware</h4><p>AI analyzes and adapts to your shot</p></div></div>
-            <div class="feat"><div class="feat-dot">●</div><div class="feat-txt"><h4>Video Recording</h4><p>Red record button · live filters</p></div></div>
+            <div class="feat"><div class="feat-dot">▣</div><div class="feat-txt"><h4>Photo &amp; Video</h4><p>Tap or hold the shutter to record</p></div></div>
+            <div class="feat"><div class="feat-dot">✦</div><div class="feat-txt"><h4>AI Beauty Filters</h4><p>Infinite styles with adjustable strength</p></div></div>
+            <div class="feat"><div class="feat-dot">▦</div><div class="feat-txt"><h4>Grid &amp; Timer</h4><p>Rule-of-thirds grid · 3s / 10s countdown</p></div></div>
+            <div class="feat"><div class="feat-dot">⚡</div><div class="feat-txt"><h4>Flash Auto / On / Off</h4><p>Smart auto flash for low-light shots</p></div></div>
+            <div class="feat"><div class="feat-dot">●</div><div class="feat-txt"><h4>Zoom &amp; Exposure</h4><p>1×–3× zoom pills · swipe to set EV</p></div></div>
         </div>
     </main>
 
@@ -1127,7 +1252,8 @@ const RATIOS = {
 };
 
 let state = {
-    facing:'front', flash:false, demo:false, stream:null, zoom:1,
+    facing:'front', flash:false, flashMode:'off', demo:false, stream:null, zoom:1,
+    grid:false, timer:0, counting:false, ev:0, filterStrength:100,
     photos:[], photoLibrary:[], collectedFilters:[], userPrefs:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
     captured:null, capturedVideo:null, videoDuration:0, sceneInfo:null,
     currentFilter:null, filterIndex:0, filterHistory:[],
@@ -1911,7 +2037,7 @@ function showSaveToast(msg){
 async function writeNativeTempFile(dataUrl,ext){
     const FS=window.Capacitor.Plugins.Filesystem;
     const b64=String(dataUrl).split(',')[1]||'';
-    const name='AICam_'+Date.now()+'.'+ext;
+    const name='TikCam_'+Date.now()+'.'+ext;
     await FS.writeFile({path:name,data:b64,directory:'CACHE',recursive:true});
     const {uri}=await FS.getUri({path:name,directory:'CACHE'});
     return uri;
@@ -1957,7 +2083,7 @@ async function nativeShareImage(dataUrl){
     if(!isNativeApp())return false;
     try{
         const uri=await writeNativeTempFile(dataUrl,'jpg');
-        await window.Capacitor.Plugins.Share.share({files:[uri],title:'AICam'});
+        await window.Capacitor.Plugins.Share.share({files:[uri],title:'TikCam'});
     }catch(e){ /* 用户取消分享，静默 */ }
     return true;
 }
@@ -1975,7 +2101,7 @@ function saveCurrentPhoto(){
 }
 async function savePhotoDataUrl(dataUrl){
     if(await nativeSaveImage(dataUrl))return;
-    downloadDataUrl(dataUrl,`AICam_${Date.now()}.jpg`);
+    downloadDataUrl(dataUrl,`TikCam_${Date.now()}.jpg`);
 }
 async function shareCurrentPhoto(){
     const photo=state.currentDetailPhoto;
@@ -1984,13 +2110,13 @@ async function shareCurrentPhoto(){
     // 网页端：优先系统分享，否则降级下载
     try{
         const blob=await (await fetch(photo.data)).blob();
-        const file=new File([blob],`AICam_${Date.now()}.jpg`,{type:'image/jpeg'});
+        const file=new File([blob],`TikCam_${Date.now()}.jpg`,{type:'image/jpeg'});
         if(navigator.canShare&&navigator.canShare({files:[file]})){
-            await navigator.share({files:[file],title:'AICam'});
+            await navigator.share({files:[file],title:'TikCam'});
             return;
         }
     }catch(e){}
-    downloadDataUrl(photo.data,`AICam_${Date.now()}.jpg`);
+    downloadDataUrl(photo.data,`TikCam_${Date.now()}.jpg`);
 }
 
 function analyzeImage(imgC){
@@ -2345,14 +2471,19 @@ async function testArkConnection(){
     return true;
 }
 
-function buildFilter(f,adj){
+function buildFilter(f,adj,includeEv){
     if(!f)return 'none';
     const p=f.params,a=adj||state.adjustments;
-    let parts=[`brightness(${p.brightness})`,`contrast(${p.contrast})`,`saturate(${p.saturate})`];
-    if(p.grayscale>0.02)parts.push(`grayscale(${p.grayscale})`);
-    if(p.sepia>0.005)parts.push(`sepia(${p.sepia})`);
-    if(Math.abs(p.hueRotate)>0.5)parts.push(`hue-rotate(${p.hueRotate}deg)`);
+    // 滤镜强度：0=原图，100=完整滤镜（把参数向中性值 1 / 0 插值）
+    const s=(state.filterStrength==null?100:state.filterStrength)/100;
+    const lerp=(v,neu)=>neu+(v-neu)*s;
+    let parts=[`brightness(${lerp(p.brightness,1)})`,`contrast(${lerp(p.contrast,1)})`,`saturate(${lerp(p.saturate,1)})`];
+    if(p.grayscale*s>0.02)parts.push(`grayscale(${p.grayscale*s})`);
+    if(p.sepia*s>0.005)parts.push(`sepia(${p.sepia*s})`);
+    if(Math.abs(p.hueRotate*s)>0.5)parts.push(`hue-rotate(${p.hueRotate*s}deg)`);
     ADJUST_TOOLS.forEach(t=>{const v=a[t.id];if(v!==t.default&&t.css){const c=t.css(v);if(c)parts.push(c);}});
+    // 曝光补偿（仅实时预览/成片烘焙；相册缩略图传 includeEv=false）
+    if(includeEv!==false&&Math.abs(state.ev||0)>0.5)parts.push(`brightness(${1+state.ev*0.006})`);
     return parts.join(' ');
 }
 
@@ -2564,6 +2695,24 @@ function setZoom(z){
     if(state.recording)return; // 录制中保持当前倍率，避免预览与成片不一致
     state.zoom=Math.min(5,Math.max(1,z));
     applyCamTransform();
+    if(typeof updateZoomPills==='function'){ updateZoomPills(); flashZoomPills(); }
+}
+
+// ===== 曝光补偿（EV）：对焦后上下滑动调节，点按对焦复位 =====
+function setEV(v){
+    state.ev=Math.max(-100,Math.min(100,Math.round(v)));
+    const badge=$('evBadge');
+    if(badge){
+        badge.textContent=(state.ev>0?'+':'')+state.ev;
+        badge.classList.toggle('on', Math.abs(state.ev)>0.5);
+    }
+    applyCurrentFilter();
+}
+function positionEVBadge(x,y){
+    const badge=$('evBadge');
+    if(!badge)return;
+    badge.style.left=x+'px'; badge.style.top=y+'px';
+    badge.style.transform='translate(56px,-50%)';
 }
 
 function startDemo(){
@@ -2668,9 +2817,40 @@ function startAnalysis(){
     },1500);
 }
 
+function flashShouldFire(){
+    if(state.flashMode==='on')return true;
+    if(state.flashMode==='auto'){ const b=state.sceneInfo?state.sceneInfo.brightness:0.5; return b<0.42; }
+    return false;
+}
+
+// 倒计时拍照：3s / 10s 大数字动画后再拍摄
+function runCountdown(sec, done){
+    state.counting=true;
+    const overlay=$('countdownOverlay'), num=$('countNum');
+    overlay.classList.add('show');
+    let n=sec;
+    const tick=()=>{
+        num.textContent=n;
+        num.classList.remove('go'); void num.offsetWidth; num.classList.add('go');
+        if(navigator.vibrate)navigator.vibrate(15);
+        if(n<=0){
+            setTimeout(()=>{ overlay.classList.remove('show'); state.counting=false; done&&done(); },250);
+            return;
+        }
+        n--; setTimeout(tick,1000);
+    };
+    tick();
+}
+
 function takePhoto(){
-    // 闪光开启时：前置用屏幕补光（主流自拍闪光），后置同样白屏闪烁模拟
-    if(state.flash){
+    if(state.counting)return;
+    if(state.timer>0){ runCountdown(state.timer,doCapture); }
+    else doCapture();
+}
+
+function doCapture(){
+    // 闪光：开启或自动（低亮度）时，前置用屏幕补光，后置白屏闪烁模拟
+    if(flashShouldFire()){
         $('flashEl').classList.add('go');
         setTimeout(()=>$('flashEl').classList.remove('go'),220);
     }
@@ -2729,20 +2909,43 @@ function updateAlbum(){
     const src=state.photos.length?state.photos[state.photos.length-1]:(last?last.data:null);
     if(!src)return;
     // 缩略图同样直接呈现滤镜效果（未烘焙时用 CSS 兜底）
-    const st=(last&&!last.baked&&last.filterParams)?` style="filter:${buildFilter({params:last.filterParams})}"`:'';
+    const st=(last&&!last.baked&&last.filterParams)?` style="filter:${buildFilter({params:last.filterParams},state.adjustments,false)}"`:'';
     btn.innerHTML=`<img src="${src}"${st}>`;
 }
 function toggleAdjust(s){state.adjustMode=s!==undefined?s:!state.adjustMode;$('adjPanel').classList.toggle('show',state.adjustMode);}
 function renderAdjTools(){
     const c=$('adjTools');c.innerHTML='';
+    // 首个为「滤镜强度」，0=原图 100=完整滤镜
+    const mk=(id,name,onClick)=>{
+        const b=document.createElement('button');
+        b.className=`adj-tab${id===state.currentTool?' active':''}`;
+        b.textContent=name; b.onclick=onClick; c.appendChild(b);
+    };
+    mk('strength','Filter',()=>{state.currentTool='strength';syncAdjActive();updateSlider();});
     ADJUST_TOOLS.forEach(t=>{
-        const b=document.createElement('button');b.className=`adj-tab${t.id===state.currentTool?' active':''}`;
-        b.textContent=t.name;b.onclick=()=>{state.currentTool=t.id;document.querySelectorAll('.adj-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');updateSlider();};
-        c.appendChild(b);});
+        mk(t.id,t.name,()=>{state.currentTool=t.id;syncAdjActive();updateSlider();});
+    });
 }
-function updateSlider(){const t=ADJUST_TOOLS.find(x=>x.id===state.currentTool);if(!t)return;$('adjSlider').value=state.adjustments[t.id];$('adjVal').textContent=state.adjustments[t.id];}
+function syncAdjActive(){
+    document.querySelectorAll('.adj-tab').forEach(x=>x.classList.remove('active'));
+    const tabs=[...document.querySelectorAll('.adj-tab')];
+    const idx=state.currentTool==='strength'?0:ADJUST_TOOLS.findIndex(t=>t.id===state.currentTool)+1;
+    if(tabs[idx])tabs[idx].classList.add('active');
+}
+function updateSlider(){
+    const slider=$('adjSlider');
+    if(state.currentTool==='strength'){
+        slider.min=0; slider.max=100;
+        slider.value=state.filterStrength; $('adjVal').textContent=state.filterStrength;
+    }else{
+        const t=ADJUST_TOOLS.find(x=>x.id===state.currentTool); if(!t)return;
+        slider.min=-100; slider.max=100;
+        slider.value=state.adjustments[t.id]; $('adjVal').textContent=state.adjustments[t.id];
+    }
+}
 
 $('btnShutter').onclick=()=>{
+    if(state._suppressShutterClick){ state._suppressShutterClick=false; return; }
     if(state.mode==='video'){
         if(state.recording) stopRecording();
         else startRecording();
@@ -2750,6 +2953,29 @@ $('btnShutter').onclick=()=>{
         takePhoto();
     }
 };
+// TikTok 式：视频模式下按住快门录制、松开结束（短按仍为点按切换）
+(function setupHoldRecord(){
+    const btn=$('btnShutter');
+    let holdTimer=null, holding=false;
+    const press=(e)=>{
+        if(state.mode!=='video'||state.recording||state.counting)return;
+        holding=true;
+        holdTimer=setTimeout(()=>{
+            if(holding&&!state.recording){ startRecording(); state._holdRec=true; }
+        },180);
+    };
+    const release=()=>{
+        if(!holding)return;
+        holding=false; clearTimeout(holdTimer);
+        if(state._holdRec&&state.recording){ stopRecording(); state._holdRec=false; state._suppressShutterClick=true; }
+    };
+    btn.addEventListener('touchstart',press,{passive:true});
+    btn.addEventListener('touchend',release);
+    btn.addEventListener('touchcancel',release);
+    btn.addEventListener('mousedown',press);
+    btn.addEventListener('mouseup',release);
+    btn.addEventListener('mouseleave',release);
+})();
 $('btnFlip').onclick=()=>{
     state.facing=state.facing==='front'?'back':'front';
     state.zoom=1; // 切换摄像头复位缩放（主流相机行为）
@@ -2764,7 +2990,67 @@ $('btnFlip').onclick=()=>{
         initCam();
     }
 };
-$('btnFlash').onclick=()=>{state.flash=!state.flash;$('btnFlash').classList.toggle('on',state.flash);};
+// ===== 闪光灯三态：关 -> 自动 -> 开 =====
+const FLASH_BOLT='<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>';
+const FLASH_BOLT_OFF='<path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/><path d="M4 4l16 16" stroke-width="2" opacity="0"/>';
+function updateFlashUI(){
+    const btn=$('btnFlash'), icon=$('flashIcon');
+    btn.classList.remove('on','flash-on','flash-auto');
+    let tag=btn.querySelector('.auto-tag'); if(tag)tag.remove();
+    if(state.flashMode==='on'){
+        btn.classList.add('on','flash-on');
+        icon.innerHTML=FLASH_BOLT;
+    }else if(state.flashMode==='auto'){
+        btn.classList.add('on','flash-auto');
+        icon.innerHTML=FLASH_BOLT;
+        const t=document.createElement('span'); t.className='auto-tag'; t.textContent='A'; btn.appendChild(t);
+    }else{
+        // off：闪电加斜杠
+        icon.innerHTML='<path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/><path d="M5 4.5l14 15" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    }
+    state.flash=state.flashMode!=='off';
+}
+function cycleFlash(){
+    state.flashMode=state.flashMode==='off'?'auto':(state.flashMode==='auto'?'on':'off');
+    updateFlashUI();
+}
+$('btnFlash').onclick=cycleFlash;
+
+// ===== 倒计时：关 -> 3s -> 10s =====
+function cycleTimer(){
+    state.timer=state.timer===0?3:(state.timer===3?10:0);
+    const tag=$('timerTag'), btn=$('btnTimer');
+    if(state.timer>0){ tag.style.display='block'; tag.textContent=state.timer; btn.classList.add('on'); }
+    else { tag.style.display='none'; btn.classList.remove('on'); }
+}
+$('btnTimer').onclick=cycleTimer;
+
+// ===== 网格线开关 =====
+$('btnGrid').onclick=()=>{
+    state.grid=!state.grid;
+    $('btnGrid').classList.toggle('on',state.grid);
+    $('gridOverlay').classList.toggle('on',state.grid);
+};
+
+// ===== 变焦档位胶囊 =====
+function updateZoomPills(){
+    document.querySelectorAll('.zoom-pill').forEach(b=>{
+        const z=parseFloat(b.dataset.z);
+        b.classList.toggle('active', Math.abs(state.zoom-z)<0.01);
+    });
+    const wrap=$('zoomPills');
+    wrap.classList.toggle('on', state.zoom>1.001 || state._zoomPillsHot);
+}
+let _zoomPillTimer=null;
+function flashZoomPills(){
+    const wrap=$('zoomPills');
+    state._zoomPillsHot=true; updateZoomPills();
+    clearTimeout(_zoomPillTimer);
+    _zoomPillTimer=setTimeout(()=>{ state._zoomPillsHot=false; updateZoomPills(); },2200);
+}
+document.querySelectorAll('.zoom-pill').forEach(b=>{
+    b.onclick=(e)=>{ e.stopPropagation(); setZoom(parseFloat(b.dataset.z)); flashZoomPills(); };
+});
 $('btnGenAI').onclick=()=>runFilterGeneration('next');
 $('btnRatio').onclick=(e)=>{e.stopPropagation();toggleRatioPicker();};
 document.querySelectorAll('.ratio-opt').forEach(o=>{
@@ -2904,7 +3190,7 @@ $('rSave').onclick=async ()=>{
         // 保存视频：原生写入系统相册，网页端下载
         if(await nativeSaveVideo(state.capturedVideo))return;
         const a=document.createElement('a');
-        a.download=`AICam_Video_${Date.now()}.webm`;
+        a.download=`TikCam_Video_${Date.now()}.webm`;
         a.href=state.capturedVideo;
         a.click();
         return;
@@ -2913,12 +3199,12 @@ $('rSave').onclick=async ()=>{
     img.onload=async ()=>{oc.width=img.width;oc.height=img.height;octx.filter=buildFilter(state.currentFilter,state.adjustments);octx.drawImage(img,0,0);
         const url=oc.toDataURL('image/jpeg',0.92);
         if(await nativeSaveImage(url))return;
-        downloadDataUrl(url,`AICam_${Date.now()}.jpg`);};
+        downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);};
 };
 $('rAdjust').onclick=()=>toggleAdjust();
 $('adjClose').onclick=()=>toggleAdjust(false);
-$('adjReset').onclick=()=>{ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);updateSlider();applyCurrentFilter();};
-$('adjSlider').addEventListener('input',e=>{const v=parseInt(e.target.value);state.adjustments[state.currentTool]=v;$('adjVal').textContent=v;applyCurrentFilter();});
+$('adjReset').onclick=()=>{ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);state.filterStrength=100;const sv=$('strengthVal');if(sv)sv.textContent=100;state.ev=0;setEV(0);updateSlider();applyCurrentFilter();};
+$('adjSlider').addEventListener('input',e=>{const v=parseInt(e.target.value);if(state.currentTool==='strength'){state.filterStrength=v;const sv=$('strengthVal');if(sv)sv.textContent=v;}else{state.adjustments[state.currentTool]=v;}$('adjVal').textContent=v;applyCurrentFilter();});
 $('permOk').onclick=initCam;$('permDemo').onclick=startDemo;
 
 const photoArea=$('rPhotoArea');
@@ -2942,16 +3228,33 @@ photoArea.addEventListener('touchstart',swipeStart,{passive:true});photoArea.add
     function showFocus(x,y){
         ring.style.left=x+'px'; ring.style.top=y+'px';
         ring.classList.remove('go'); void ring.offsetWidth; ring.classList.add('go');
+        // 点按对焦同时锁定曝光并复位 EV，曝光提示跟随对焦框
+        if(typeof positionEVBadge==='function')positionEVBadge(x,y);
+        if(typeof setEV==='function')setEV(0);
     }
     // 点按对焦（单指轻点，不与左右滑动冲突）
-    let tapStart=null;
+    let tapStart=null, evDrag=null;
     vfInner.addEventListener('touchstart',e=>{
         if(e.touches.length===1 && !e.target.closest('button')){
             const t=e.touches[0];
             tapStart={x:t.clientX,y:t.clientY,t:Date.now()};
+            evDrag={x:t.clientX,y:t.clientY,ev:state.ev};
+        }
+    },{passive:true});
+    // 单指上下滑动 = 调节曝光（EV）
+    vfInner.addEventListener('touchmove',e=>{
+        if(e.touches.length===1 && evDrag && !e.target.closest('button')){
+            const t=e.touches[0];
+            const dx=t.clientX-evDrag.x, dy=t.clientY-evDrag.y;
+            if(Math.abs(dy)>10 && Math.abs(dy)>Math.abs(dx)){
+                const r=vfInner.getBoundingClientRect();
+                if(typeof positionEVBadge==='function')positionEVBadge(evDrag.x-r.left, evDrag.y-r.top);
+                setEV(evDrag.ev + dy*0.45); // 上滑更亮、下滑更暗
+            }
         }
     },{passive:true});
     vfInner.addEventListener('touchend',e=>{
+        evDrag=null;
         if(!tapStart)return;
         const t=e.changedTouches[0];
         const dx=t.clientX-tapStart.x, dy=t.clientY-tapStart.y;
@@ -3008,6 +3311,8 @@ photoArea.addEventListener('touchstart',startHold,{passive:false});photoArea.add
 setRatio('4-3');
 setMode('photo');
 renderAdjTools();updateSlider();
+updateFlashUI();
+if(typeof updateZoomPills==='function')updateZoomPills();
 // 延迟初始化模式指示器位置
 requestAnimationFrame(()=>{
     setMode('photo');

@@ -1,10 +1,10 @@
 {
   "appId": "com.aicam.camera",
-  "appName": "AICAM",
+  "appName": "TikCam",
   "webDir": "www",
   "backgroundColor": "#000000",
   "ios": {
-    "scheme": "AICAM",
+    "scheme": "TikCam",
     "contentInset": "always",
     "limitsNavigationsToAppBoundDomains": true
   }

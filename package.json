@@ -1,8 +1,8 @@
 {
-  "name": "aicam-mobile",
+  "name": "tikcam-mobile",
   "version": "1.0.0",
   "private": true,
-  "description": "AICAM - AI filter camera, wrapped with Capacitor for iOS",
+  "description": "TikCam - AI beauty filter camera, wrapped with Capacitor for iOS",
   "scripts": {
     "sync": "node scripts/sync-web.mjs",
     "add:ios": "cap add ios",

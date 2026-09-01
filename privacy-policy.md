@@ -1,12 +1,12 @@
-# Privacy Policy — AICAM
+# Privacy Policy — TikCam
 
 **Last updated:** August 31, 2026
 
-AICAM ("we", "the app") is a camera application that applies photographic filters to photos and videos. Your privacy is designed into the app: most processing happens on your device, and we do not operate accounts or collect personal data.
+TikCam ("we", "the app") is a camera application that applies photographic filters to photos and videos. Your privacy is designed into the app: most processing happens on your device, and we do not operate accounts or collect personal data.
 
 ## 1. Data We Collect
 
-**We collect no personal information.** AICAM has no account system, no sign-up, no analytics SDKs, no advertising identifiers, and no crash-reporting services that identify you.
+**We collect no personal information.** TikCam has no account system, no sign-up, no analytics SDKs, no advertising identifiers, and no crash-reporting services that identify you.
 
 ## 2. Camera, Microphone and Photos
 
@@ -22,7 +22,7 @@ All built-in filters, scene detection and photo editing run locally on your devi
 
 ## 4. Optional Cloud AI Filters
 
-AICAM offers an optional feature that requests a custom filter style from an artificial-intelligence model. This feature is **off by default** and works only if **you** provide your own API key for a third-party model provider (entered in Settings and stored locally on your device).
+TikCam offers an optional feature that requests a custom filter style from an artificial-intelligence model. This feature is **off by default** and works only if **you** provide your own API key for a third-party model provider (entered in Settings and stored locally on your device).
 
 When you actively use this feature:
 
@@ -39,7 +39,7 @@ When you tap Share or Save, the action is performed by iOS system services (the 
 
 ## 6. Children
 
-AICAM does not collect personal data from anyone, including children. The app contains no age-restricted content and no advertising.
+TikCam does not collect personal data from anyone, including children. The app contains no age-restricted content and no advertising.
 
 ## 7. Your Rights and Controls
 
