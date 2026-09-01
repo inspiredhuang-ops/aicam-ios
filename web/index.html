@@ -53,12 +53,12 @@
         /* 顶部清爽白色工具栏（Foodie 风格） */
         .top-bar {
             position:relative; z-index:30; background:#fff;
-            display:flex; justify-content:space-between; align-items:center;
-            padding:44px 16px 10px;
+            display:flex; justify-content:space-around; align-items:center;
+            padding:46px 24px 12px;
             transition:background 0.3s;
         }
         .top-btn {
-            width:38px; height:38px; border-radius:50%;
+            width:40px; height:40px; border-radius:50%;
             background:transparent; border:none; color:#222; position:relative;
             display:flex; align-items:center; justify-content:center; cursor:pointer;
             transition:all 0.2s;
@@ -67,7 +67,7 @@
         .top-btn.on { color:#FE2C55; }
         .top-btn.on.flash-on { color:#FFB300; }
         .top-btn.on.flash-auto { color:#222; }
-        .top-btn svg { width:21px; height:21px; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+        .top-btn svg { width:22px; height:22px; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; fill:none; }
         .top-btn svg.fill { fill:currentColor; stroke:none; }
         .top-btn .auto-tag { position:absolute; font-size:7px; font-weight:800; bottom:3px; right:4px; color:#FE2C55; letter-spacing:0; line-height:1; }
 
@@ -964,15 +964,12 @@
                                 <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2.5h6"/></svg>
                                 <span class="mode-tag" id="timerTag" style="display:none;">3</span>
                             </button>
+                            <button class="top-btn ratio-btn" id="btnRatio" title="Ratio">4:3</button>
                             <button class="top-btn" id="btnGrid" title="Grid">
                                 <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.5 3.5v17M14.5 3.5v17M3.5 9.5h17M3.5 14.5h17"/></svg>
                             </button>
-                            <button class="top-btn ratio-btn" id="btnRatio" title="Ratio">4:3</button>
                             <button class="top-btn" id="btnGenAI" title="New filter">
                                 <svg viewBox="0 0 24 24"><path d="M12 3l1.6 4.8L18 9.4l-4.4 1.6L12 16l-1.6-5L6 9.4l4.4-1.6z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
-                            </button>
-                            <button class="top-btn" id="btnSettings" title="AI Settings">
-                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                             </button>
                         </div>
 
@@ -987,7 +984,7 @@
                             <div class="viewfinder ratio-4-3" id="viewfinder">
                                 <div class="vf-inner">
                                     <div class="vf-media" id="vfMedia">
-                                        <video id="video" autoplay playsinline webkit-playsinline class="front"></video>
+                                        <video id="video" autoplay playsinline webkit-playsinline class="back"></video>
                                         <canvas id="canvas"></canvas>
                                     </div>
                                     <div class="ai-scan" id="aiScan"></div>
@@ -1280,7 +1277,7 @@ const RATIOS = {
 };
 
 let state = {
-    facing:'front', flash:false, flashMode:'off', demo:false, stream:null, zoom:1,
+    facing:'back', flash:false, flashMode:'off', demo:false, stream:null, zoom:1,
     grid:false, timer:0, counting:false, ev:0, filterStrength:100,
     photos:[], photoLibrary:[], collectedFilters:[], userPrefs:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
     captured:null, capturedVideo:null, videoDuration:0, sceneInfo:null,
@@ -1305,8 +1302,10 @@ const ARK_MODEL_CHIPS=['doubao-seed-1-6-250615','doubao-seed-1-6-flash-250828','
 function loadAIConfig(){
     try{
         const c=JSON.parse(localStorage.getItem(AI_CONFIG_KEY)||'{}');
-        return {enabled:!!c.enabled, apiKey:c.apiKey||'', model:c.model||DEFAULT_ARK_MODEL};
-    }catch(e){return {enabled:false, apiKey:'', model:DEFAULT_ARK_MODEL};}
+        // 默认开启 AI —— 本地算法始终工作，配置了 API Key 后大模型自动增强
+        const enabled = c.enabled === undefined ? true : !!c.enabled;
+        return {enabled, apiKey:c.apiKey||'', model:c.model||DEFAULT_ARK_MODEL};
+    }catch(e){return {enabled:true, apiKey:'', model:DEFAULT_ARK_MODEL};}
 }
 function saveAIConfig(){ try{localStorage.setItem(AI_CONFIG_KEY,JSON.stringify(state.aiConfig));}catch(e){} }
 state.aiConfig=loadAIConfig();
@@ -2589,7 +2588,7 @@ function generateNextFilter(direction){
         applyCurrentFilter();
         state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
         state._sceneCandidate=null;
-        state._lastManualSwipe=Date.now();
+        state._userTookControl=true; // 用户手动选过，永久停止自动适配
         return;
     }
     let nf=null;
@@ -2610,10 +2609,12 @@ function generateNextFilter(direction){
         setFilterDuration('.38s'); // 手动滑动：轻快跟手
         applyCurrentFilter();
     }
-    // 记录当前滤镜所适配的场景，供自动适配比对；手动滑动后进入冷却
+    // 记录当前滤镜所适配的场景，供自动适配比对；用户手动滑动后接管控制权
     state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
     state._sceneCandidate=null;
-    if(direction==='next'||direction==='prev')state._lastManualSwipe=Date.now();
+    if(direction==='next'||direction==='prev'){
+        state._userTookControl=true; // 用户手动选过，永久停止自动适配
+    }
     // Refill the queue in the background after the swipe settles (non-blocking).
     schedulePrefetch(direction==='first'?1500:700);
 }
@@ -2625,15 +2626,16 @@ function runFilterGeneration(direction){
 }
 
 // ===== 场景自适应：镜头移动、画面场景变化后自动调整滤镜 =====
-// 由分析循环(每1.5s)驱动；要求场景连续两帧稳定变化才触发，避免晃动闪烁。
+// 由分析循环(每0.4s)驱动；检测到明显变化即触发，响应速度 < 0.5s。
+// 用户一旦手动滑动选过滤镜，永久停止自动适配，完全尊重用户选择。
 function maybeAutoAdapt(){
     if(state.demo)return;
     if(!state.liveInitialized||!state.currentFilter)return;
     if($('resultView').classList.contains('show'))return; // 查看成片时不打扰
     if(state.recording)return;
+    if(state._userTookControl)return; // 用户手动选过，不再自动调整
     const now=Date.now();
-    if(now-(state._lastManualSwipe||0)<3500)return;  // 用户刚手动滑动，尊重其选择
-    if(now-(state._lastAutoAdapt||0)<5000)return;    // 两次自动适配最小间隔
+    if(now-(state._lastAutoAdapt||0)<4000)return;    // 两次自动适配最小间隔，避免频繁闪烁
     const cur=state.sceneInfo;
     if(!cur)return;
     if(!state._filterScene){ state._filterScene={...cur}; return; }
@@ -2641,19 +2643,11 @@ function maybeAutoAdapt(){
     const labelChanged=cur.scene!==base.scene;
     const dBright=Math.abs(cur.brightness-base.brightness);
     const dSat=Math.abs(cur.saturation-base.saturation);
-    const changed=labelChanged||dBright>0.17||dSat>0.22;
-    if(!changed){ state._sceneCandidate=null; return; }
-    const key=cur.scene+'|'+(cur.brightness>0.55?'b':'d');
-    if(state._sceneCandidate&&state._sceneCandidate.key===key){
-        state._sceneCandidate.count++;
-    }else{
-        state._sceneCandidate={key,count:1};
-    }
-    if(state._sceneCandidate.count>=2){
-        state._sceneCandidate=null;
-        state._lastAutoAdapt=now;
-        autoAdaptFilter(cur);
-    }
+    const changed=labelChanged||dBright>0.18||dSat>0.25;
+    if(!changed){ return; }
+    // 检测到变化立即响应，无需等待多帧确认（分析间隔已足够过滤抖动）
+    state._lastAutoAdapt=now;
+    autoAdaptFilter(cur);
 }
 
 function autoAdaptFilter(scene){
@@ -2664,7 +2658,7 @@ function autoAdaptFilter(scene){
     state.filterIndex=state.filterHistory.length-1;
     state.currentFilter=nf;
     state._filterScene={...scene};
-    setFilterDuration('.7s'); // 环境变化：平滑漂移，跟手且不突兀
+    setFilterDuration('.45s'); // 环境变化：较快但平滑的漂移，跟手且不突兀
     applyCurrentFilter();
     // 队列里可能是旧场景的模型滤镜，作废并为新场景重新预取
     state._aiQueue=[];
@@ -2835,14 +2829,14 @@ function startAnalysis(){
             if(!state.liveInitialized){generateNextFilter('first');state.liveInitialized=true;}
             else maybeAutoAdapt(); // 画面场景变化时自动调整滤镜
         }catch(e){}
-    },1500);
+    },400);
     setTimeout(()=>{
         if(!state.liveInitialized&&video.videoWidth){
             const tc=document.createElement('canvas');tc.width=60;tc.height=Math.round(60*video.videoHeight/video.videoWidth);
             const tctx=tc.getContext('2d');tctx.drawImage(video,0,0,tc.width,tc.height);
             state.sceneInfo=analyzeImage(tc);generateNextFilter('first');state.liveInitialized=true;
         }
-    },1500);
+    },300);
 }
 
 function flashShouldFire(){
@@ -3115,7 +3109,7 @@ function openSettings(){
     $('settingsView').classList.add('show');
 }
 function closeSettings(){$('settingsView').classList.remove('show');}
-$('btnSettings').onclick=openSettings;
+if($('btnSettings'))$('btnSettings').onclick=openSettings;
 $('setBack').onclick=closeSettings;
 $('setModel').addEventListener&&$('setModel').addEventListener('input',refreshModelChips);
 $('setAiSwitch').onclick=()=>{
