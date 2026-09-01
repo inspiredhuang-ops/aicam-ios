@@ -33,8 +33,9 @@ workflows:
           # 安装依赖。@capacitor/cli、@capacitor/assets 已放在 dependencies（而非
           # devDependencies），确保构建机即使以生产模式（NODE_ENV=production）安装
           # 也能拿到 cap / capacitor-assets 命令。
-          npm install
-          node scripts/sync-web.mjs
+          # 用 && 串联：若 npm install 失败（如依赖冲突）立即中止并暴露真实错误，
+          # 避免继续执行导致后续出现令人困惑的 "cap: command not found"。
+          npm install && node scripts/sync-web.mjs
       - name: 添加并同步 iOS 平台（含 pod install）
         script: |
           # 使用 npm run 调用本地 node_modules/.bin 中的 cap，解析最可靠。
