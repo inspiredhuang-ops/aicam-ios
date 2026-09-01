@@ -77,4 +77,6 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        # 仅上传到 App Store Connect，不自动提交 TestFlight 审核
+        # 内部测试员可直接在 TestFlight 中安装，无需审核
+        submit_to_testflight: false
