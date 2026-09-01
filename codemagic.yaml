@@ -30,9 +30,10 @@ workflows:
     scripts:
       - name: 同步网页资源（web/ 快照 -> www/）
         script: |
-          # --include=dev 强制安装开发依赖（@capacitor/cli、@capacitor/assets），
-          # 否则构建机若以生产模式安装会跳过 devDependencies，导致 cap 命令缺失。
-          npm install --include=dev
+          # 安装依赖。@capacitor/cli、@capacitor/assets 已放在 dependencies（而非
+          # devDependencies），确保构建机即使以生产模式（NODE_ENV=production）安装
+          # 也能拿到 cap / capacitor-assets 命令。
+          npm install
           node scripts/sync-web.mjs
       - name: 添加并同步 iOS 平台（含 pod install）
         script: |
