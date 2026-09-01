@@ -60,6 +60,13 @@ workflows:
         script: keychain add-certificates
       - name: 配置 Xcode 签名
         script: xcode-project use-profiles
+      - name: 递增 Build 版本号（每次上传 TestFlight 必须更高）
+        script: |
+          # 使用 Codemagic 构建序号作为 CFBundleVersion，保证单调递增
+          # 例如 Build #7 → version 7
+          cd ios/App
+          agvtool new-version -all $BUILD_NUMBER
+          agvtool new-marketing-version 1.0.0
       - name: 归档并导出 IPA
         script: |
           xcode-project build-ipa \
