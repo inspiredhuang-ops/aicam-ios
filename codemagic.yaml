@@ -30,19 +30,23 @@ workflows:
     scripts:
       - name: 同步网页资源（web/ 快照 -> www/）
         script: |
-          npm install
+          # --include=dev 强制安装开发依赖（@capacitor/cli、@capacitor/assets），
+          # 否则构建机若以生产模式安装会跳过 devDependencies，导致 cap 命令缺失。
+          npm install --include=dev
           node scripts/sync-web.mjs
       - name: 添加并同步 iOS 平台（含 pod install）
         script: |
-          npm exec cap add ios || true
-          npm exec cap sync ios
+          # 使用 npm run 调用本地 node_modules/.bin 中的 cap，解析最可靠。
+          # ios/ 目录被 gitignore，首次构建由 cap add ios 生成原生工程。
+          npm run add:ios || true
+          npm run sync:ios
       - name: 注入相机/麦克风/相册权限说明
         script: |
           chmod +x scripts/inject-plist.sh
           bash scripts/inject-plist.sh
       - name: 生成 App 图标与启动页
         script: |
-          npm exec capacitor-assets generate --ios || true
+          npm run assets || true
       - name: 初始化签名钥匙串
         script: keychain initialize
       - name: 自动创建/获取证书与描述文件
