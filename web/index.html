@@ -130,15 +130,21 @@
             100% { opacity:1; transform:translateY(0); }
         }
 
-        /* AI扫描线 */
-        .ai-scan {
-            position:absolute; left:0; right:0; height:1px; z-index:5;
-            background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.1) 20%,rgba(255,255,255,0.3) 50%,rgba(255,255,255,0.1) 80%,transparent 100%);
-            opacity:0; pointer-events:none;
+        /* 场景感知徽章 —— 极简，不打断取景 */
+        .scene-badge {
+            position:absolute; top:14px; right:14px; z-index:12;
+            display:flex; align-items:center; gap:6px;
+            padding:5px 10px 5px 8px; border-radius:999px;
+            background:rgba(0,0,0,0.28); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+            color:#fff; font-size:10px; font-weight:600; letter-spacing:0.8px;
+            opacity:0; transform:translateY(-4px); transition:opacity .3s, transform .3s;
+            pointer-events:none;
         }
-        .ai-scan.active { opacity:1; animation:scanMove 3s ease-in-out infinite; }
-        .ai-scan.busy { animation:scanMove 0.9s ease-in-out infinite; background:linear-gradient(90deg,transparent 0%,rgba(108,92,231,0.2) 20%,rgba(140,120,255,0.85) 50%,rgba(108,92,231,0.2) 80%,transparent 100%); }
-        @keyframes scanMove { 0%{top:15%;opacity:0;} 10%{opacity:0.5;} 90%{opacity:0.5;} 100%{top:85%;opacity:0;} }
+        .scene-badge.show { opacity:1; transform:translateY(0); }
+        .scene-badge .sb-dot {
+            width:6px; height:6px; border-radius:50%;
+            background:#34d399; box-shadow:0 0 6px rgba(52,211,153,0.7);
+        }
 
         .flash-overlay { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:50; transition:opacity 0.05s; }
         .flash-overlay.go { opacity:1; }
@@ -987,7 +993,7 @@
                                         <video id="video" autoplay playsinline webkit-playsinline class="back"></video>
                                         <canvas id="canvas"></canvas>
                                     </div>
-                                    <div class="ai-scan" id="aiScan"></div>
+                                    <div class="scene-badge" id="sceneBadge"><span class="sb-dot"></span><span id="sbText">SCANNING</span></div>
                                     <div class="flash-overlay" id="flashEl"></div>
 
                                     <!-- 三分构图网格线 -->
@@ -1041,7 +1047,7 @@
                         </div>
 
                         <div class="bottom-bar">
-                            <div class="swipe-hint" id="swipeHint">← swipe to generate →</div>
+                            <div class="swipe-hint" id="swipeHint">← swipe for styles →</div>
                             <div class="mode-switch" id="modeSwitch">
                                 <div class="mode-indicator" id="modeIndicator"></div>
                                 <span class="mode-label" data-mode="video">VIDEO</span>
@@ -1078,7 +1084,7 @@
                                 </button>
                             </div>
                             <div class="r-bottom">
-                                <div class="r-hint-row"><span class="r-hint">← swipe for new · long press to compare →</span></div>
+                                <div class="r-hint-row"><span class="r-hint">← swipe styles · long press to compare →</span></div>
                                 <div class="r-actions">
                                     <button class="r-act" id="rRetake"><span class="r-act-ic">⟲</span><span>Retake</span></button>
                                     <button class="r-act" id="rAdjust"><span class="r-act-ic">◐</span><span>Edit</span></button>
@@ -1204,7 +1210,7 @@
                                 </div>
                                 <div class="set-group">
                                     <div class="set-group-title">How it works</div>
-                                    <div class="set-desc" style="margin:0 2px">Every swipe switches filters instantly — there is zero waiting. After you swipe, a small thumbnail of the viewfinder is sent to the model in the background; its scene-tuned filter is queued up and appears on a following swipe (marked with the purple dot). If the network is slow or offline, on-device generation simply keeps the feed flowing.</div>
+                                    <div class="set-desc" style="margin:0 2px">Swipe through a curated set of filters tuned to your current scene and personal taste. The first one appears the instant the camera opens. AI-crafted filters (marked with the purple dot) slide in silently as you use the app — no waiting, no loading.</div>
                                 </div>
                             </div>
                         </div>
@@ -1279,12 +1285,25 @@ const RATIOS = {
 let state = {
     facing:'back', flash:false, flashMode:'off', demo:false, stream:null, zoom:1,
     grid:false, timer:0, counting:false, ev:0, filterStrength:100,
-    photos:[], photoLibrary:[], collectedFilters:[], userPrefs:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+    photos:[], photoLibrary:[], collectedFilters:[],
+    userPrefs:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+    // 分场景偏好：每个场景独立学习用户口味
+    scenePrefs:{
+        food:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+        portrait:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+        night:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+        landscape:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+        normal:{brightness:0,contrast:0,saturation:0,warmth:0,count:0},
+    },
     captured:null, capturedVideo:null, videoDuration:0, sceneInfo:null,
     currentFilter:null, filterIndex:0, filterHistory:[],
+    // 智能滤镜池：当前场景下最适配的 N 个滤镜，用户左右滑就在池子里选
+    _filterPool:[], _poolScene:null, _poolIndex:0,
+    // 停留时长追踪：用户在某个滤镜上停留越久 = 越喜欢
+    _dwellStart:0, _dwellFilterId:null,
     holding:false, startX:0,
     _aiQueue:[], _prefetching:false, _prefetchTimer:null, _lastModelCallAt:0,
-    _filterScene:null, _sceneCandidate:null, _lastAutoAdapt:0, _lastManualSwipe:0, _autoToastTimer:null,
+    _filterScene:null, _sceneCandidate:null, _lastAutoAdapt:0, _lastManualSwipe:0, _autoToastTimer:null, _userTookControl:false,
     adjustMode:false, currentTool:'brightness', adjustments:{},
     liveInitialized:false, ratio:'4-3', ratioPickerOpen:false,
     mode:'photo', recording:false, mediaRecorder:null, recordedChunks:[],
@@ -1368,7 +1387,7 @@ function setMode(mode){
         indicator.style.left=(labelCenter-8)+'px';
         indicator.style.width='16px';
     }
-    $('swipeHint').textContent = mode==='video' ? 'tap to record · AI filters live' : '← swipe to generate →';
+    $('swipeHint').textContent = mode==='video' ? 'tap to record · AI filters live' : '← swipe for styles →';
     // 切换模式时重新初始化相机（视频需要音频）
     if(!state.demo && state.stream){
         initCam();
@@ -2000,35 +2019,13 @@ function toggleLike(){
     }
 }
 
-// 偏好学习 - 从喜爱照片中学习
+// 偏好学习 - 从喜爱照片中学习（最强信号）
 function learnFromLike(photo){
     if(!photo.filterParams)return;
-    const p=photo.filterParams;
-    const n=state.userPrefs.count;
-    // 加权平均偏好
-    const weight=1/(n+1);
-    state.userPrefs.brightness=state.userPrefs.brightness*(1-weight)+((p.brightness-1)*250)*weight;
-    state.userPrefs.contrast=state.userPrefs.contrast*(1-weight)+((p.contrast-1)*250)*weight;
-    state.userPrefs.saturation=state.userPrefs.saturation*(1-weight)+((p.saturate-1)*200)*weight;
-    state.userPrefs.warmth=state.userPrefs.warmth*(1-weight)+((p.sepia||0)*500+p.hueRotate*2)*weight;
-    state.userPrefs.count=n+1;
-}
-
-// 应用偏好到滤镜生成 - 偏置参数
-function applyPreferenceBias(baseParams){
-    if(state.userPrefs.count===0)return baseParams;
-    const strength=Math.min(0.25, state.userPrefs.count*0.04); // cap bias at 25%, keep random character
-    const p={...baseParams};
-    // strong looks (mono / heavy sepia) skip the saturation bias
-    const strongStyle=(p.grayscale>0.5||p.sepia>0.3);
-    p.brightness+=(state.userPrefs.brightness/250)*strength*0.08;
-    p.contrast+=(state.userPrefs.contrast/250)*strength*0.08;
-    if(!strongStyle)p.saturate+=(state.userPrefs.saturation/200)*strength*0.1;
-    // 限制范围（与风格原型范围一致）
-    p.brightness=Math.max(0.72,Math.min(1.28,p.brightness));
-    p.contrast=Math.max(0.74,Math.min(1.34,p.contrast));
-    p.saturate=Math.max(0.5,Math.min(1.7,p.saturate));
-    return p;
+    const sceneKey=photo.scene||'normal';
+    // 分场景学习 + 全局学习同步更新
+    updateScenePref(sceneKey, photo.filterParams, 2.0); // 收藏权重最高
+    updateGlobalPref(photo.filterParams, 1.5);
 }
 
 function showPrefToast(text){
@@ -2286,10 +2283,208 @@ function generateAIFilter(scene, seed){
     const tag = mono
         ? MONO_TAGS[Math.floor(rng()*MONO_TAGS.length)]
         : STYLE_WORDS.tags[Math.floor(rng()*STYLE_WORDS.tags.length)];
-    const biasedParams=applyPreferenceBias(params);
-    const f={id:'ai_'+Date.now()+'_'+Math.floor(rng()*9999),name,tag,params:biasedParams};
+    const biasedParams=applyPreferenceBias(params, sc.scene);
+    const f={id:'ai_'+Date.now()+'_'+Math.floor(rng()*9999),name,tag,params:biasedParams,scene:sc.scene};
     rememberFilter(f);
     return f;
+}
+
+// ===== 场景徽章：极简提示当前识别的场景 =====
+function updateSceneBadge(sceneKey){
+    const badge=$('sceneBadge');
+    const text=$('sbText');
+    const dot=badge.querySelector('.sb-dot');
+    if(!badge||!text)return;
+    const meta=SCENE_META[sceneKey]||SCENE_META.normal;
+    text.textContent=meta.label.toUpperCase();
+    if(dot){ dot.style.background=meta.color; dot.style.boxShadow=`0 0 6px ${meta.color}aa`; }
+    badge.classList.add('show');
+}
+
+// ===== 智能滤镜池 =====
+// 为当前场景预生成一组最优滤镜，用户左右滑就在池子里选，
+// 池子里的每个滤镜都：① 适配当前场景 ② 注入用户口味偏置 ③ 互不重复
+const POOL_SIZE=10;
+const POOL_EXTEND=5;
+
+function buildFilterPool(scene){
+    const sc=scene||{scene:'normal',brightness:0.5,contrast:0.4,saturation:0.3};
+    const sceneKey=sc.scene||'normal';
+    // 如果场景没变，不重建（保持用户已浏览的位置）
+    if(state._poolScene===sceneKey && state._filterPool.length>0) return;
+    state._poolScene=sceneKey;
+    state._filterPool=[];
+    state._poolIndex=0;
+    // 生成一批差异化滤镜，按场景适配度 + 偏好匹配度排序
+    const candidates=[];
+    for(let i=0;i<POOL_SIZE*2;i++){
+        const f=generateAIFilter(scene, Date.now()+i*1000+Math.random()*999);
+        const score=scoreFilterForScene(f, sc);
+        candidates.push({f,score});
+    }
+    candidates.sort((a,b)=>b.score-a.score);
+    // 取前 POOL_SIZE 个，确保视觉多样性（已由 generateAIFilter 保证不重复）
+    state._filterPool=candidates.slice(0,POOL_SIZE).map(c=>c.f);
+    // AI 预取队列里已有的模型滤镜，插入池头（最高优先级）
+    if(state._aiQueue && state._aiQueue.length){
+        for(let i=state._aiQueue.length-1;i>=0;i--){
+            const af=state._aiQueue[i];
+            af.scene=sceneKey;
+            state._filterPool.unshift(af);
+        }
+        state._aiQueue=[];
+    }
+}
+
+// 给滤镜打分：场景匹配度 + 风格多样性 + 偏好契合度
+function scoreFilterForScene(f, scene){
+    let score=0;
+    const p=f.params;
+    const sc=scene||{scene:'normal'};
+    const key=sc.scene||'normal';
+    // 场景适配：根据场景类型给对应特质加分
+    if(key==='food'){
+        if(p.sepia>0.12) score+=0.3; // 食物暖调
+        if(p.saturate>1.0) score+=0.2; // 食物饱和度
+    } else if(key==='portrait'){
+        if(p.brightness>0.98) score+=0.25; // 人像偏亮
+        if(p.saturate<1.05) score+=0.15; // 人像不艳
+    } else if(key==='night'){
+        if(p.brightness>0.95) score+=0.25; // 夜景提亮
+        if(p.contrast>1.05) score+=0.2; // 夜景高对比
+    } else if(key==='landscape'){
+        if(p.saturate>1.0) score+=0.2; // 风景饱和
+        if(p.contrast>1.0) score+=0.15; // 风景对比
+    }
+    // 偏好匹配：用户喜欢的方向加分（越强的偏好权重越高）
+    const prefs=state.scenePrefs[key]||state.userPrefs;
+    if(prefs.count>0){
+        const prefStrength=Math.min(1, prefs.count*0.15);
+        const prefBright=prefs.brightness/250; // -1 ~ 1
+        const prefSat=prefs.saturation/200;
+        if(prefBright>0.2 && p.brightness>1.0) score+=0.2*prefStrength;
+        if(prefBright<-0.2 && p.brightness<1.0) score+=0.2*prefStrength;
+        if(prefSat>0.2 && p.saturate>1.0) score+=0.15*prefStrength;
+        if(prefSat<-0.2 && p.saturate<1.0) score+=0.15*prefStrength;
+    }
+    // 加点随机扰动，避免每次排序都一模一样
+    score+=Math.random()*0.15;
+    return score;
+}
+
+// 激活池中的第 index 个滤镜（带方向感的过渡）
+function activatePoolFilter(index, direction){
+    if(!state._filterPool.length) return;
+    // 边界：到末尾自动扩充
+    if(index>=state._filterPool.length){
+        extendFilterPool(POOL_EXTEND);
+    }
+    if(index<0) index=0;
+    state._poolIndex=index;
+    const f=state._filterPool[index];
+    // 记录停留时长起点（用于偏好学习）
+    recordDwellStart(f.id);
+    // 写入历史
+    if(direction==='first'){
+        state.filterHistory=[f];state.filterIndex=0;
+        state.currentFilter=f;
+        setFilterDuration('.7s');
+        applyCurrentFilter();
+    }else{
+        state.filterHistory.push(f);state.filterIndex=state.filterHistory.length-1;
+        state.currentFilter=f;
+        setFilterDuration('.32s'); // 滑动更快，跟手
+        applyCurrentFilter();
+    }
+    state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
+    state._sceneCandidate=null;
+}
+
+// 池子快用完时追加生成
+function extendFilterPool(count){
+    const scene=state.sceneInfo||{scene:'normal',brightness:0.5};
+    for(let i=0;i<count;i++){
+        const f=generateAIFilter(scene, Date.now()+i*777+Math.random()*999);
+        state._filterPool.push(f);
+    }
+}
+
+// ===== 停留时长偏好学习 =====
+function recordDwellStart(filterId){
+    // 先结算上一个滤镜的停留
+    if(state._dwellFilterId && state._dwellStart>0){
+        const duration=Date.now()-state._dwellStart;
+        if(duration>2500){ // 超过 2.5s 才算"认真看了"
+            learnFromDwell(state._dwellFilterId, duration);
+        }
+    }
+    state._dwellFilterId=filterId;
+    state._dwellStart=Date.now();
+}
+
+function learnFromDwell(filterId, durationMs){
+    // 在池中找到这个滤镜
+    const f=state._filterPool.find(x=>x.id===filterId)
+        || state.filterHistory.find(x=>x.id===filterId);
+    if(!f||!f.params)return;
+    const sceneKey=f.scene||(state.sceneInfo&&state.sceneInfo.scene)||'normal';
+    // 停留越久权重越大（上限 4s）
+    const weight=Math.min(1.0, durationMs/4000)*0.3; // 比拍照弱
+    updateScenePref(sceneKey, f.params, weight);
+    // 也更新全局偏好
+    updateGlobalPref(f.params, weight*0.5);
+}
+
+// 从拍照学习（用户按下快门 = 认可这个滤镜）
+function learnFromShot(filter, sceneKey){
+    if(!filter||!filter.params)return;
+    const key=sceneKey||'normal';
+    updateScenePref(key, filter.params, 1.2); // 拍照权重高
+    updateGlobalPref(filter.params, 0.8);
+}
+
+// 更新分场景偏好（加权平均）
+function updateScenePref(sceneKey, params, weight){
+    const sp=state.scenePrefs[sceneKey];
+    if(!sp) return;
+    const n=sp.count;
+    const w=weight/(n+weight);
+    sp.brightness=sp.brightness*(1-w)+((params.brightness-1)*250)*w;
+    sp.contrast=sp.contrast*(1-w)+((params.contrast-1)*250)*w;
+    sp.saturation=sp.saturation*(1-w)+((params.saturate-1)*200)*w;
+    sp.warmth=sp.warmth*(1-w)+((params.sepia||0)*500+(params.hueRotate||0)*2)*w;
+    sp.count=n+weight;
+}
+
+// 更新全局偏好
+function updateGlobalPref(params, weight){
+    const p=state.userPrefs;
+    const n=p.count;
+    const w=weight/(n+weight);
+    p.brightness=p.brightness*(1-w)+((params.brightness-1)*250)*w;
+    p.contrast=p.contrast*(1-w)+((params.contrast-1)*250)*w;
+    p.saturation=p.saturation*(1-w)+((params.saturate-1)*200)*w;
+    p.warmth=p.warmth*(1-w)+((params.sepia||0)*500+(params.hueRotate||0)*2)*w;
+    p.count=n+weight;
+}
+
+// 应用偏好偏置 —— 优先用当前场景的偏好，没有则用全局
+function applyPreferenceBias(baseParams, sceneKey){
+    const sp=sceneKey ? state.scenePrefs[sceneKey] : null;
+    const prefs=(sp && sp.count>0) ? sp : state.userPrefs;
+    if(prefs.count===0)return baseParams;
+    // 偏置强度：数据越多越强，上限 35%（比旧版 25% 更高，让用户更直观感受到"懂我"）
+    const strength=Math.min(0.35, prefs.count*0.05);
+    const p={...baseParams};
+    const strongStyle=(p.grayscale>0.5||p.sepia>0.3);
+    p.brightness+=(prefs.brightness/250)*strength*0.1;
+    p.contrast+=(prefs.contrast/250)*strength*0.1;
+    if(!strongStyle)p.saturate+=(prefs.saturation/200)*strength*0.12;
+    // 限制范围（与风格原型范围一致）
+    p.brightness=Math.max(0.72,Math.min(1.28,p.brightness));
+    p.contrast=Math.max(0.74,Math.min(1.34,p.contrast));
+    p.saturate=Math.max(0.5,Math.min(1.7,p.saturate));
+    return p;
 }
 
 // ===== Vision model (Doubao / Volcengine Ark) filter generation =====
@@ -2422,25 +2617,30 @@ async function requestModelFilter(scene){
     return parseModelFilter(content);
 }
 
-// Fire one background model request (guarded by throttle + queue cap) and stash
-// the result for the next swipe. Never throws; failures just leave the queue empty.
+// Fire one background model request (guarded by throttle). Result goes straight
+// into the filter pool, right after the current position — so the next swipe
+// gives the user an AI-crafted look. No visible UI during this (silent background).
 async function prefetchModelFilter(){
     const cfg=state.aiConfig;
     if(!cfg||!cfg.enabled||!cfg.apiKey)return;
     if(state._prefetching)return;
-    if((state._aiQueue||[]).length>=1)return;
     if(Date.now()-(state._lastModelCallAt||0)<MODEL_THROTTLE_MS)return;
     state._prefetching=true;
     state._lastModelCallAt=Date.now();
-    $('aiScan').classList.add('busy');
     try{
         const scene=state.sceneInfo||{scene:'normal',brightness:0.5};
         const f=await requestModelFilter(scene);
         if(f&&state.aiConfig&&state.aiConfig.enabled){
-            state._aiQueue=state._aiQueue||[];
-            if(state._aiQueue.length<1)state._aiQueue.push(f);
-        }else if(!f && (!state._aiQueue || !state._aiQueue.length)){
-            // No frame available yet (camera warming up) — retry shortly.
+            // 应用偏好偏置 + 标记场景
+            f.scene=scene.scene||'normal';
+            f.params=applyPreferenceBias(f.params, f.scene);
+            f.ai=true;
+            // 插入到当前位置的下一个（用户右滑就遇到它）
+            const insertAt=Math.min(state._poolIndex+1, state._filterPool.length);
+            state._filterPool.splice(insertAt, 0, f);
+            rememberFilter(f);
+        }else if(!f){
+            // 相机还在预热 —— 稍后重试
             schedulePrefetch(2000);
         }
     }catch(e){
@@ -2448,7 +2648,6 @@ async function prefetchModelFilter(){
         state._lastModelError=(e&&e.message)||'request failed';
     }finally{
         state._prefetching=false;
-        if(!state._prefetching)$('aiScan').classList.remove('busy');
     }
 }
 
@@ -2580,96 +2779,62 @@ function setFilterDuration(sec){
     document.getElementById('viewfinder').style.setProperty('--filter-dur',sec);
 }
 
-// INSTANT filter generation. Every swipe is answered synchronously: a prefetched
-// model filter is used if one is ready (purple dot), otherwise on-device random
-// generation. The model is refreshed in the background afterwards, so swipes
-// never wait on the network.
-function generateNextFilter(direction){
-    const scene=state.sceneInfo||{scene:'normal',brightness:0.5,contrast:0.4,saturation:0.3};
-    if(direction==='prev'){
-        if(state.filterIndex>0){state.filterIndex--;state.currentFilter=state.filterHistory[state.filterIndex];}
-        else{const nf=generateAIFilter(scene);state.filterHistory.unshift(nf);state.filterIndex=0;state.currentFilter=nf;}
-        setFilterDuration('.38s');
-        applyCurrentFilter();
-        state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
-        state._sceneCandidate=null;
-        state._userTookControl=true; // 用户手动选过，永久停止自动适配
-        return;
-    }
-    let nf=null;
-    if(direction!=='first' && state._aiQueue && state._aiQueue.length){
-        nf=ensureDistinct(state._aiQueue.shift());
-    }
-    if(!nf)nf=generateAIFilter(scene);
-    if(direction==='first'){
-        state.filterHistory=[nf];state.filterIndex=0;
-    }else{
-        state.filterHistory.push(nf);state.filterIndex=state.filterHistory.length-1;
-    }
-    state.currentFilter=nf;
-    if(direction==='first'){
-        setFilterDuration('.7s'); // 首个滤镜柔和淡入
-        applyCurrentFilter();
-    }else{
-        setFilterDuration('.38s'); // 手动滑动：轻快跟手
-        applyCurrentFilter();
-    }
-    // 记录当前滤镜所适配的场景，供自动适配比对；用户手动滑动后接管控制权
-    state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
-    state._sceneCandidate=null;
-    if(direction==='next'||direction==='prev'){
-        state._userTookControl=true; // 用户手动选过，永久停止自动适配
-    }
-    // Refill the queue in the background after the swipe settles (non-blocking).
-    schedulePrefetch(direction==='first'?1500:700);
-}
-
-// Swipe entry point — kept synchronous; loading spinners are no longer needed
-// because filter switches are instant. The purple scan line shows background work.
+// 左右滑切换滤镜 —— 全部来自当前场景的智能滤镜池，
+// 每个都是为这个场景 + 用户口味量身定制的最优解。
 function runFilterGeneration(direction){
-    generateNextFilter(direction);
+    if(!state._filterPool.length){
+        // 兜底：池子还没建好（极罕见），立即建
+        buildFilterPool(state.sceneInfo);
+    }
+    if(direction==='prev'){
+        if(state._poolIndex>0){
+            activatePoolFilter(state._poolIndex-1,'prev');
+        }
+        // 到最左边就停住（不往前生成了，避免用户迷路）
+    }else{
+        activatePoolFilter(state._poolIndex+1,'next');
+    }
+    state._userTookControl=true; // 用户手动选过，停止自动适配
+    // 滑动后在后台刷新模型滤镜，不阻塞
+    schedulePrefetch(700);
 }
 
-// ===== 场景自适应：镜头移动、画面场景变化后自动调整滤镜 =====
-// 由分析循环(每0.4s)驱动；检测到明显变化即触发，响应速度 < 0.5s。
-// 用户一旦手动滑动选过滤镜，永久停止自动适配，完全尊重用户选择。
+// ===== 场景自适应：镜头移动、画面场景变化后重建滤镜池 =====
+// 由分析循环驱动；检测到场景变化时重建池子，首项自动柔和淡入。
+// 用户一旦手动滑动选过滤镜，停止自动换滤镜，但池子仍会刷新（用户滑到的都是新场景适配的）。
 function maybeAutoAdapt(){
     if(state.demo)return;
     if(!state.liveInitialized||!state.currentFilter)return;
-    if($('resultView').classList.contains('show'))return; // 查看成片时不打扰
+    if($('resultView').classList.contains('show'))return;
     if(state.recording)return;
-    if(state._userTookControl)return; // 用户手动选过，不再自动调整
-    const now=Date.now();
-    if(now-(state._lastAutoAdapt||0)<4000)return;    // 两次自动适配最小间隔，避免频繁闪烁
     const cur=state.sceneInfo;
     if(!cur)return;
     if(!state._filterScene){ state._filterScene={...cur}; return; }
     const base=state._filterScene;
     const labelChanged=cur.scene!==base.scene;
-    const dBright=Math.abs(cur.brightness-base.brightness);
-    const dSat=Math.abs(cur.saturation-base.saturation);
-    const changed=labelChanged||dBright>0.18||dSat>0.25;
-    if(!changed){ return; }
-    // 检测到变化立即响应，无需等待多帧确认（分析间隔已足够过滤抖动）
-    state._lastAutoAdapt=now;
-    autoAdaptFilter(cur);
-}
-
-function autoAdaptFilter(scene){
-    // 即时生成一个为新场景调校的滤镜（本地生成，零延迟，CSS 过渡平滑切换）
-    const nf=generateAIFilter(scene);
-    nf.autoAdapted=true;
-    state.filterHistory.push(nf);
-    state.filterIndex=state.filterHistory.length-1;
-    state.currentFilter=nf;
-    state._filterScene={...scene};
-    setFilterDuration('.45s'); // 环境变化：较快但平滑的漂移，跟手且不突兀
-    applyCurrentFilter();
-    // 队列里可能是旧场景的模型滤镜，作废并为新场景重新预取
-    state._aiQueue=[];
-    state._lastModelCallAt=0;
-    schedulePrefetch(500);
-    showAutoToast(scene.scene);
+    // 场景变了 → 重建池子（无论用户是否手动过，池子都要跟上新场景）
+    if(labelChanged){
+        updateSceneBadge(cur.scene);
+        // 重建池子（新场景的最优解）
+        buildFilterPool(cur);
+        state._filterScene={...cur};
+        // 如果用户还没手动过（在自动模式），自动切到新池第一个
+        if(!state._userTookControl){
+            state._poolIndex=0;
+            const f=state._filterPool[0];
+            if(f){
+                state.filterHistory.push(f);state.filterIndex=state.filterHistory.length-1;
+                state.currentFilter=f;
+                recordDwellStart(f.id);
+                setFilterDuration('.5s');
+                applyCurrentFilter();
+                showAutoToast(cur.scene);
+            }
+        }
+        // 新场景触发一次 AI 预取
+        state._lastModelCallAt=0;
+        schedulePrefetch(500);
+    }
 }
 
 function showAutoToast(sceneKey){
@@ -2701,7 +2866,26 @@ async function initCam(){
         video.className=state.facing;
         canvas.className=state.facing;
         applyCamTransform();
-        $('permModal').classList.remove('show');$('aiScan').classList.add('active');startAnalysis();
+        $('permModal').classList.remove('show');
+        // 首帧就绪立即出滤镜，零等待体感
+        const onFirstFrame=()=>{
+            video.removeEventListener('loadeddata',onFirstFrame);
+            startAnalysis();
+            // 立即分析第一帧 + 生成首滤镜，用户看到画面就有色调
+            try{
+                const tc=document.createElement('canvas');tc.width=60;tc.height=Math.round(60*video.videoHeight/video.videoWidth);
+                tc.getContext('2d').drawImage(video,0,0,tc.width,tc.height);
+                state.sceneInfo=analyzeImage(tc);
+                buildFilterPool(state.sceneInfo);
+                activatePoolFilter(0,'first');
+                state.liveInitialized=true;
+                updateSceneBadge(state.sceneInfo.scene);
+            }catch(e){
+                // 兜底：等分析循环
+            }
+        };
+        if(video.readyState>=2) onFirstFrame();
+        else video.addEventListener('loadeddata',onFirstFrame);
     }catch{$('permModal').classList.add('show');}
 }
 
@@ -2743,7 +2927,7 @@ function positionEVBadge(x,y){
 }
 
 function startDemo(){
-    state.demo=true;$('permModal').classList.remove('show');$('aiScan').classList.add('active');
+    state.demo=true;$('permModal').classList.remove('show');
     video.style.display='none';canvas.style.display='block';applyCamTransform();let h=0;
     const draw=()=>{
         if(!state.demo)return;
@@ -2759,12 +2943,13 @@ function startDemo(){
     try{ state.demoStream=canvas.captureStream(30); }catch(e){ state.demoStream=null; }
     setTimeout(()=>{
         state.sceneInfo={scene:'food',brightness:0.5,contrast:0.4,saturation:0.4,warmth:0.15};
-        generateNextFilter('first');
+        buildFilterPool(state.sceneInfo);
+        activatePoolFilter(0,'first');
         state.liveInitialized=true;
-        $('fTag').textContent=state.currentFilter.tag;
+        updateSceneBadge('food');
         // 为demo模式种子一些示例内容
         seedDemoContent();
-    },800);
+    },500);
 }
 
 function seedDemoContent(){
@@ -2824,6 +3009,7 @@ function seedDemoContent(){
 let analysisTimer;
 function startAnalysis(){
     if(analysisTimer)clearInterval(analysisTimer);
+    // 每 300ms 分析一次画面，场景变化更跟手
     analysisTimer=setInterval(()=>{
         if(state.demo||!video.videoWidth)return;
         try{
@@ -2831,16 +3017,15 @@ function startAnalysis(){
             const tctx=tc.getContext('2d');
             tctx.drawImage(video,0,0,tc.width,tc.height);
             state.sceneInfo=analyzeImage(tc);
-            if(!state.liveInitialized){generateNextFilter('first');state.liveInitialized=true;}
-            else maybeAutoAdapt(); // 画面场景变化时自动调整滤镜
+            if(!state.liveInitialized){
+                // 兜底：initCam 首帧回调没触发到时的备用
+                buildFilterPool(state.sceneInfo);
+                activatePoolFilter(0,'first');
+                state.liveInitialized=true;
+                updateSceneBadge(state.sceneInfo.scene);
+            }
+            else maybeAutoAdapt(); // 场景变化 → 重建滤镜池
         }catch(e){}
-    },400);
-    setTimeout(()=>{
-        if(!state.liveInitialized&&video.videoWidth){
-            const tc=document.createElement('canvas');tc.width=60;tc.height=Math.round(60*video.videoHeight/video.videoWidth);
-            const tctx=tc.getContext('2d');tctx.drawImage(video,0,0,tc.width,tc.height);
-            state.sceneInfo=analyzeImage(tc);generateNextFilter('first');state.liveInitialized=true;
-        }
     },300);
 }
 
@@ -2909,7 +3094,7 @@ function doCapture(){
         }
         state.sceneInfo=analyzeImage(tc);
         // Keep the exact filter shown in the viewfinder — do not regenerate after capture
-        if(!state.currentFilter)generateNextFilter('first');
+        if(!state.currentFilter){ buildFilterPool(state.sceneInfo); activatePoolFilter(0,'first'); }
         const liveFilter=state.currentFilter;
         // Bake the viewfinder filter into the copy saved to the gallery (WYSIWYG)
         const baked=bakeFilterToDataUrl(tc, liveFilter);
@@ -2925,6 +3110,8 @@ function doCapture(){
         $('resultImg').src=imgData;
         $('resultView').classList.add('show');applyCurrentFilter();
         addPhotoToLibrary(baked.url, liveFilter, state.sceneInfo, baked.baked, imgData);
+        // 拍照即学习：用户按下快门 = 认可这个滤镜的口味
+        learnFromShot(liveFilter, state.sceneInfo?state.sceneInfo.scene:'normal');
         ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);
         if(state.adjustMode)toggleAdjust(false);
     },800);
@@ -3119,7 +3306,7 @@ $('setBack').onclick=closeSettings;
 $('setModel').addEventListener&&$('setModel').addEventListener('input',refreshModelChips);
 $('setAiSwitch').onclick=()=>{
     state.aiConfig.enabled=!state.aiConfig.enabled;
-    if(!state.aiConfig.enabled){ state._aiQueue=[]; clearTimeout(state._prefetchTimer); $('aiScan').classList.remove('busy'); }
+    if(!state.aiConfig.enabled){ state._aiQueue=[]; clearTimeout(state._prefetchTimer); }
     updateAiSwitchUI();saveAIConfig();
     if(state.aiConfig.enabled)schedulePrefetch(400);
 };
