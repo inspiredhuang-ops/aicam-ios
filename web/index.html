@@ -515,7 +515,7 @@
             background:#f1f1f5; color:#8e8e93; transition:all .2s;
         }
         .adj-tool-ic svg { width:21px; height:21px; stroke:currentColor; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round; }
-        .adj-tool-lbl { font-size:10px; font-weight:600; color:#8e8e93; line-height:1.2; text-align:center; }
+        .adj-tool-lbl { margin-top:1px; font-size:11px; font-weight:700; color:#6b6b74; line-height:1.2; text-align:center; letter-spacing:.2px; white-space:nowrap; }
         .adj-tool.active .adj-tool-ic { background:#1c1c1e; color:#fff; }
         .adj-tool.active .adj-tool-lbl { color:#1c1c1e; font-weight:700; }
         .adj-tool.edited .adj-tool-ic { color:#7c6ff0; }
@@ -3144,7 +3144,7 @@ function showConfirmModal(title,message,okText,cancelText,callback){
         .cm-cancel{color:#007aff;border-right:0.5px solid rgba(0,0,0,0.1);}
         .cm-ok{color:#ff3b30;font-weight:600;}
         .cm-ok.cm-normal{color:#007aff;font-weight:600;}
-        .success-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:16px;padding:36px 46px;background:rgba(255,255,255,0.9);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.6);opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.8,.4,1), transform .28s cubic-bezier(.25,.8,.4,1);}
+        .success-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);z-index:3000;display:flex;flex-direction:column;align-items:center;gap:16px;padding:36px 46px;background:rgba(255,255,255,0.9);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.6);opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.8,.4,1), transform .28s cubic-bezier(.25,.8,.4,1);}
         .success-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
         .success-hud .sh-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ffc400,#e8960a);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(255,196,0,0.45);animation:shPop .55s cubic-bezier(.2,1.4,.4,1);}
         @keyframes shPop{0%{transform:scale(.2);opacity:0;}60%{transform:scale(1.18);}100%{transform:scale(1);opacity:1;}}
@@ -3254,9 +3254,15 @@ function saveCurrentPhoto(){
     savePhotoDataUrl(photo.data);
 }
 async function savePhotoDataUrl(dataUrl){
-    const nativeOk=await nativeSaveImage(dataUrl);
-    if(nativeOk){ showSuccessHud(t('savedToAlbum')); return; }
-    downloadDataUrl(dataUrl,`TikCam_${Date.now()}.jpg`);
+    try{
+        const nativeOk=await nativeSaveImage(dataUrl);
+        if(nativeOk){ showSuccessHud(t('savedToAlbum')); return; }
+        downloadDataUrl(dataUrl,`TikCam_${Date.now()}.jpg`);
+    }catch(e){
+        console.warn('save photo failed',e);
+        showSuccessHud(t('saveFailed'));
+        return;
+    }
     showSuccessHud(t('savedToAlbum'));
 }
 async function shareCurrentPhoto(){
@@ -4522,6 +4528,7 @@ function renderAdjTools(){
         const b=document.createElement('button');
         b.className='adj-tool'; b.dataset.tool=id;
         b.innerHTML=`<span class="adj-tool-ic"><svg viewBox="0 0 24 24">${icon}</svg></span><span class="adj-tool-lbl">${label}</span>`;
+        b.querySelector('.adj-tool-lbl').dataset.orig=label;
         b.onclick=onClick; c.appendChild(b);
     };
     // 一键自动增强
@@ -4861,27 +4868,35 @@ function resetResultView(){
 }
 $('rGenBtn').onclick=()=>runFilterGeneration('next');
 $('rSave').onclick=async ()=>{
-    if(state.capturedVideo){
-        // 保存视频：原生写入系统相册，网页端下载
-        if(await nativeSaveVideo(state.capturedVideo)){ showSuccessHud(t('savedToAlbum')); return; }
-        const a=document.createElement('a');
-        a.download=`TikCam_Video_${Date.now()}.webm`;
-        a.href=state.capturedVideo;
-        a.click();
-        showSuccessHud(t('savedToAlbum'));
-        return;
-    }
-    const img=new Image();img.src=state.captured;
-    img.onload=async ()=>{
-        // 用可靠烘焙（iOS 走 SVG 滤镜）确保保存的是带滤镜的成片
-        const sc=document.createElement('canvas');sc.width=img.width;sc.height=img.height;
-        sc.getContext('2d').drawImage(img,0,0);
-        const css=buildFilter(state.currentFilter,state.adjustments);
-        const url=await bakeFilterReliable(sc,css);
-        if(await nativeSaveImage(url)){ showSuccessHud(t('savedToAlbum')); return; }
-        downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);
-        showSuccessHud(t('savedToAlbum'));
-    };
+    try{
+        if(state.capturedVideo){
+            // 保存视频：原生写入系统相册，网页端下载
+            if(await nativeSaveVideo(state.capturedVideo)){ showSuccessHud(t('savedToAlbum')); return; }
+            const a=document.createElement('a');
+            a.download=`TikCam_Video_${Date.now()}.webm`;
+            a.href=state.capturedVideo;
+            a.click();
+            showSuccessHud(t('savedToAlbum'));
+            return;
+        }
+        const img=new Image();img.src=state.captured;
+        img.onload=async ()=>{
+            let url=state.captured;
+            try{
+                // 用可靠烘焙（iOS 走 SVG 滤镜）确保保存的是带滤镜的成片；失败则降级保存原图
+                const sc=document.createElement('canvas');sc.width=img.width;sc.height=img.height;
+                sc.getContext('2d').drawImage(img,0,0);
+                const css=buildFilter(state.currentFilter,state.adjustments);
+                url=await bakeFilterReliable(sc,css);
+            }catch(e){ console.warn('bake failed, save raw',e); }
+            try{
+                const ok=await nativeSaveImage(url);
+                if(!ok) downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);
+            }catch(e){ console.warn('native save failed',e); downloadDataUrl(url,`TikCam_${Date.now()}.jpg`); }
+            showSuccessHud(t('savedToAlbum'));
+        };
+        img.onerror=()=>showSuccessHud(t('saveFailed'));
+    }catch(e){ console.warn('save error',e); showSuccessHud(t('saveFailed')); }
 };
 $('rAdjust').onclick=()=>toggleAdjust();
 $('adjClose').onclick=()=>toggleAdjust(false);
