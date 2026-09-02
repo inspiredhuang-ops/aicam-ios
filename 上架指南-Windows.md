@@ -62,7 +62,7 @@ mobile/
 ## 3. 第二步：代码推到 GitHub（✅ 已完成）
 
 仓库已创建并推送：**https://github.com/inspiredhuang-ops/aicam-ios** （Public）
-隐私政策已通过 GitHub Pages 上线：**https://inspiredhuang-ops.github.io/aicam-ios/privacy-policy.md**
+隐私政策已通过 GitHub Pages 上线（排版版 HTML，推荐填这个）：**https://inspiredhuang-ops.github.io/aicam-ios/privacy-policy.html**
 
 > 以后更新代码：改完根目录 `index.html` 后，在 `mobile/` 目录运行：
 > ```powershell
@@ -108,15 +108,15 @@ mobile/
 - **截图**：必需 6.9 英寸（1290×2796）和 6.5 英寸（1242×2688）各一套。用真机 TestFlight 版截图，或用网页版截 iPhone 尺寸的图。
 - **描述、关键词、分类**：建议分类「摄影与录像」。
 - **隐私政策 URL**：**必须提供**一个可公开访问的网址。隐私政策已写好并已发布上线，直接在 App Store Connect 填这个地址：
-  **https://inspiredhuang-ops.github.io/aicam-ios/privacy-policy.md**
-  （英文，内容覆盖：相机/麦克风/相册用途、画面本地处理、可选云端滤镜只发缩略图、不收集任何个人数据。仓库为 Public，Pages 已配置 main 分支根目录；代码可公开——仓库内没有任何密钥，API Key 只存在用户手机上，签名密钥存在 Codemagic 后台。）
+  **https://inspiredhuang-ops.github.io/aicam-ios/privacy-policy.html**
+  （英文，内容覆盖：相机/麦克风/相册用途、画面本地处理、云端 AI 滤镜只发低清缩略图且可在设置里一键关闭、开发者不收集任何个人数据。仓库为 Public，Pages 已配置 main 分支根目录；代码可公开——签名密钥存在 Codemagic 后台。）
 - **App 隐私问卷**：
   - 相机：用于拍摄，不用于追踪
   - 麦克风：用于录像
   - 照片：保存拍摄内容
-  - 若有 API Key 联网：声明「不收集数据」，因为画面不外传用于分析
+  - 数据收集：开发者「不收集数据」。云端滤镜的缩略图由设备直连第三方模型厂商、仅用于实时生成滤镜、不经手开发者、不与身份关联（已在隐私政策第 4 节披露）
 - **审核备注**（重要，写给审核员）：
-  > The AI filter feature works fully offline with built-in filters. The optional cloud model requires a user-provided API key (Settings), which reviewers do not need — all core camera, filter, gallery and capture functions work without any key or account.
+  > TikCam works with no login and no account. All core features — live camera, AI-style filters, gallery, photo/video capture, save to Photos and share — work fully offline via on-device generation. The "Vision Model Filters" option (Settings) is on by default using a built-in service key, but it only sends a tiny thumbnail to design a filter and silently falls back to on-device filters if the network is unavailable; reviewers do not need any key, account, or network access. If camera permission is not granted, use "Demo Mode" on the launch screen to explore the interface.
 
 点「添加以供审核」→ 提交。通常 1–2 天出结果。
 

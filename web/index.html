@@ -54,7 +54,7 @@
         .top-bar {
             position:relative; z-index:30; background:#fff;
             display:flex; justify-content:space-around; align-items:center;
-            padding:46px 24px 12px;
+            padding:62px 24px 14px;
             transition:background 0.3s;
         }
         .top-btn {
@@ -130,20 +130,9 @@
             100% { opacity:1; transform:translateY(0); }
         }
 
-        /* 场景感知徽章 —— 极简，不打断取景 */
+        /* 场景感知徽章 —— 已移除，保持取景纯净 */
         .scene-badge {
-            position:absolute; top:14px; right:14px; z-index:12;
-            display:flex; align-items:center; gap:6px;
-            padding:5px 10px 5px 8px; border-radius:999px;
-            background:rgba(0,0,0,0.28); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
-            color:#fff; font-size:10px; font-weight:600; letter-spacing:0.8px;
-            opacity:0; transform:translateY(-4px); transition:opacity .3s, transform .3s;
-            pointer-events:none;
-        }
-        .scene-badge.show { opacity:1; transform:translateY(0); }
-        .scene-badge .sb-dot {
-            width:6px; height:6px; border-radius:50%;
-            background:#34d399; box-shadow:0 0 6px rgba(52,211,153,0.7);
+            display:none !important;
         }
 
         .flash-overlay { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:50; transition:opacity 0.05s; }
@@ -186,20 +175,20 @@
 
         /* 模式切换器 - Foodie风格 */
         .mode-switch {
-            display:flex; align-items:center; justify-content:center; gap:28px;
+            display:flex; align-items:center; justify-content:center; gap:32px;
             padding:4px 0 10px; position:relative;
         }
         .mode-label {
-            font-size:11px; font-weight:500; letter-spacing:1.8px; color:rgba(0,0,0,0.25);
+            font-size:13px; font-weight:600; letter-spacing:2px; color:rgba(0,0,0,0.25);
             cursor:pointer; transition:color 0.25s, transform 0.25s, font-weight 0.25s; text-transform:uppercase;
             padding:6px 4px 8px; position:relative;
         }
-        .mode-label.active { color:#222; font-weight:700; }
+        .mode-label.active { color:#1a1a1a; font-weight:800; }
         .mode-label:active { transform:scale(0.95); }
         .mode-indicator {
-            position:absolute; bottom:4px; height:2.5px; background:#222; border-radius:2px;
+            position:absolute; bottom:4px; height:2.5px; background:#1a1a1a; border-radius:2px;
             transition:all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
-            width:16px; margin-left:0;
+            width:18px; margin-left:0;
         }
 
         /* 底部白色工具栏 */
@@ -208,15 +197,16 @@
 
         /* 左下角图库按钮：与右侧摄像头切换按钮风格一致（透明底、黑色图标） */
         .album-btn {
-            width:42px; height:42px; border-radius:50%;
+            width:48px; height:48px; border-radius:50%;
             border:none;
             background:transparent; overflow:hidden;
             display:flex; align-items:center; justify-content:center;
-            cursor:pointer; color:#222;
-            transition:all 0.2s; font-size:21px;
+            cursor:pointer; color:#1a1a1a;
+            transition:all 0.2s;
         }
+        .album-btn svg { width:30px; height:30px; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; fill:none; }
         .album-btn:active { transform:scale(0.88); opacity:0.6; }
-        .album-btn img { width:100%; height:100%; object-fit:cover; }
+        .album-btn img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 
         .shutter-wrap { position:relative; display:flex; align-items:center; justify-content:center; }
         .shutter-ring {
@@ -270,12 +260,12 @@
 
         /* 右下角前后摄像头切换按钮（iOS 习惯：相册 | 快门 | 切换） */
         .flip-cam-btn {
-            width:42px; height:42px; border-radius:50%;
-            background:transparent; border:none; color:#222;
+            width:48px; height:48px; border-radius:50%;
+            background:transparent; border:none; color:#1a1a1a;
             cursor:pointer; display:flex; align-items:center; justify-content:center;
             transition:all 0.2s;
         }
-        .flip-cam-btn svg { width:26px; height:26px; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+        .flip-cam-btn svg { width:30px; height:30px; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; fill:none; }
         .flip-cam-btn:active { transform:scale(0.88); opacity:0.6; }
 
         /* 点按对焦框 */
@@ -318,10 +308,8 @@
         /* 滑动提示 */
         .swipe-hint {
             text-align:center; padding-bottom:8px;
-            font-size:8px; color:rgba(0,0,0,0.2); letter-spacing:1px;
-            animation:hintFade 3s ease-in-out infinite;
+            font-size:9px; color:rgba(0,0,0,0.45); letter-spacing:1.2px; font-weight:500;
         }
-        @keyframes hintFade { 0%,100%{opacity:0.4;} 50%{opacity:0.7;} }
 
         /* 处理中 */
         .processing { position:absolute; inset:0; z-index:80; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.2); backdrop-filter:blur(2px); }
@@ -475,7 +463,9 @@
         .r-act { display:flex; flex-direction:column; align-items:center; gap:5px; background:none; border:none; color:#222; cursor:pointer; font-size:9px; font-weight:400; letter-spacing:0.5px; }
         .r-act:active { transform:scale(0.9); opacity:0.6; }
         .r-act-ic { font-size:20px; display:flex; align-items:center; justify-content:center; }
-        .r-act.save .r-act-ic { width:50px; height:50px; border-radius:50%; background:#222; color:#fff; font-size:22px; }
+        .r-act-ic svg { width:23px; height:23px; }
+        .r-act.save .r-act-ic { width:52px; height:52px; border-radius:50%; background:#222; color:#fff; }
+        .r-act.save .r-act-ic svg { width:24px; height:24px; }
 
         /* 细调面板 */
         .adjust-panel {
@@ -486,18 +476,45 @@
             box-shadow:0 -4px 30px rgba(0,0,0,0.1);
         }
         .adjust-panel.show { transform:translateY(0); }
-        .adj-header { display:flex; justify-content:space-between; align-items:center; padding:18px 18px 6px; }
-        .adj-title { font-size:14px; font-weight:500; letter-spacing:0.5px; color:#222; }
-        .adj-close { background:none; border:none; color:rgba(0,0,0,0.4); font-size:18px; cursor:pointer; }
-        .adj-reset { background:none; border:none; color:rgba(0,0,0,0.35); font-size:11px; cursor:pointer; letter-spacing:0.5px; }
-        .adj-tools { display:flex; gap:3px; padding:0 14px 12px; overflow-x:auto; scrollbar-width:none; }
+        .adj-header { display:flex; justify-content:space-between; align-items:center; padding:16px 18px 4px; }
+        .adj-title { font-size:15px; font-weight:700; letter-spacing:0.3px; color:#1c1c1e; }
+        .adj-close { width:30px; height:30px; border-radius:50%; background:#f2f2f7; border:none; color:#3a3a3c; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        .adj-reset { background:none; border:none; color:#7c6ff0; font-size:13px; font-weight:700; cursor:pointer; letter-spacing:0.3px; }
+        .adj-tools { display:flex; gap:2px; padding:8px 12px 6px; overflow-x:auto; scrollbar-width:none; }
         .adj-tools::-webkit-scrollbar { display:none; }
-        .adj-tab { flex-shrink:0; padding:6px 13px; border-radius:100px; font-size:11px; font-weight:400; color:rgba(0,0,0,0.4); background:transparent; border:none; cursor:pointer; transition:all 0.2s; letter-spacing:0.5px; }
-        .adj-tab.active { color:#fff; background:#222; }
-        .adj-slider-wrap { padding:4px 20px 0; display:flex; align-items:center; gap:12px; }
-        .adj-slider { flex:1; height:2px; -webkit-appearance:none; appearance:none; background:rgba(0,0,0,0.1); border-radius:1px; outline:none; }
-        .adj-slider::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:#222; cursor:pointer; box-shadow:0 1px 6px rgba(0,0,0,0.15); }
-        .adj-val { font-size:10px; color:rgba(0,0,0,0.35); width:24px; text-align:right; font-variant-numeric:tabular-nums; font-weight:400; }
+        .adj-tool {
+            flex:none; width:54px; display:flex; flex-direction:column; align-items:center; gap:5px;
+            background:none; border:none; cursor:pointer; padding:0; transition:transform .15s;
+        }
+        .adj-tool:active { transform:scale(.9); }
+        .adj-tool-ic {
+            width:42px; height:42px; border-radius:50%;
+            display:flex; align-items:center; justify-content:center;
+            background:#f1f1f5; color:#8e8e93; transition:all .2s;
+        }
+        .adj-tool-ic svg { width:21px; height:21px; stroke:currentColor; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+        .adj-tool-lbl { font-size:9px; font-weight:600; color:#8e8e93; letter-spacing:.1px; line-height:1.15; text-align:center; }
+        .adj-tool.active .adj-tool-ic { background:#1c1c1e; color:#fff; }
+        .adj-tool.active .adj-tool-lbl { color:#1c1c1e; font-weight:700; }
+        .adj-tool.edited .adj-tool-ic { color:#7c6ff0; }
+        .adj-tool.edited .adj-tool-lbl { color:#7c6ff0; font-weight:700; }
+        .adj-tool.active.edited .adj-tool-ic { background:#7c6ff0; color:#fff; }
+        .adj-slider-wrap { padding:8px 20px 0; display:flex; align-items:center; gap:12px; }
+        .adj-slider-box { position:relative; flex:1; height:26px; display:flex; align-items:center; }
+        .adj-track { position:absolute; left:0; right:0; height:3px; border-radius:2px; background:#e8e8ee; }
+        .adj-fill { position:absolute; height:3px; border-radius:2px; background:#1c1c1e; top:50%; transform:translateY(-50%); left:50%; width:0; }
+        .adj-tick { position:absolute; left:50%; top:50%; width:2px; height:14px; background:#c9c9d4; border-radius:1px; transform:translate(-50%,-50%); }
+        .adj-slider { position:relative; width:100%; -webkit-appearance:none; appearance:none; background:transparent; height:26px; margin:0; z-index:2; }
+        .adj-slider::-webkit-slider-thumb { -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#fff; border:2.5px solid #1c1c1e; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,.18); }
+        .adj-slider::-moz-range-thumb { width:17px; height:17px; border-radius:50%; background:#fff; border:2.5px solid #1c1c1e; cursor:pointer; }
+        .adj-slider::-moz-range-track { background:transparent; }
+        .adj-val { font-size:13px; color:#1c1c1e; width:38px; text-align:right; font-variant-numeric:tabular-nums; font-weight:700; }
+        .adj-toast {
+            position:absolute; top:52px; left:50%; transform:translateX(-50%) translateY(-6px);
+            background:rgba(28,28,30,.92); color:#fff; font-size:11px; font-weight:700; letter-spacing:.5px;
+            padding:7px 16px; border-radius:999px; opacity:0; pointer-events:none; transition:all .25s; white-space:nowrap;
+        }
+        .adj-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
         /* ====== 图库页面 - Gallery ====== */
         .gallery-view {
@@ -640,53 +657,229 @@
         .photo-cell.comparing .cell-heart,
         .photo-cell.comparing .cell-filter { opacity:0; }
 
-        /* 滤镜集网格 - 3列卡片 */
-        /* ===== Style Profile ===== */
-        .profile-wrap { padding:16px 14px 4px; }
+        /* ===== Style Profile - 柔和动画风 ===== */
+        .profile-wrap { padding:20px 16px 6px; }
         .profile-card {
-            background:linear-gradient(160deg,#eaf4fb 0%,#f1f0fb 52%,#e9f8f2 100%);
-            border-radius:22px; padding:22px 20px 20px; color:#2c3140; position:relative; overflow:hidden;
-            box-shadow:0 10px 30px rgba(90,120,170,.14), 0 0 0 .5px rgba(120,150,200,.12);
+            background:linear-gradient(165deg,#fff5f7 0%,#f0f4ff 45%,#eefbf4 100%);
+            border-radius:28px; padding:26px 22px 22px; color:#3a3a4c; position:relative; overflow:hidden;
+            box-shadow:0 8px 28px rgba(180,160,220,.18), 0 0 0 1px rgba(255,255,255,.6) inset;
         }
+        /* 浮动装饰光斑 */
         .profile-card::before {
-            content:''; position:absolute; top:-60px; right:-50px; width:170px; height:170px; border-radius:50%;
-            background:radial-gradient(circle,rgba(130,180,250,.38),transparent 70%); pointer-events:none;
+            content:''; position:absolute; top:-80px; right:-60px; width:200px; height:200px; border-radius:50%;
+            background:radial-gradient(circle,rgba(255,180,200,.45),transparent 68%); pointer-events:none;
+            animation:floatBlob 8s ease-in-out infinite;
         }
         .profile-card::after {
-            content:''; position:absolute; bottom:-70px; left:-40px; width:160px; height:160px; border-radius:50%;
-            background:radial-gradient(circle,rgba(150,225,195,.35),transparent 70%); pointer-events:none;
+            content:''; position:absolute; bottom:-90px; left:-50px; width:180px; height:180px; border-radius:50%;
+            background:radial-gradient(circle,rgba(160,220,200,.4),transparent 70%); pointer-events:none;
+            animation:floatBlob 10s ease-in-out infinite reverse;
         }
-        .profile-card > * { position:relative; z-index:1; }
-        .profile-eyebrow { font-size:10px; letter-spacing:2.5px; color:rgba(70,85,110,.55); font-weight:700; text-transform:uppercase; }
-        .profile-archetype { font-size:24px; font-weight:800; letter-spacing:-.5px; margin:5px 0 3px; line-height:1.15; color:#262b38; }
-        .profile-desc { font-size:12px; line-height:1.55; color:rgba(55,65,85,.66); max-width:90%; }
-        .radar-box { display:flex; justify-content:center; margin:6px 0 2px; }
-        .radar-box svg { width:250px; height:228px; overflow:visible; }
-        .radar-ring { fill:rgba(255,255,255,.55); stroke:rgba(100,120,150,.20); stroke-width:1; }
-        .radar-axis { stroke:rgba(100,120,150,.20); stroke-width:1; }
-        .radar-label { fill:rgba(65,78,102,.78); font-size:9.5px; font-weight:700; letter-spacing:1px; }
-        .radar-data { fill:rgba(110,170,250,.30); stroke:#6ea8f0; stroke-width:2; stroke-linejoin:round; transition:all .6s ease; }
-        .radar-dot { fill:#7fb4f5; stroke:#fff; stroke-width:1.2; }
-        .profile-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; padding-top:16px; border-top:1px solid rgba(90,110,140,.14); }
+        @keyframes floatBlob {
+            0%,100% { transform:translate(0,0) scale(1); }
+            50% { transform:translate(12px,-8px) scale(1.08); }
+        }
+        /* 小星星装饰 */
+        .profile-sparkles {
+            position:absolute; inset:0; pointer-events:none; z-index:1;
+        }
+        .profile-sparkles span {
+            position:absolute; width:6px; height:6px; border-radius:50%;
+            background:rgba(255,255,255,.8);
+            box-shadow:0 0 10px rgba(255,255,255,.8);
+            animation:sparkleTwinkle 3s ease-in-out infinite;
+        }
+        .profile-sparkles span:nth-child(1){ top:20px; left:22px; animation-delay:0s; }
+        .profile-sparkles span:nth-child(2){ top:48px; right:40px; width:4px; height:4px; animation-delay:1.2s; }
+        .profile-sparkles span:nth-child(3){ bottom:80px; left:38px; width:5px; height:5px; animation-delay:0.6s; }
+        .profile-sparkles span:nth-child(4){ bottom:40px; right:28px; width:3px; height:3px; animation-delay:1.8s; }
+        @keyframes sparkleTwinkle {
+            0%,100% { opacity:0.3; transform:scale(0.8); }
+            50% { opacity:1; transform:scale(1.3); }
+        }
+        .profile-card > * { position:relative; z-index:2; }
+        .profile-eyebrow { font-size:10px; letter-spacing:2.5px; color:rgba(120,110,160,.55); font-weight:700; text-transform:uppercase; }
+        .profile-archetype {
+            font-size:26px; font-weight:800; letter-spacing:-.5px; margin:8px 0 6px; line-height:1.2; color:#2e2e4a;
+            background:linear-gradient(135deg,#ff7a9c 0%,#8a7dff 50%,#5ec9a6 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .profile-desc { font-size:12.5px; line-height:1.6; color:rgba(80,75,110,.68); max-width:92%; }
+        .radar-box { display:flex; justify-content:center; margin:10px 0 4px; }
+        .radar-box svg { width:240px; height:218px; overflow:visible; }
+        .radar-ring { fill:rgba(255,255,255,.6); stroke:rgba(170,160,210,.18); stroke-width:1; }
+        .radar-axis { stroke:rgba(170,160,210,.18); stroke-width:1; }
+        .radar-label { fill:rgba(100,90,140,.72); font-size:9.5px; font-weight:700; letter-spacing:1px; }
+        .radar-data {
+            fill:url(#radarGrad); stroke:#a78bfa; stroke-width:2; stroke-linejoin:round;
+            transition:all .7s cubic-bezier(.34,1.2,.5,1);
+            filter:drop-shadow(0 4px 10px rgba(167,139,250,.35));
+        }
+        .radar-dot { fill:#c4b5fd; stroke:#fff; stroke-width:1.5; }
+        .profile-stats {
+            display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:16px; padding-top:18px;
+            border-top:1px dashed rgba(160,150,200,.25);
+        }
         .pstat { text-align:center; }
-        .pstat-num { font-size:19px; font-weight:800; letter-spacing:-.5px; color:#2b3140; }
-        .pstat-num small { font-size:11px; font-weight:700; opacity:.6; }
-        .pstat-lbl { font-size:9px; letter-spacing:1.2px; color:rgba(80,95,120,.52); text-transform:uppercase; margin-top:2px; }
-        .profile-sub { background:#fff; border-radius:18px; padding:16px 16px 14px; margin-top:12px;
-            box-shadow:0 2px 12px rgba(0,0,0,.05), 0 0 0 .5px rgba(0,0,0,.03); }
-        .profile-sec-title { font-size:11px; font-weight:800; letter-spacing:1.8px; color:#999; text-transform:uppercase; margin:0 2px 12px; }
-        .profile-sec-title .profile-sec-count { color:#7fa8ec; font-weight:800; }
-        .scene-bar { display:flex; height:10px; border-radius:999px; overflow:hidden; background:#edf1f7; }
-        .scene-seg { height:100%; transition:width .6s ease; }
-        .scene-legend { display:flex; flex-wrap:wrap; gap:8px 14px; margin-top:10px; }
-        .scene-li { display:flex; align-items:center; gap:6px; font-size:11px; color:#666; font-weight:600; }
+        .pstat-num {
+            font-size:20px; font-weight:800; letter-spacing:-.5px; color:#4a4270;
+            position:relative; display:inline-block;
+        }
+        .pstat-num small { font-size:11px; font-weight:700; opacity:.55; }
+        .pstat-lbl { font-size:9px; letter-spacing:1.2px; color:rgba(110,100,150,.55); text-transform:uppercase; margin-top:3px; }
+        .profile-sub {
+            background:rgba(255,255,255,.75); border-radius:22px; padding:18px 18px 16px; margin-top:14px;
+            box-shadow:0 2px 14px rgba(160,140,200,.08), 0 0 0 1px rgba(255,255,255,.8) inset;
+            backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+        }
+        .profile-sec-title { font-size:11px; font-weight:800; letter-spacing:1.8px; color:#9e96c4; text-transform:uppercase; margin:0 2px 12px; }
+        .profile-sec-title .profile-sec-count { color:#a78bfa; font-weight:800; }
+        .scene-bar { display:flex; height:12px; border-radius:999px; overflow:hidden; background:#eef0f8; }
+        .scene-seg { height:100%; transition:width .8s cubic-bezier(.34,1.2,.5,1); }
+        .scene-legend { display:flex; flex-wrap:wrap; gap:10px 16px; margin-top:12px; }
+        .scene-li { display:flex; align-items:center; gap:6px; font-size:11px; color:#6b6590; font-weight:600; }
         .scene-dot { width:8px; height:8px; border-radius:50%; flex:none; }
-        .tag-pills { display:flex; flex-wrap:wrap; gap:8px; }
-        .tag-pill { display:inline-flex; align-items:center; gap:6px; background:#eef4fd; color:#4a72b8; border-radius:999px; padding:7px 13px; font-size:12px; font-weight:700; }
-        .tag-pill .tp-n { background:#7aa5f0; color:#fff; border-radius:999px; font-size:10px; padding:1px 7px; font-weight:800; }
-        .profile-hint { text-align:center; font-size:12px; color:#999; line-height:1.6; padding:8px 4px 0; }
-        .profile-collection { padding-top:14px; }
-        .profile-collection .filter-grid { padding-top:6px; }
+        .tag-pills { display:flex; flex-wrap:wrap; gap:10px; }
+        .tag-pill {
+            display:inline-flex; align-items:center; gap:6px;
+            background:linear-gradient(135deg,#f3e8ff,#dbeafe);
+            color:#6d5bd4; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:700;
+            box-shadow:0 2px 8px rgba(167,139,250,.2);
+        }
+        .tag-pill .tp-n {
+            background:linear-gradient(135deg,#a78bfa,#60a5fa); color:#fff; border-radius:999px;
+            font-size:10px; padding:2px 8px; font-weight:800;
+        }
+        .profile-hint {
+            text-align:center; font-size:12px; color:#a09bc4; line-height:1.7; padding:10px 4px 0;
+        }
+        .profile-collection { padding-top:18px; }
+        .profile-collection .filter-grid { padding-top:8px; }
+
+        /* ===== Filters Studio · AI 个性化滤镜中心 ===== */
+        .fx-studio { padding:18px 0 4px; }
+
+        /* Hero 风格身份卡 —— 简洁纯色 */
+        .fx-hero-card {
+            position:relative; margin:0 14px;
+            border-radius:22px; padding:22px 20px 18px;
+            background:#ffffff;
+            border:1px solid #efedf6;
+            box-shadow:0 4px 18px rgba(120,110,160,.07);
+            color:#33304e;
+        }
+        .fx-hero-sparkles { display:none; }
+        .fx-hero-top { position:relative; display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+        .fx-hero-eyebrow { font-size:9px; letter-spacing:2.5px; font-weight:800; color:#9b94c4; }
+        .fx-hero-name {
+            font-size:22px; font-weight:800; letter-spacing:-.4px; margin-top:5px; line-height:1.15;
+            color:#2e2e4a;
+        }
+        .fx-hero-lv {
+            flex:none; background:#7c6ff0; color:#fff;
+            font-size:12px; font-weight:800; padding:7px 13px; border-radius:999px;
+            letter-spacing:.5px;
+        }
+        .fx-hero-desc { position:relative; font-size:11.5px; line-height:1.55; color:#7d779c; margin-top:9px; }
+        .fx-hero-barwrap { position:relative; margin-top:15px; }
+        .fx-hero-bar { height:7px; border-radius:99px; background:#eeecf6; overflow:hidden; }
+        .fx-hero-bar-fill {
+            height:100%; border-radius:99px;
+            background:#7c6ff0;
+            transition:width .8s cubic-bezier(.34,1.3,.5,1);
+        }
+        .fx-hero-lvtext { font-size:9px; color:rgba(110,100,150,.62); font-weight:700; letter-spacing:.6px; margin-top:6px; }
+        .fx-hero-stats {
+            position:relative; z-index:2; display:flex; gap:8px; margin-top:14px; padding-top:12px;
+            border-top:1px dashed rgba(160,150,200,.28);
+        }
+        .fx-hero-stat { flex:1; text-align:center; }
+        .fx-hero-stat b { display:block; font-size:17px; font-weight:800; color:#4a4270; }
+        .fx-hero-stat span { display:block; font-size:8.5px; letter-spacing:1.2px; color:rgba(110,100,150,.55); text-transform:uppercase; font-weight:700; margin-top:2px; }
+
+        /* Today's Pick 每日推荐 */
+        .fx-daily {
+            margin:16px 14px 0; border-radius:24px; overflow:hidden; background:#fff;
+            box-shadow:0 8px 26px rgba(90,80,140,.12); position:relative;
+        }
+        .fx-daily-head { display:flex; justify-content:space-between; align-items:center; padding:15px 17px 0; }
+        .fx-daily-eyebrow { font-size:9.5px; font-weight:800; letter-spacing:2px; color:#8a7dff; display:flex; align-items:center; gap:5px; }
+        .fx-daily-reset { font-size:8.5px; color:#b5b0cc; font-weight:600; letter-spacing:.4px; }
+        .fx-daily-body { display:flex; gap:14px; padding:11px 17px 17px; align-items:stretch; }
+        .fx-daily-preview {
+            position:relative; flex:none; width:102px; border-radius:16px; overflow:hidden;
+            aspect-ratio:3/4; box-shadow:0 6px 16px rgba(0,0,0,.14);
+        }
+        .fx-daily-preview img { width:100%; height:100%; object-fit:cover; }
+        .fx-daily-info { flex:1; display:flex; flex-direction:column; justify-content:center; min-width:0; }
+        .fx-daily-name { font-size:19px; font-weight:800; color:#2e2e4a; letter-spacing:-.3px; line-height:1.1; }
+        .fx-daily-tag { font-size:8.5px; font-weight:800; letter-spacing:1.6px; color:#7c6ff0; margin-top:4px; }
+        .fx-daily-reason { font-size:11px; line-height:1.5; color:#8b85a8; margin-top:8px; }
+        .fx-daily-try {
+            margin-top:12px; align-self:flex-start; border:none; cursor:pointer;
+            background:#2e2e4a; color:#fff;
+            font-size:12px; font-weight:800; letter-spacing:.5px; padding:10px 24px; border-radius:999px;
+            transition:transform .15s, background .2s;
+        }
+        .fx-daily-try:active { transform:scale(.94); background:#7c6ff0; }
+
+        /* 场景 chips */
+        .fx-chips {
+            display:flex; gap:8px; overflow-x:auto; padding:20px 14px 2px;
+            scrollbar-width:none; -webkit-overflow-scrolling:touch;
+        }
+        .fx-chips::-webkit-scrollbar { display:none; }
+        .fx-chip {
+            flex:none; border:none; cursor:pointer; background:#fff; color:#8b86a8;
+            font-size:11.5px; font-weight:700; padding:8px 16px; border-radius:999px;
+            box-shadow:0 2px 8px rgba(120,110,160,.1); transition:all .2s;
+        }
+        .fx-chip.active {
+            background:#2e2e4a; color:#fff;
+            box-shadow:0 3px 10px rgba(46,46,74,.22);
+        }
+
+        /* 横向滤镜轨道 */
+        .fx-rail { margin-top:22px; }
+        .fx-rail-head { padding:0 16px 10px; display:flex; align-items:baseline; gap:8px; }
+        .fx-rail-title { font-size:14.5px; font-weight:800; color:#2e2e4a; letter-spacing:-.2px; }
+        .fx-rail-sub { font-size:9px; color:#b0aac8; font-weight:600; letter-spacing:.3px; }
+        .fx-rail-cards {
+            display:flex; gap:12px; overflow-x:auto; padding:2px 14px 8px;
+            scroll-snap-type:x proximity; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+        }
+        .fx-rail-cards::-webkit-scrollbar { display:none; }
+        .fx-card { flex:none; width:124px; scroll-snap-align:start; cursor:pointer; }
+        .fx-card-preview {
+            position:relative; border-radius:18px; overflow:hidden; aspect-ratio:3/4;
+            box-shadow:0 4px 14px rgba(80,70,120,.14);
+        }
+        .fx-card-preview .fc-bg { position:absolute; inset:0; }
+        .fx-card-preview .fc-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+        .fx-card-preview .fc-vignette { position:absolute; inset:0; z-index:2; }
+        .fx-card-preview .fc-shine { position:absolute; inset:0; z-index:3; pointer-events:none; }
+        .fx-card-gem {
+            position:absolute; top:7px; right:7px; z-index:5;
+            width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,.24);
+            display:flex; align-items:center; justify-content:center;
+        }
+        .fx-card-gem svg { width:11px; height:11px; display:block; }
+        .fx-card-add {
+            position:absolute; right:8px; bottom:8px; z-index:6;
+            width:28px; height:28px; border-radius:50%; border:none; cursor:pointer;
+            background:rgba(255,255,255,.92); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+            color:#7c6ff0; font-size:19px; font-weight:700; line-height:1;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 3px 10px rgba(80,60,160,.25);
+            transition:transform .15s, background .25s, color .25s;
+        }
+        .fx-card-add:active { transform:scale(.85); }
+        .fx-card-add.saved { background:#7c6ff0; color:#fff; font-size:13px; box-shadow:0 3px 10px rgba(124,111,240,.35); }
+        .fx-card-name {
+            font-size:12px; font-weight:800; color:#2e2e4a; margin-top:8px; padding:0 2px;
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+        .fx-card-tag { font-size:8.5px; font-weight:700; letter-spacing:1.2px; color:#a8a2c4; margin-top:2px; padding:0 2px; }
 
         .filter-grid {
             display:grid; grid-template-columns:repeat(3,1fr); gap:16px 10px;
@@ -709,24 +902,10 @@
         .fc-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
         .fc-scene { position:absolute; inset:0; width:100%; height:100%; }
         .fc-vignette {
-            position:absolute; inset:0;
-            background:radial-gradient(130% 100% at 50% 38%, rgba(0,0,0,0) 52%, rgba(0,0,0,.22) 100%);
+            display:none;
         }
-        .fc-shine {
-            position:absolute; inset:0; pointer-events:none;
-            background:linear-gradient(155deg, rgba(255,255,255,.30) 0%, rgba(255,255,255,.07) 22%, rgba(255,255,255,0) 46%);
-        }
-        /* 传奇卡流光动画 */
-        .fc-shimmer {
-            position:absolute; top:-25%; bottom:-25%; left:-60%; width:45%;
-            background:linear-gradient(105deg, transparent, rgba(255,255,255,.4), transparent);
-            transform:rotate(8deg); pointer-events:none;
-            animation:fcShimmer 3.2s ease-in-out infinite;
-        }
-        @keyframes fcShimmer {
-            0%,55% { left:-60%; }
-            100% { left:135%; }
-        }
+        /* 简洁纯色：去掉高光与流光装饰 */
+        .fc-shine, .fc-shimmer { display:none !important; }
 
         /* 中央玻璃徽章 */
         .fc-badge {
@@ -758,10 +937,9 @@
         /* NEW 角标 */
         .fc-new {
             position:absolute; top:7px; left:7px; z-index:5;
-            background:linear-gradient(135deg,#ff5a6a,#e63946);
+            background:#e63946;
             color:#fff; font-size:7px; font-weight:800;
             padding:2.5px 6px; border-radius:6px; letter-spacing:.8px;
-            box-shadow:0 2px 6px rgba(230,57,70,.4);
         }
 
         /* 卡片信息区 */
@@ -818,31 +996,109 @@
             padding:16px 0 40px;
         }
         .pd-info {
-            text-align:center; padding-bottom:14px;
+            text-align:center; padding-bottom:16px;
         }
-        .pd-filter-name { font-size:18px; font-weight:200; color:#fff; letter-spacing:2px; }
-        .pd-filter-tag { font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:2px; margin-top:4px; text-transform:uppercase; }
-        .pd-date { font-size:9px; color:rgba(255,255,255,0.25); margin-top:6px; letter-spacing:0.5px; }
+        .pd-filter-name { font-size:20px; font-weight:600; color:#fff; letter-spacing:1px; }
+        .pd-filter-tag { font-size:10px; color:rgba(255,255,255,0.65); letter-spacing:1.8px; margin-top:5px; text-transform:uppercase; font-weight:600; }
+        .pd-date { font-size:10px; color:rgba(255,255,255,0.45); margin-top:7px; letter-spacing:0.5px; font-weight:500; }
         .pd-actions {
             display:flex; justify-content:space-around; align-items:center; padding:0 20px;
         }
         .pd-act {
             display:flex; flex-direction:column; align-items:center; gap:5px;
-            background:none; border:none; color:rgba(255,255,255,0.7); cursor:pointer;
-            font-size:9px; letter-spacing:0.5px; transition:all 0.2s;
+            background:none; border:none; color:rgba(255,255,255,0.75); cursor:pointer;
+            font-size:10px; font-weight:700; letter-spacing:0.5px; transition:all 0.2s;
         }
         .pd-act:active { transform:scale(0.9); color:#fff; }
         .pd-act-ic {
-            width:44px; height:44px; border-radius:50%;
-            background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center;
-            font-size:18px; margin-bottom:2px;
+            width:46px; height:46px; border-radius:50%;
+            background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center;
+            font-size:19px; margin-bottom:2px;
             transition:all 0.2s;
         }
-        .pd-act:active .pd-act-ic { background:rgba(255,255,255,0.15); }
+        .pd-act-ic svg { width:21px; height:21px; stroke:currentColor; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+        .pd-act:active .pd-act-ic { background:rgba(255,255,255,0.18); }
         .pd-act.primary .pd-act-ic {
-            width:54px; height:54px; background:#fff; color:#222; font-size:20px;
+            width:56px; height:56px; background:#fff; color:#111; font-size:21px;
         }
         .pd-act.primary { color:#fff; }
+
+        /* ===== 多平台分享面板 ===== */
+        .share-sheet {
+            position:absolute; inset:0; z-index:320;
+            visibility:hidden; pointer-events:none;
+        }
+        .share-sheet.show { visibility:visible; pointer-events:auto; }
+        .share-backdrop {
+            position:absolute; inset:0; background:rgba(0,0,0,.55);
+            opacity:0; transition:opacity .28s ease;
+            -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
+        }
+        .share-sheet.show .share-backdrop { opacity:1; }
+        .share-panel {
+            position:absolute; left:0; right:0; bottom:0;
+            background:#f2f2f7; border-radius:24px 24px 0 0;
+            padding:8px 16px calc(20px + env(safe-area-inset-bottom));
+            transform:translateY(100%);
+            transition:transform .34s cubic-bezier(.32,.72,.34,1);
+        }
+        .share-sheet.show .share-panel { transform:translateY(0); }
+        .share-handle {
+            width:38px; height:5px; border-radius:99px; background:rgba(60,60,67,.25);
+            margin:6px auto 10px;
+        }
+        .share-title {
+            text-align:center; font-size:13px; font-weight:700; color:#8e8e93;
+            letter-spacing:.3px; padding-bottom:14px;
+        }
+        .share-apps {
+            display:grid; grid-template-columns:repeat(4,1fr); gap:16px 8px;
+            background:#fff; border-radius:18px; padding:18px 10px;
+        }
+        .share-app {
+            display:flex; flex-direction:column; align-items:center; gap:7px;
+            background:none; border:none; cursor:pointer; padding:0;
+            transition:transform .15s;
+        }
+        .share-app:active { transform:scale(.9); }
+        .share-app-ic {
+            width:54px; height:54px; border-radius:15px;
+            display:flex; align-items:center; justify-content:center;
+            box-shadow:0 2px 8px rgba(0,0,0,.12);
+        }
+        .share-app-ic svg { width:30px; height:30px; fill:#fff; }
+        .share-app-lbl {
+            font-size:10.5px; font-weight:600; color:#3a3a3c; text-align:center;
+            line-height:1.15; max-width:62px; word-break:break-word;
+        }
+        .share-actions {
+            background:#fff; border-radius:18px; margin-top:10px; overflow:hidden;
+        }
+        .share-row {
+            display:flex; align-items:center; gap:14px; width:100%;
+            background:none; border:none; cursor:pointer;
+            padding:15px 18px; text-align:left;
+            transition:background .15s;
+        }
+        .share-row:active { background:#f2f2f7; }
+        .share-row + .share-row { border-top:.5px solid rgba(60,60,67,.12); }
+        .share-row-ic {
+            width:30px; height:30px; border-radius:8px; flex:none;
+            display:flex; align-items:center; justify-content:center;
+        }
+        .share-row-ic svg { width:20px; height:20px; }
+        .share-row-lbl { flex:1; font-size:15px; font-weight:600; color:#1c1c1e; }
+        .share-row-ic.save { background:#34c759; }
+        .share-row-ic.copy { background:#0a84ff; }
+        .share-row-ic.more { background:#8e8e93; }
+        .share-row-ic svg { stroke:#fff; stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+        .share-cancel {
+            width:100%; margin-top:10px; border:none; cursor:pointer;
+            background:#fff; border-radius:18px; padding:16px;
+            font-size:16px; font-weight:700; color:#0a84ff;
+            transition:transform .15s;
+        }
+        .share-cancel:active { transform:scale(.98); background:#f2f2f7; }
 
         /* 偏好学习提示 */
         .pref-toast {
@@ -1047,14 +1303,16 @@
                         </div>
 
                         <div class="bottom-bar">
-                            <div class="swipe-hint" id="swipeHint">← swipe for styles →</div>
+                            <div class="swipe-hint" id="swipeHint">← back · swipe for new →</div>
                             <div class="mode-switch" id="modeSwitch">
                                 <div class="mode-indicator" id="modeIndicator"></div>
                                 <span class="mode-label" data-mode="video">VIDEO</span>
                                 <span class="mode-label active" data-mode="photo">PHOTO</span>
                             </div>
                             <div class="shoot-row">
-                                <button class="album-btn" id="btnAlbum">◳</button>
+                                <button class="album-btn" id="btnAlbum" title="Gallery">
+                                    <svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="8.6" cy="9.6" r="1.7"/><path d="M4.5 17.5l4.6-4.8 3.1 3.2 2.2-2.3 5 4.2"/></svg>
+                                </button>
                                 <div class="shutter-wrap">
                                     <div class="shutter-ring"></div>
                                     <button class="shutter-btn" id="btnShutter"><div class="shutter-inner"></div></button>
@@ -1084,24 +1342,30 @@
                                 </button>
                             </div>
                             <div class="r-bottom">
-                                <div class="r-hint-row"><span class="r-hint">← swipe styles · long press to compare →</span></div>
+                                <div class="r-hint-row"><span class="r-hint">← back · long press to compare · swipe for new →</span></div>
                                 <div class="r-actions">
-                                    <button class="r-act" id="rRetake"><span class="r-act-ic">⟲</span><span>Retake</span></button>
-                                    <button class="r-act" id="rAdjust"><span class="r-act-ic">◐</span><span>Edit</span></button>
-                                    <button class="r-act save" id="rSave"><span class="r-act-ic">↓</span></button>
+                                    <button class="r-act" id="rRetake"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 1 1-1 6"/><path d="M4 4v5h5"/></svg></span><span>Retake</span></button>
+                                    <button class="r-act" id="rAdjust"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h9M18 6h1M5 12h1M10 12h9M5 18h13M10 18h4"/><circle cx="16" cy="6" r="2.2"/><circle cx="8" cy="12" r="2.2"/><circle cx="12" cy="18" r="2.2"/></svg></span><span>Edit</span></button>
+                                    <button class="r-act save" id="rSave"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M12 15l-4-4M12 15l4-4"/><path d="M5 17v1.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V17"/></svg></span></button>
                                 </div>
                             </div>
                             <div class="adjust-panel" id="adjPanel">
                                 <div class="adj-header">
                                     <button class="adj-reset" id="adjReset">Reset</button>
                                     <span class="adj-title">Edit</span>
-                                    <button class="adj-close" id="adjClose">✕</button>
+                                    <button class="adj-close" id="adjClose"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
                                 </div>
                                 <div class="adj-tools" id="adjTools"></div>
                                 <div class="adj-slider-wrap">
-                                    <input type="range" class="adj-slider" id="adjSlider" min="-100" max="100" value="0">
+                                    <div class="adj-slider-box">
+                                        <div class="adj-track"></div>
+                                        <div class="adj-fill" id="adjFill"></div>
+                                        <div class="adj-tick" id="adjTick"></div>
+                                        <input type="range" class="adj-slider" id="adjSlider" min="-100" max="100" value="0">
+                                    </div>
                                     <span class="adj-val" id="adjVal">0</span>
                                 </div>
+                                <div class="adj-toast" id="adjToast"></div>
                             </div>
                         </div>
 
@@ -1131,17 +1395,23 @@
                                         <div class="gal-empty-desc">Start shooting to build your collection<br>Heart photos to teach AI your style</div>
                                     </div>
                                 </div>
-                                <!-- 滤镜集 · Style Profile -->
+                                <!-- 滤镜集 · AI Style Studio -->
                                 <div class="gal-pane" id="paneFilters">
-                                    <div class="profile-wrap" id="profileWrap"></div>
+                                    <div class="fx-studio">
+                                        <div id="fxHero"></div>
+                                        <div id="fxDailyWrap"></div>
+                                        <div class="fx-chips" id="fxChips"></div>
+                                        <div class="fx-rail" id="fxForyou"></div>
+                                        <div class="fx-rail" id="fxTrending"></div>
+                                    </div>
                                     <div class="profile-collection" id="profileCollection">
                                         <div class="profile-sec-title">Your Collection <span class="profile-sec-count" id="profileColCount">0</span></div>
                                         <div class="filter-grid" id="filterGrid"></div>
                                     </div>
                                     <div class="gal-empty" id="filterEmpty">
                                         <div class="gal-empty-ic">✦</div>
-                                        <div class="gal-empty-title">No Filters Collected</div>
-                                        <div class="gal-empty-desc">Filters you shoot with are collected here<br>Your style profile builds itself as you snap</div>
+                                        <div class="gal-empty-title">Your Collection Awaits</div>
+                                        <div class="gal-empty-desc">Tap any look above to try it on your camera<br>Looks you love are saved here automatically</div>
                                     </div>
                                 </div>
                             </div>
@@ -1166,11 +1436,23 @@
                                     <div class="pd-date" id="pdDate"></div>
                                 </div>
                                 <div class="pd-actions">
-                                    <button class="pd-act" id="pdShare"><span class="pd-act-ic">↗</span><span>Share</span></button>
-                                    <button class="pd-act" id="pdEdit"><span class="pd-act-ic">◐</span><span>Edit</span></button>
-                                    <button class="pd-act primary" id="pdSave"><span class="pd-act-ic">↓</span><span>Save</span></button>
-                                    <button class="pd-act" id="pdDelete"><span class="pd-act-ic">🗑</span><span>Delete</span></button>
+                                    <button class="pd-act" id="pdShare"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M12 3v12M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 11v7.5a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></span><span>Share</span></button>
+                                    <button class="pd-act" id="pdEdit"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg></span><span>Edit</span></button>
+                                    <button class="pd-act primary" id="pdSave"><span class="pd-act-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11M12 14l-4-4M12 14l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span><span>Save</span></button>
+                                    <button class="pd-act" id="pdDelete"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 .9h8a1 1 0 0 0 1-.9L18 7M10 11v6M14 11v6"/></svg></span><span>Delete</span></button>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 分享面板 -->
+                        <div class="share-sheet" id="shareSheet">
+                            <div class="share-backdrop" id="shareBackdrop"></div>
+                            <div class="share-panel">
+                                <div class="share-handle"></div>
+                                <div class="share-title">Share Photo</div>
+                                <div class="share-apps" id="shareGrid"></div>
+                                <div class="share-actions" id="shareActions"></div>
+                                <button class="share-cancel" id="shareCancel">Cancel</button>
                             </div>
                         </div>
 
@@ -1267,12 +1549,24 @@ const STYLE_WORDS = {
     tags: ['Natural','Portrait','Food','Mood','Clean','Fresh','Golden','Blue Hour','Soft Light','Warm Tone','Cinematic','Dreamy','Crisp','Gentle','Vibrant','Serene','Lush','Airy','Intimate','Quiet','Golden Hour','Cool Tone','Soft Glow','Rich','Delicate','Warm Glow']
 };
 
+// 编辑器工具图标（24x24，stroke 风格）
+const ED_ICONS = {
+    auto:'<path d="M4.5 19.5l12-12M13 4.5l1.2-1.2M18 9.5l1.2-1.2M14.5 3.2l3.3 3.3"/><path d="M9 3.8l.65 1.75L11.4 6.2l-1.75.65L9 8.6l-.65-1.75L6.6 6.2l1.75-.65z"/>',
+    filter:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>',
+    exposure:'<circle cx="12" cy="12" r="4"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3L17 7M7 17l-1.7 1.7"/>',
+    contrast:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" stroke="none"/>',
+    saturation:'<path d="M12 3.2s6.3 6.9 6.3 11.1a6.3 6.3 0 0 1-12.6 0C5.7 10.1 12 3.2 12 3.2z"/>',
+    warmth:'<path d="M10 13.2V5.6a2 2 0 1 1 4 0v7.6a4 4 0 1 1-4 0z"/><circle cx="12" cy="17" r="1.5" fill="currentColor" stroke="none"/>',
+    tint:'<path d="M12 3a9 9 0 0 0 0 18c1.7 0 2.6-1.3 2-2.5-.5-1.2.3-2.5 1.8-2.5H17.6a3.1 3.1 0 0 0 3-3.1C20.5 7.6 16.7 3 12 3z"/><circle cx="7.6" cy="11" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.6" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="7.8" r="1.1" fill="currentColor" stroke="none"/>',
+    fade:'<path d="M7 18a4.6 4.6 0 0 1-.5-9.1A6.1 6.1 0 0 1 18 9.4a3.9 3.9 0 0 1-1 8.6z"/>',
+};
 const ADJUST_TOOLS = [
-    { id:'brightness', name:'Bright', default:0, css:v=>`brightness(${1+v*0.004})` },
-    { id:'contrast', name:'Contrast', default:0, css:v=>`contrast(${1+v*0.004})` },
-    { id:'saturate', name:'Saturate', default:0, css:v=>`saturate(${1+v*0.005})` },
-    { id:'temperature', name:'Warmth', default:0, css:v=>v>0?`sepia(${v*0.003})`:`hue-rotate(${v*0.15}deg)` },
-    { id:'fade', name:'Fade', default:0, css:v=>`saturate(${1-v*0.004}) brightness(${1+v*0.002}) contrast(${1-v*0.002})` },
+    { id:'brightness', name:'Exposure', icon:ED_ICONS.exposure, default:0, css:v=>`brightness(${1+v*0.004})` },
+    { id:'contrast', name:'Contrast', icon:ED_ICONS.contrast, default:0, css:v=>`contrast(${1+v*0.004})` },
+    { id:'saturate', name:'Vivid', icon:ED_ICONS.saturation, default:0, css:v=>`saturate(${1+v*0.005})` },
+    { id:'temperature', name:'Warmth', icon:ED_ICONS.warmth, default:0, css:v=>v>0?`sepia(${v*0.003})`:`hue-rotate(${v*0.15}deg)` },
+    { id:'tint', name:'Tint', icon:ED_ICONS.tint, default:0, css:v=>`hue-rotate(${v*0.22}deg)` },
+    { id:'fade', name:'Fade', icon:ED_ICONS.fade, default:0, css:v=>`saturate(${1-v*0.004}) brightness(${1+v*0.002}) contrast(${1-v*0.002})` },
 ];
 
 const RATIOS = {
@@ -1387,7 +1681,7 @@ function setMode(mode){
         indicator.style.left=(labelCenter-8)+'px';
         indicator.style.width='16px';
     }
-    $('swipeHint').textContent = mode==='video' ? 'tap to record · AI filters live' : '← swipe for styles →';
+    $('swipeHint').textContent = mode==='video' ? 'tap to record · AI filters live' : '← back · swipe for new →';
     // 切换模式时重新初始化相机（视频需要音频）
     if(!state.demo && state.stream){
         initCam();
@@ -1553,7 +1847,7 @@ function getFilterPalette(filter){
     const l2=Math.max(28,Math.min(64,44+Math.floor(rng()*11)+lightBoost));
     const angle=135+Math.floor(rng()*80);
     const pal={
-        bg:`linear-gradient(${angle}deg, hsl(${h1},${s1}%,${l1}%) 0%, hsl(${h2},${s2}%,${l2}%) 58%, hsl(${h3},${Math.max(14,s2-8)}%,${Math.max(22,l2-13)}%) 100%)`,
+        bg:`hsl(${h1},${Math.max(mono?0:14,s1-14)}%,${Math.max(34,l2-4)}%)`,
         sunX:22+Math.floor(rng()*56),
         sunY:14+Math.floor(rng()*30),
         seed:Math.floor(rng()*100000),
@@ -1638,7 +1932,7 @@ function setGalTab(tab){
 function renderGallery(){
     renderPhotoGrid();
     renderFilterGrid();
-    renderStyleProfile();
+    renderFiltersStudio();
     $('photoCount').textContent=state.photoLibrary.length;
     $('filterCount').textContent=state.collectedFilters.length;
 }
@@ -1801,6 +2095,13 @@ function radarSVG(dims){
     });
     const dataPts=dims.map((dim,i)=>pt(i,R*Math.max(0.06,dim.v)).map(v=>v.toFixed(1)).join(',')).join(' ');
     return `<svg viewBox="0 0 250 224" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="radarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fca5a5" stop-opacity="0.45"/>
+                <stop offset="50%" stop-color="#c4b5fd" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#86efac" stop-opacity="0.45"/>
+            </linearGradient>
+        </defs>
         ${rings}${axes}
         <polygon points="${dataPts}" class="radar-data"/>
         ${dots}${labels}
@@ -1831,6 +2132,7 @@ function renderStyleProfile(){
     }
     wrap.innerHTML=`
         <div class="profile-card">
+            <div class="profile-sparkles"><span></span><span></span><span></span><span></span></div>
             <div class="profile-eyebrow">Your Style Profile</div>
             <div class="profile-archetype">${p.hasData?p.arch:'Style in Progress'}</div>
             <div class="profile-desc">${p.hasData?p.desc:'Shoot and swipe through filters — your unique taste profile takes shape here.'}</div>
@@ -1847,6 +2149,218 @@ function renderStyleProfile(){
     `;
     $('profileColCount').textContent=p.stats.filters;
     $('profileCollection').style.display=p.stats.filters>0?'block':'none';
+}
+
+// ===== AI Style Studio: 个性化滤镜发现中心 =====
+const _fxReg=new Map();
+const FX_CHIPS=[
+    {key:'foryou',label:'For You'},
+    {key:'food',label:'Food'},
+    {key:'portrait',label:'Portrait'},
+    {key:'night',label:'Night'},
+    {key:'landscape',label:'Scenery'},
+    {key:'mono',label:'Mono'},
+];
+// 精选流行色卡 — 社区验证的经典美学，手工调校
+const FX_CURATED=[
+    {name:'Kodak Gold', tag:'FILM', gem:'epic', params:{brightness:1.02,contrast:1.05,saturate:1.12,sepia:.28,hueRotate:-6,grayscale:0}},
+    {name:'Tokyo Night', tag:'CINEMATIC', gem:'epic', params:{brightness:.92,contrast:1.18,saturate:1.1,sepia:.05,hueRotate:-18,grayscale:0}},
+    {name:'Portra 400', tag:'FILM', gem:null, params:{brightness:1.05,contrast:.94,saturate:.92,sepia:.12,hueRotate:0,grayscale:0}},
+    {name:'Noir', tag:'MONO', gem:'legendary', params:{brightness:.98,contrast:1.22,saturate:1,sepia:0,hueRotate:0,grayscale:.92}},
+    {name:'Clean Cream', tag:'AIRY', gem:null, params:{brightness:1.08,contrast:.9,saturate:.85,sepia:.08,hueRotate:0,grayscale:0}},
+    {name:'Sunset Crush', tag:'WARM', gem:'epic', params:{brightness:1,contrast:1.06,saturate:1.22,sepia:.32,hueRotate:8,grayscale:0}},
+    {name:'Teal Orange', tag:'CINEMATIC', gem:null, params:{brightness:1,contrast:1.1,saturate:1.18,sepia:0,hueRotate:-14,grayscale:0}},
+    {name:'Vintage Fade', tag:'RETRO', gem:null, params:{brightness:1.03,contrast:.88,saturate:.8,sepia:.35,hueRotate:0,grayscale:0}},
+    {name:'Berry Cool', tag:'FRESH', gem:null, params:{brightness:1.02,contrast:1,saturate:1.05,sepia:0,hueRotate:18,grayscale:0}},
+    {name:'Forest Dew', tag:'NATURE', gem:null, params:{brightness:1,contrast:1.02,saturate:.95,sepia:0,hueRotate:-22,grayscale:0}},
+];
+
+function fxNeutral(){ const n={}; ADJUST_TOOLS.forEach(t=>n[t.id]=t.default); return n; }
+function fxDaySeed(){ const d=new Date(); return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate(); }
+function fxTopUserScene(){
+    const counts={};
+    (state.photoLibrary||[]).forEach(p=>{ if(p.scene) counts[p.scene]=(counts[p.scene]||0)+1; });
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    return sorted.length?sorted[0][0]:null;
+}
+function fxSceneObj(key){
+    switch(key){
+        case 'food': return {scene:'food',brightness:.55,contrast:.4,saturation:.6};
+        case 'portrait': return {scene:'portrait',brightness:.6,contrast:.35,saturation:.3};
+        case 'night': return {scene:'night',brightness:.35,contrast:.6,saturation:.35};
+        case 'landscape': return {scene:'landscape',brightness:.5,contrast:.5,saturation:.55};
+        case 'mono': return {scene:'normal',brightness:.5,contrast:.55,saturation:.2};
+        default: { const top=fxTopUserScene(); return top?fxSceneObj(top):{scene:'normal',brightness:.5,contrast:.4,saturation:.3}; }
+    }
+}
+function fxStyleLevel(){
+    const n=(state.photoLibrary?state.photoLibrary.length:0)+(state.collectedFilters?state.collectedFilters.length:0);
+    const per=6, lv=1+Math.floor(n/per), into=n%per;
+    return {lv, into, per, pct:into/per*100};
+}
+
+function renderFiltersStudio(){
+    _fxReg.clear();
+    const p=computeStyleProfile();
+    const lvl=fxStyleLevel();
+    $('fxHero').innerHTML=`
+        <div class="fx-hero-card">
+            <div class="fx-hero-top">
+                <div>
+                    <div class="fx-hero-eyebrow">YOUR AI STYLE</div>
+                    <div class="fx-hero-name">${p.hasData?p.arch:'New Explorer'}</div>
+                </div>
+                <div class="fx-hero-lv">LV ${lvl.lv}</div>
+            </div>
+            <div class="fx-hero-desc">${p.hasData?p.desc:'Shoot and swipe through looks — your taste profile takes shape as you go.'}</div>
+            <div class="fx-hero-barwrap">
+                <div class="fx-hero-bar"><div class="fx-hero-bar-fill" style="width:${lvl.pct.toFixed(0)}%"></div></div>
+                <div class="fx-hero-lvtext">${lvl.into}/${lvl.per} shots &amp; looks to Level ${lvl.lv+1}</div>
+            </div>
+            <div class="fx-hero-stats">
+                <div class="fx-hero-stat"><b>${p.stats.filters}</b><span>Filters</span></div>
+                <div class="fx-hero-stat"><b>${p.stats.photos}</b><span>Photos</span></div>
+                <div class="fx-hero-stat"><b>${p.stats.liked}</b><span>Loved</span></div>
+            </div>
+        </div>`;
+    renderFxDaily();
+    renderFxChips();
+    renderFxForYou();
+    renderFxTrending();
+    $('profileColCount').textContent=p.stats.filters;
+    $('profileCollection').style.display=p.stats.filters>0?'block':'none';
+}
+
+function renderFxDaily(){
+    const day=fxDaySeed();
+    const sceneObj=fxSceneObj('foryou');
+    const f=generateAIFilter(sceneObj, day*7919+101);
+    f.id='daily_'+day; f.ai=true; f.daily=true; f.scene=sceneObj.scene;
+    _fxReg.set(f.id,f);
+    const pal=getFilterPalette(f);
+    const prevCss=buildFilter(f,fxNeutral());
+    const land=pickLandscape(f);
+    $('fxDailyWrap').innerHTML=`
+        <div class="fx-daily">
+            <div class="fx-daily-head">
+                <span class="fx-daily-eyebrow">✦ TODAY&apos;S PICK</span>
+                <span class="fx-daily-reset">new look every day</span>
+            </div>
+            <div class="fx-daily-body">
+                <div class="fx-daily-preview">
+                    <div class="fc-bg" style="background:${pal.bg};position:absolute;inset:0"></div>
+                    <img src="assets/${land}" alt="" style="filter:${prevCss};position:relative;z-index:1">
+                </div>
+                <div class="fx-daily-info">
+                    <div class="fx-daily-name">${f.name}</div>
+                    <div class="fx-daily-tag">${f.tag||'AI FILTER'}</div>
+                    <div class="fx-daily-reason">${fxDailyReason()}</div>
+                    <button class="fx-daily-try" id="fxDailyTry">Try now</button>
+                </div>
+            </div>
+        </div>`;
+    $('fxDailyTry').onclick=()=>tryFxFilter(f);
+}
+
+function fxDailyReason(){
+    const p=computeStyleProfile();
+    if(!p.hasData) return 'A fresh AI-crafted look to start your style journey.';
+    const a=p.arch.toLowerCase();
+    if(a.includes('mono')) return 'Stark, timeless contrast — tuned to your black &amp; white eye.';
+    if(a.includes('golden')||a.includes('warm')) return 'Warm, sun-kissed tones you keep coming back to.';
+    if(a.includes('airy')||a.includes('soft')) return 'Soft, glowing light that flatters every frame.';
+    if(a.includes('moody')||a.includes('cinematist')) return 'Deep shadows and cinematic contrast — your signature.';
+    if(a.includes('bold')||a.includes('colorist')) return 'Vivid, punchy color tuned to your bold side.';
+    return 'Hand-picked by AI to match the way you see the world.';
+}
+
+function renderFxChips(){
+    const cur=state._fxChip||'foryou';
+    $('fxChips').innerHTML=FX_CHIPS.map(c=>
+        `<button class="fx-chip${cur===c.key?' active':''}" data-chip="${c.key}">${c.label}</button>`).join('');
+    $('fxChips').querySelectorAll('.fx-chip').forEach(b=>{
+        b.onclick=()=>{ state._fxChip=b.dataset.chip; renderFxChips(); renderFxForYou(); };
+    });
+}
+
+function renderFxForYou(){
+    const key=state._fxChip||'foryou';
+    const sceneObj=fxSceneObj(key);
+    const day=fxDaySeed(), keyHash=hashCode(key);
+    const list=[];
+    for(let i=0;i<14;i++){
+        const f=generateAIFilter(sceneObj, day*104729+keyHash*97+i*131+7);
+        f.id=`fy_${key}_${day}_${i}`; f.ai=true; f.scene=sceneObj.scene;
+        if(key==='mono'){ f.params.grayscale=Math.max(f.params.grayscale||0,.82); f.params.saturate=Math.min(f.params.saturate||1,1.02); f.tag='MONO'; }
+        list.push(f);
+    }
+    list.sort((a,b)=>scoreFilterForScene(b,sceneObj)-scoreFilterForScene(a,sceneObj));
+    const picks=list.slice(0,9);
+    const chip=FX_CHIPS.find(c=>c.key===key);
+    const title=key==='foryou'?'Crafted for You':chip.label+' Looks';
+    $('fxForyou').innerHTML=`
+        <div class="fx-rail-head">
+            <span class="fx-rail-title">${title}</span>
+            <span class="fx-rail-sub">AI-generated · matched to your taste</span>
+        </div>
+        <div class="fx-rail-cards">${picks.map((f,i)=>fxCardHTML(f,i+2)).join('')}</div>`;
+    bindFxRail($('fxForyou'));
+}
+
+function renderFxTrending(){
+    $('fxTrending').innerHTML=`
+        <div class="fx-rail-head">
+            <span class="fx-rail-title">Trending Looks</span>
+            <span class="fx-rail-sub">community favorites</span>
+        </div>
+        <div class="fx-rail-cards">${FX_CURATED.map((c,i)=>{
+            const f={id:'cur_'+i,name:c.name,tag:c.tag,params:c.params,ai:false,curated:true,scene:'normal',gem:c.gem};
+            return fxCardHTML(f,i,true);
+        }).join('')}</div>`;
+    bindFxRail($('fxTrending'));
+}
+
+function fxCardHTML(f, idx, curated){
+    _fxReg.set(f.id,f);
+    const rarity=curated
+        ? {key:f.gem||'common', gem:RARITY_GEMS[f.gem]||''}
+        : getFilterRarity(f, idx+3);
+    const pal=getFilterPalette(f);
+    const prevCss=buildFilter(f,fxNeutral());
+    const land=pickLandscape(f);
+    const saved=state.collectedFilters.some(c=>c.id===f.id||(c.name===f.name&&c.tag===f.tag));
+    return `<div class="fx-card" data-fid="${f.id}">
+        <div class="fx-card-preview">
+            <div class="fc-bg" style="background:${pal.bg}"></div>
+            <img class="fc-photo" src="assets/${land}" alt="" loading="lazy" style="filter:${prevCss}">
+            <div class="fc-vignette"></div>
+            ${rarity.gem?`<div class="fx-card-gem">${rarity.gem}</div>`:''}
+            <button class="fx-card-add${saved?' saved':''}" data-add="${f.id}">${saved?'✓':'+'}</button>
+        </div>
+        <div class="fx-card-name">${f.name}</div>
+        <div class="fx-card-tag">${f.tag||'AI FILTER'}</div>
+    </div>`;
+}
+
+function bindFxRail(rail){
+    rail.querySelectorAll('.fx-card').forEach(card=>{
+        const fid=card.dataset.fid;
+        card.onclick=()=>{ const f=_fxReg.get(fid); if(f) tryFxFilter(f); };
+        const add=card.querySelector('.fx-card-add');
+        if(add) add.onclick=e=>{
+            e.stopPropagation();
+            const f=_fxReg.get(fid);
+            if(!f) return;
+            collectFilter(f);
+            add.classList.add('saved'); add.textContent='✓';
+            $('filterCount').textContent=state.collectedFilters.length;
+        };
+    });
+}
+
+function tryFxFilter(f){
+    collectFilter(f);
+    applyFilterFromCollection(f);
 }
 
 // 为滤镜卡片挑选一张清爽风景配图：按滤镜色调匹配，再叠加该滤镜的实际调色
@@ -1891,8 +2405,6 @@ function renderFilterGrid(){
                 <div class="fc-bg" style="background:${pal.bg}"></div>
                 <img class="fc-photo" src="assets/${land}" alt="" loading="lazy" style="filter:${prevCss}">
                 <div class="fc-vignette"></div>
-                <div class="fc-shine"></div>
-                ${rarity.key==='legendary'?'<div class="fc-shimmer"></div>':''}
                 ${isNew?'<div class="fc-new">NEW</div>':''}
                 ${rarity.gem?`<div class="fc-gem">${rarity.gem}</div>`:''}
                 <div class="fc-badge"><span>${getFilterIcon(f.name)}</span></div>
@@ -2135,17 +2647,149 @@ async function savePhotoDataUrl(dataUrl){
 async function shareCurrentPhoto(){
     const photo=state.currentDetailPhoto;
     if(!photo)return;
-    if(await nativeShareImage(photo.data))return;
-    // 网页端：优先系统分享，否则降级下载
+    renderShareSheet();
+    openShareSheet();
+}
+
+// ===== 多平台分享 =====
+const SHARE_APPS=[
+    { id:'instagram', name:'Instagram', color:'#E1306C', glyph:'<svg viewBox="0 0 24 24" style="fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.3" fill="#fff" stroke="none"/></svg>' },
+    { id:'tiktok', name:'TikTok', color:'#111111', glyph:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M16.6 3c.3 2.1 1.6 3.6 3.6 3.9v2.7c-1.3.1-2.6-.3-3.6-.9v6c0 3.1-2.5 5.6-5.6 5.6A5.5 5.5 0 0 1 5.5 14.8c.3-2.8 2.8-5 5.7-4.7v2.8c-.4-.1-.8-.2-1.2-.1-1.5.2-2.5 1.5-2.4 2.9.1 1.4 1.4 2.6 2.8 2.5 1.5-.1 2.5-1.3 2.5-2.8V3h3.7z"/></svg>' },
+    { id:'whatsapp', name:'WhatsApp', color:'#25D366', glyph:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3a9 9 0 0 0-7.7 13.7L3 21l4.5-1.2A9 9 0 1 0 12 3zm0 2a7 7 0 0 1 6 10.6l.3 2-2.1-.5A7 7 0 1 1 12 5zm-2.7 3.7c-.2 0-.5.1-.7.3-.3.3-.9.9-.9 2.1s.9 2.5 1.1 2.7c.1.2 1.7 2.7 4.3 3.7 2.1.8 2.5.7 2.9.6.5-.1 1.4-.6 1.6-1.2.2-.6.2-1.1.1-1.2-.1-.1-.3-.2-.7-.4-.4-.2-2.2-1.1-2.5-1.2-.3-.1-.6-.2-.8.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.5-1.6-.9-.8-1.6-1.8-1.8-2.2-.2-.3 0-.5.1-.6.1-.1.3-.3.5-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6-.1-.2-.8-1.9-1.1-2.6-.2-.6-.5-.5-.7-.5h-.6z"/></svg>' },
+    { id:'snapchat', name:'Snapchat', color:'#FFFC00', dark:true, glyph:'<svg viewBox="0 0 24 24" fill="#111"><path d="M12 2c2.4 0 4 1.7 4 4.2v2.3c0 .3.1.5.3.6.2.1.6.2 1 .2.6 0 1 .3 1 .8 0 .6-.7 1-1.6 1.2-.2.1-.3.2-.3.4 0 .8 1.7 1.7 2.7 2.2.3.1.6.4.6.8 0 .2-.1.4-.3.5-.4.2-1.1.3-1.7.3-.2 0-.3.1-.3.3 0 .7-.2 1.4-.6 1.9-.3.4-.8.6-1.3.6-.4 0-.7.1-1.1.4-.5.4-1.1.6-1.7.6-.7 0-1.3-.2-1.8-.6-.3-.3-.7-.4-1.1-.4-.5 0-1-.2-1.3-.6-.4-.5-.6-1.2-.6-1.9 0-.2-.1-.3-.3-.3-.6 0-1.3-.1-1.7-.3-.2-.1-.3-.3-.3-.5 0-.4.3-.7.6-.8 1-.5 2.7-1.4 2.7-2.2 0-.2-.1-.3-.3-.4-.9-.2-1.6-.6-1.6-1.2 0-.5.4-.8 1-.8.4 0 .8-.1 1-.2.2-.1.3-.3.3-.6V6.2C8 3.7 9.6 2 12 2z"/></svg>' },
+    { id:'facebook', name:'Facebook', color:'#1877F2', glyph:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M14 9h3V5.5h-3c-2.4 0-3.9 1.7-3.9 4V11H7v3.5h2.1V22h3.6v-7.5h2.9l.5-3.5h-3.4V9.8c0-.5.3-.8.8-.8z"/></svg>' },
+    { id:'messenger', name:'Messenger', color:'#0084FF', glyph:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 6.3 2 11.7c0 3 1.4 5.7 3.7 7.4V22l3.4-1.9c.9.3 1.9.4 2.9.4 5.5 0 10-4.3 10-9.7S17.5 2 12 2zm1 13l-2.5-2.7L5.5 15l5-5.4 2.6 2.7L18.5 10l-5.5 5z"/></svg>' },
+    { id:'x', name:'X', color:'#111111', glyph:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M17.5 3h3.1l-6.8 7.7L21.9 21h-6.2l-4.8-6.3L5.3 21H2.2l7.3-8.3L2.1 3h6.3l4.3 5.8L17.5 3zm-1.1 16.1h1.7L7.7 4.8H5.9l10.5 14.3z"/></svg>' },
+    { id:'messages', name:'Messages', color:'#34C759', glyph:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3C6.9 3 3 6.6 3 11c0 2.4 1.2 4.6 3.2 6.1V21l3-1.7c.9.2 1.8.4 2.8.4 5.1 0 9-3.6 9-8s-3.9-8.7-9-8.7z"/></svg>' },
+    { id:'mail', name:'Mail', color:'#FF9500', glyph:'<svg viewBox="0 0 24 24" style="fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.7 7.2l8.3 5.8 8.3-5.8"/></svg>' },
+];
+
+const SAVE_ICON='<svg viewBox="0 0 24 24"><path d="M12 3v11M12 14l-4-4M12 14l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
+const COPY_ICON='<svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg>';
+const MORE_ICON='<svg viewBox="0 0 24 24" fill="#fff" stroke="none"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg>';
+
+function renderShareSheet(){
+    const grid=$('shareGrid');
+    grid.innerHTML=SHARE_APPS.map(a=>`
+        <button class="share-app" data-app="${a.id}">
+            <span class="share-app-ic" style="background:${a.color}">${a.glyph}</span>
+            <span class="share-app-lbl" style="${a.dark?'color:#111':''}">${a.name}</span>
+        </button>`).join('');
+    grid.querySelectorAll('.share-app').forEach(b=>{
+        b.onclick=()=>shareToApp(b.dataset.app);
+    });
+    $('shareActions').innerHTML=`
+        <button class="share-row" data-act="save">
+            <span class="share-row-ic save">${SAVE_ICON}</span>
+            <span class="share-row-lbl">Save Image</span>
+        </button>
+        <button class="share-row" data-act="copy">
+            <span class="share-row-ic copy">${COPY_ICON}</span>
+            <span class="share-row-lbl">Copy Photo</span>
+        </button>
+        <button class="share-row" data-act="more">
+            <span class="share-row-ic more">${MORE_ICON}</span>
+            <span class="share-row-lbl">More Apps</span>
+        </button>`;
+    $('shareActions').querySelectorAll('.share-row').forEach(b=>{
+        b.onclick=()=>shareAction(b.dataset.act);
+    });
+}
+
+function openShareSheet(){ $('shareSheet').classList.add('show'); }
+function closeShareSheet(){ $('shareSheet').classList.remove('show'); }
+
+async function getShareFile(){
+    const photo=state.currentDetailPhoto;
+    if(!photo)return null;
     try{
         const blob=await (await fetch(photo.data)).blob();
-        const file=new File([blob],`TikCam_${Date.now()}.jpg`,{type:'image/jpeg'});
-        if(navigator.canShare&&navigator.canShare({files:[file]})){
-            await navigator.share({files:[file],title:'TikCam'});
-            return;
+        return new File([blob],`TikCam_${Date.now()}.jpg`,{type:'image/jpeg'});
+    }catch(e){ return null; }
+}
+
+// 调起系统级分享（原生 Capacitor / Web Share API）
+async function systemShare(){
+    const photo=state.currentDetailPhoto;
+    if(!photo)return false;
+    if(isNativeApp()){
+        try{
+            const uri=await writeNativeTempFile(photo.data,'jpg');
+            await window.Capacitor.Plugins.Share.share({files:[uri],title:'TikCam',text:'Made with TikCam'});
+            return true;
+        }catch(e){ return false; }
+    }
+    try{
+        const file=await getShareFile();
+        if(file&&navigator.canShare&&navigator.canShare({files:[file]})){
+            await navigator.share({files:[file],title:'TikCam',text:'Made with TikCam'});
+            return true;
         }
-    }catch(e){}
-    downloadDataUrl(photo.data,`TikCam_${Date.now()}.jpg`);
+        if(navigator.share){
+            await navigator.share({title:'TikCam',text:'Made with TikCam'});
+            return true;
+        }
+    }catch(e){ /* 用户取消 */ return true; }
+    return false;
+}
+
+async function shareToApp(appId){
+    const app=SHARE_APPS.find(a=>a.id===appId);
+    const label=app?app.name:'app';
+    // 移动端/原生：系统分享面板里即可选择对应 App
+    const ok=await systemShare();
+    if(ok){ closeShareSheet(); return; }
+    // 桌面端不支持文件分享：保存图片并提示
+    const photo=state.currentDetailPhoto;
+    if(photo){ downloadDataUrl(photo.data,`TikCam_${Date.now()}.jpg`); }
+    closeShareSheet();
+    showShareToast(`Saved — open ${label} to post`);
+}
+
+async function shareAction(act){
+    const photo=state.currentDetailPhoto;
+    if(!photo)return;
+    if(act==='save'){
+        closeShareSheet();
+        await savePhotoDataUrl(photo.data);
+        return;
+    }
+    if(act==='copy'){
+        try{
+            const blob=await (await fetch(photo.data)).blob();
+            await navigator.clipboard.write([new ClipboardItem({'image/jpeg':blob})]);
+            closeShareSheet();
+            showShareToast('Photo Copied');
+            return;
+        }catch(e){}
+        // 兜底：系统分享或下载
+        const ok=await systemShare();
+        if(ok){ closeShareSheet(); return; }
+        downloadDataUrl(photo.data,`TikCam_${Date.now()}.jpg`);
+        closeShareSheet();
+        showShareToast('Saved to device');
+        return;
+    }
+    if(act==='more'){
+        const ok=await systemShare();
+        if(ok)closeShareSheet();
+        else showShareToast('Sharing not available here');
+    }
+}
+
+let _shareToastTimer=null;
+function showShareToast(msg){
+    let t=document.getElementById('shareToast');
+    if(!t){
+        t=document.createElement('div');
+        t.id='shareToast';
+        t.style.cssText='position:absolute;left:50%;bottom:120px;transform:translateX(-50%) translateY(10px);background:rgba(28,28,30,.92);color:#fff;font-size:12px;font-weight:600;padding:11px 20px;border-radius:999px;z-index:80;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.3);';
+        $('shareSheet').appendChild(t);
+    }
+    t.textContent=msg;
+    requestAnimationFrame(()=>{ t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+    clearTimeout(_shareToastTimer);
+    _shareToastTimer=setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; },2200);
 }
 
 function analyzeImage(imgC){
@@ -2779,24 +3423,59 @@ function setFilterDuration(sec){
     document.getElementById('viewfinder').style.setProperty('--filter-dur',sec);
 }
 
-// 左右滑切换滤镜 —— 全部来自当前场景的智能滤镜池，
-// 每个都是为这个场景 + 用户口味量身定制的最优解。
+// 左右滑切换滤镜 —— 右滑探索新滤镜，左滑回溯历史
+// 右滑（手指从左向右划）= 从滤镜池取下一个新滤镜，追加到历史
+// 左滑（手指从右向左划）= 回到上一个看过的滤镜（历史回溯）
 function runFilterGeneration(direction){
     if(!state._filterPool.length){
         // 兜底：池子还没建好（极罕见），立即建
         buildFilterPool(state.sceneInfo);
     }
-    if(direction==='prev'){
-        if(state._poolIndex>0){
-            activatePoolFilter(state._poolIndex-1,'prev');
-        }
-        // 到最左边就停住（不往前生成了，避免用户迷路）
-    }else{
-        activatePoolFilter(state._poolIndex+1,'next');
-    }
     state._userTookControl=true; // 用户手动选过，停止自动适配
-    // 滑动后在后台刷新模型滤镜，不阻塞
-    schedulePrefetch(700);
+
+    if(direction==='prev'){
+        // 右滑 = 往前 / 探索新滤镜
+        if(state.filterIndex < state.filterHistory.length - 1){
+            // 历史里还有后面的，先往前走（redo）
+            state.filterIndex++;
+            const f=state.filterHistory[state.filterIndex];
+            recordDwellStart(f.id);
+            state.currentFilter=f;
+            setFilterDuration('.32s');
+            applyCurrentFilter();
+        }else{
+            // 已经在历史末尾，生成新的
+            const nextPoolIndex=state._poolIndex+1;
+            if(nextPoolIndex>=state._filterPool.length){
+                extendFilterPool(POOL_EXTEND);
+            }
+            state._poolIndex=nextPoolIndex;
+            const f=state._filterPool[state._poolIndex];
+            state.filterHistory.push(f);
+            state.filterIndex=state.filterHistory.length-1;
+            recordDwellStart(f.id);
+            state.currentFilter=f;
+            setFilterDuration('.32s');
+            applyCurrentFilter();
+        }
+        state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
+        state._sceneCandidate=null;
+        // 滑动后在后台刷新模型滤镜，不阻塞
+        schedulePrefetch(700);
+    }else{
+        // 左滑 = 回溯历史滤镜
+        if(state.filterIndex>0){
+            state.filterIndex--;
+            const f=state.filterHistory[state.filterIndex];
+            recordDwellStart(f.id);
+            state.currentFilter=f;
+            setFilterDuration('.32s');
+            applyCurrentFilter();
+            state._filterScene=state.sceneInfo?{...state.sceneInfo}:null;
+            state._sceneCandidate=null;
+        }
+        // 到最左边（历史起点）就停住
+    }
 }
 
 // ===== 场景自适应：镜头移动、画面场景变化后重建滤镜池 =====
@@ -3113,6 +3792,7 @@ function doCapture(){
         // 拍照即学习：用户按下快门 = 认可这个滤镜的口味
         learnFromShot(liveFilter, state.sceneInfo?state.sceneInfo.scene:'normal');
         ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);
+        state._editReturnDetail=null; // 新拍照片：返回回到拍摄页，而非相册
         if(state.adjustMode)toggleAdjust(false);
     },800);
 }
@@ -3129,33 +3809,78 @@ function updateAlbum(){
 function toggleAdjust(s){state.adjustMode=s!==undefined?s:!state.adjustMode;$('adjPanel').classList.toggle('show',state.adjustMode);}
 function renderAdjTools(){
     const c=$('adjTools');c.innerHTML='';
-    // 首个为「滤镜强度」，0=原图 100=完整滤镜
-    const mk=(id,name,onClick)=>{
+    const mk=(id,label,icon,onClick)=>{
         const b=document.createElement('button');
-        b.className=`adj-tab${id===state.currentTool?' active':''}`;
-        b.textContent=name; b.onclick=onClick; c.appendChild(b);
+        b.className='adj-tool'; b.dataset.tool=id;
+        b.innerHTML=`<span class="adj-tool-ic"><svg viewBox="0 0 24 24">${icon}</svg></span><span class="adj-tool-lbl" data-orig="${label}">${label}</span>`;
+        b.onclick=onClick; c.appendChild(b);
     };
-    mk('strength','Filter',()=>{state.currentTool='strength';syncAdjActive();updateSlider();});
+    // 一键自动增强
+    mk('auto','Auto',ED_ICONS.auto,()=>applyAutoAdjust());
+    // 滤镜强度：0=原图 100=完整滤镜
+    mk('strength','Filter',ED_ICONS.filter,()=>{state.currentTool='strength';syncAdjActive();updateSlider();});
     ADJUST_TOOLS.forEach(t=>{
-        mk(t.id,t.name,()=>{state.currentTool=t.id;syncAdjActive();updateSlider();});
+        mk(t.id,t.name,t.icon,()=>{state.currentTool=t.id;syncAdjActive();updateSlider();});
     });
+    syncAdjActive();
 }
 function syncAdjActive(){
-    document.querySelectorAll('.adj-tab').forEach(x=>x.classList.remove('active'));
-    const tabs=[...document.querySelectorAll('.adj-tab')];
-    const idx=state.currentTool==='strength'?0:ADJUST_TOOLS.findIndex(t=>t.id===state.currentTool)+1;
-    if(tabs[idx])tabs[idx].classList.add('active');
+    document.querySelectorAll('.adj-tool').forEach(x=>x.classList.toggle('active',x.dataset.tool===state.currentTool));
+    updateAdjEdited();
 }
+// 已调节的工具：图标变紫，标签显示数值
+function updateAdjEdited(){
+    document.querySelectorAll('.adj-tool').forEach(b=>{
+        const id=b.dataset.tool, lbl=b.querySelector('.adj-tool-lbl');
+        const orig=lbl.dataset.orig;
+        let edited=false, val=0;
+        if(id==='strength'){ edited=state.filterStrength!==100; val=state.filterStrength; }
+        else if(id!=='auto'){ const t=ADJUST_TOOLS.find(t=>t.id===id); if(t){ edited=state.adjustments[id]!==t.default; val=state.adjustments[id]; } }
+        b.classList.toggle('edited',edited);
+        lbl.textContent = edited ? (id==='strength'?val:(val>0?'+'+val:''+val)) : orig;
+    });
+}
+function updateAdjFill(v,min,max,bipolar,edited){
+    const fill=$('adjFill'); if(!fill)return;
+    fill.style.background=edited?'#7c6ff0':'#1c1c1e';
+    if(!bipolar){ fill.style.left='0'; fill.style.width=((v-min)/(max-min)*100)+'%'; }
+    else if(v>=0){ fill.style.left='50%'; fill.style.width=(v/2)+'%'; }
+    else { fill.style.left=(50+v/2)+'%'; fill.style.width=(-v/2)+'%'; }
+}
+function fmtAdjVal(v,bipolar){ return bipolar ? (v>0?'+'+v:''+v) : ''+v; }
 function updateSlider(){
-    const slider=$('adjSlider');
-    if(state.currentTool==='strength'){
-        slider.min=0; slider.max=100;
-        slider.value=state.filterStrength; $('adjVal').textContent=state.filterStrength;
-    }else{
-        const t=ADJUST_TOOLS.find(x=>x.id===state.currentTool); if(!t)return;
-        slider.min=-100; slider.max=100;
-        slider.value=state.adjustments[t.id]; $('adjVal').textContent=state.adjustments[t.id];
-    }
+    const slider=$('adjSlider'), tick=$('adjTick');
+    let v, min, max, bipolar, edited;
+    if(state.currentTool==='strength'){ min=0; max=100; v=state.filterStrength; bipolar=false; edited=v!==100; }
+    else { const t=ADJUST_TOOLS.find(x=>x.id===state.currentTool); if(!t)return; min=-100; max=100; v=state.adjustments[t.id]; bipolar=true; edited=v!==t.default; }
+    slider.min=min; slider.max=max; slider.value=v;
+    $('adjVal').textContent=fmtAdjVal(v,bipolar);
+    if(tick) tick.style.display=bipolar?'block':'none';
+    updateAdjFill(v,min,max,bipolar,edited);
+    updateAdjEdited();
+}
+// 一键自动增强：按场景智能设定参数
+function applyAutoAdjust(){
+    const sc=state.sceneInfo||{scene:'normal'};
+    const presets={
+        night:    {brightness:24, contrast:18, saturate:8,  temperature:6,  tint:0, fade:0},
+        portrait: {brightness:12, contrast:6,  saturate:6,  temperature:8,  tint:0, fade:6},
+        food:     {brightness:8,  contrast:14, saturate:18, temperature:12, tint:0, fade:0},
+        landscape:{brightness:6,  contrast:14, saturate:16, temperature:0,  tint:0, fade:0},
+        normal:   {brightness:8,  contrast:12, saturate:10, temperature:0,  tint:0, fade:0},
+    };
+    const a=presets[sc.scene]||presets.normal;
+    ADJUST_TOOLS.forEach(t=>{ state.adjustments[t.id]=a[t.id]||0; });
+    state.currentTool='brightness';
+    syncAdjActive(); updateSlider(); applyCurrentFilter();
+    showAdjToast('Auto enhanced');
+}
+let _adjToastTimer=null;
+function showAdjToast(msg){
+    const t=$('adjToast'); if(!t)return;
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(_adjToastTimer);
+    _adjToastTimer=setTimeout(()=>t.classList.remove('show'),1400);
 }
 
 $('btnShutter').onclick=()=>{
@@ -3337,26 +4062,46 @@ $('pdBack').onclick=closePhotoDetail;
 $('pdHeart').onclick=toggleLike;
 $('pdSave').onclick=saveCurrentPhoto;
 $('pdDelete').onclick=deleteCurrentPhoto;
-$('pdShare').onclick=()=>shareCurrentPhoto(); // 原生：系统分享面板；网页：Web Share/下载
+$('pdShare').onclick=()=>shareCurrentPhoto(); // 多平台分享面板
+$('shareCancel').onclick=closeShareSheet;
+$('shareBackdrop').onclick=closeShareSheet;
+// 中性（身份）滤镜参数：用于已烘焙照片，让调节工具仍能在成片上叠加
+const NEUTRAL_FILTER_PARAMS={brightness:1,contrast:1,saturate:1,grayscale:0,sepia:0,hueRotate:0};
 $('pdEdit').onclick=()=>{
-    // 从详情页打开编辑 - 复用resultView的编辑面板
+    // 从详情页打开编辑 - 复用 resultView 的编辑面板，一次点击直接进入可调节状态
     const photo=state.currentDetailPhoto;
     if(!photo)return;
+    const detailId=photo.id;
     closePhotoDetail();
     closeGallery();
-    // 打开结果页并显示这张照片
+    // 在结果页载入这张照片
     state.captured=photo.data;
-    if(photo.filterParams){
+    state.capturedVideo=null;
+    // 已烘焙：滤镜已在像素里，用中性参数（避免双重叠加），调节工具仍可叠加；
+    // 未烘焙：用保存的 filterParams 以 CSS 还原滤镜。
+    if(photo.baked||!photo.filterParams){
+        state.currentFilter={name:photo.filterName||'Original',tag:'',params:Object.assign({},NEUTRAL_FILTER_PARAMS)};
+    }else{
         state.currentFilter={name:photo.filterName||'Custom',tag:'',params:photo.filterParams};
     }
+    // 每次进入编辑从干净的调节状态开始，避免沿用上一张照片的滑杆
+    ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);
+    state.filterStrength=100; state.ev=0;
     $('resultVideo').style.display='none';
     $('resultImg').style.display='block';
     $('rPlayBtn').style.display='none';
     const durLabel=document.getElementById('rVidDur');
     if(durLabel)durLabel.style.display='none';
     $('resultImg').src=photo.data;
+    $('rName').textContent=photo.filterName||'Original';
     $('resultView').classList.add('show');
     applyCurrentFilter();
+    // 记住来源：从相册进入编辑，返回时回到该照片详情
+    state._editReturnDetail=detailId;
+    // 关键修复：同步工具与滑杆，并直接展开编辑面板，无需再点一次 Edit
+    renderAdjTools();
+    updateSlider();
+    toggleAdjust(true);
 };
 
 // 视频播放按钮
@@ -3382,8 +4127,14 @@ $('resultVideo').addEventListener('ended',()=>{
     state.videoPlaying=false;
 });
 document.addEventListener('click',(e)=>{if(state.ratioPickerOpen&&!e.target.closest('#ratioPicker')&&!e.target.closest('#btnRatio'))closeRatioPicker();});
-$('rBack').onclick=()=>{resetResultView();};
-$('rRetake').onclick=()=>{resetResultView();};
+$('rBack').onclick=()=>{
+    // 从相册进入编辑：返回时回到该照片详情；否则回到拍摄页
+    const back=state._editReturnDetail;
+    state._editReturnDetail=null;
+    resetResultView();
+    if(back){ openGallery(); openPhotoDetail(back); }
+};
+$('rRetake').onclick=()=>{ state._editReturnDetail=null; resetResultView(); };
 
 function resetResultView(){
     $('resultView').classList.remove('show');
@@ -3417,8 +4168,18 @@ $('rSave').onclick=async ()=>{
 };
 $('rAdjust').onclick=()=>toggleAdjust();
 $('adjClose').onclick=()=>toggleAdjust(false);
-$('adjReset').onclick=()=>{ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);state.filterStrength=100;const sv=$('strengthVal');if(sv)sv.textContent=100;state.ev=0;setEV(0);updateSlider();applyCurrentFilter();};
-$('adjSlider').addEventListener('input',e=>{const v=parseInt(e.target.value);if(state.currentTool==='strength'){state.filterStrength=v;const sv=$('strengthVal');if(sv)sv.textContent=v;}else{state.adjustments[state.currentTool]=v;}$('adjVal').textContent=v;applyCurrentFilter();});
+$('adjReset').onclick=()=>{ADJUST_TOOLS.forEach(t=>state.adjustments[t.id]=t.default);state.filterStrength=100;const sv=$('strengthVal');if(sv)sv.textContent=100;state.ev=0;setEV(0);updateSlider();applyCurrentFilter();showAdjToast('Reset');};
+$('adjSlider').addEventListener('input',e=>{
+    const v=parseInt(e.target.value);
+    const bipolar=state.currentTool!=='strength';
+    let edited;
+    if(state.currentTool==='strength'){state.filterStrength=v;const sv=$('strengthVal');if(sv)sv.textContent=v;edited=v!==100;}
+    else{state.adjustments[state.currentTool]=v;const t=ADJUST_TOOLS.find(x=>x.id===state.currentTool);edited=v!==(t?t.default:0);}
+    $('adjVal').textContent=fmtAdjVal(v,bipolar);
+    updateAdjFill(v,parseInt(e.target.min),parseInt(e.target.max),bipolar,edited);
+    updateAdjEdited();
+    applyCurrentFilter();
+});
 $('permOk').onclick=initCam;$('permDemo').onclick=startDemo;
 
 const photoArea=$('rPhotoArea');
