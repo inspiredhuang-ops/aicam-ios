@@ -3143,13 +3143,7 @@ function showConfirmModal(title,message,okText,cancelText,callback){
         .cm-btn:active{background:rgba(0,0,0,0.05);}
         .cm-cancel{color:#007aff;border-right:0.5px solid rgba(0,0,0,0.1);}
         .cm-ok{color:#ff3b30;font-weight:600;}
-        .cm-ok.cm-normal{color:#007aff;font-weight:600;}
-        .success-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);z-index:3000;display:flex;flex-direction:column;align-items:center;gap:16px;padding:36px 46px;background:rgba(255,255,255,0.9);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.6);opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.8,.4,1), transform .28s cubic-bezier(.25,.8,.4,1);}
-        .success-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
-        .success-hud .sh-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ffc400,#e8960a);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(255,196,0,0.45);animation:shPop .55s cubic-bezier(.2,1.4,.4,1);}
-        @keyframes shPop{0%{transform:scale(.2);opacity:0;}60%{transform:scale(1.18);}100%{transform:scale(1);opacity:1;}}
-        .success-hud .sh-icon svg{width:34px;height:34px;stroke:currentColor;stroke-width:3;fill:none;}
-        .success-hud .sh-text{color:#1a1a1a;font-size:17px;font-weight:700;letter-spacing:.3px;white-space:nowrap;}`;
+        .cm-ok.cm-normal{color:#007aff;font-weight:600;}`;
         document.head.appendChild(st);
     }
     modal.querySelector('.cm-title').textContent=title;
@@ -3171,8 +3165,20 @@ function showConfirmModal(title,message,okText,cancelText,callback){
     modal.querySelector('.cm-mask').onclick=()=>close(false);
     modal.classList.add('show');
 }
-// 保存成功提示（居中大弹窗）
+// 保存成功提示（居中大弹窗）；样式独立注入，不依赖其他组件先被使用
 function showSuccessHud(text){
+    if(!document.getElementById('successHudStyle')){
+        const st=document.createElement('style');
+        st.id='successHudStyle';
+        st.textContent=`
+        .success-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);z-index:3000;display:flex;flex-direction:column;align-items:center;gap:16px;padding:36px 46px;background:rgba(255,255,255,0.9);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.6);opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.8,.4,1), transform .28s cubic-bezier(.25,.8,.4,1);}
+        .success-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+        .success-hud .sh-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ffc400,#e8960a);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(255,196,0,0.45);animation:shPop .55s cubic-bezier(.2,1.4,.4,1);}
+        @keyframes shPop{0%{transform:scale(.2);opacity:0;}60%{transform:scale(1.18);}100%{transform:scale(1);opacity:1;}}
+        .success-hud .sh-icon svg{width:34px;height:34px;stroke:currentColor;stroke-width:3;fill:none;}
+        .success-hud .sh-text{color:#1a1a1a;font-size:17px;font-weight:700;letter-spacing:.3px;white-space:nowrap;}`;
+        document.head.appendChild(st);
+    }
     let hud=$('successHud');
     if(!hud){
         hud=document.createElement('div');
@@ -3251,13 +3257,21 @@ function downloadDataUrl(dataUrl,filename){
 function saveCurrentPhoto(){
     const photo=state.currentDetailPhoto;
     if(!photo)return;
-    savePhotoDataUrl(photo.data);
+    savePhotoDataUrl(photo.data, photo.original);
 }
-async function savePhotoDataUrl(dataUrl){
+async function savePhotoDataUrl(dataUrl, originalUrl){
     try{
         const nativeOk=await nativeSaveImage(dataUrl);
-        if(nativeOk){ showSuccessHud(t('savedToAlbum')); return; }
+        if(nativeOk){
+            // 同时保存原片（与滤镜版不同才存第二张）
+            if(originalUrl&&originalUrl!==dataUrl){
+                try{ await nativeSaveImage(originalUrl); }
+                catch(e){ console.warn('save original failed',e); }
+            }
+            showSuccessHud(t('savedToAlbum')); return;
+        }
         downloadDataUrl(dataUrl,`TikCam_${Date.now()}.jpg`);
+        if(originalUrl&&originalUrl!==dataUrl) downloadDataUrl(originalUrl,`TikCam_Original_${Date.now()}.jpg`);
     }catch(e){
         console.warn('save photo failed',e);
         showSuccessHud(t('saveFailed'));
@@ -4893,6 +4907,13 @@ $('rSave').onclick=async ()=>{
                 const ok=await nativeSaveImage(url);
                 if(!ok) downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);
             }catch(e){ console.warn('native save failed',e); downloadDataUrl(url,`TikCam_${Date.now()}.jpg`); }
+            // 同时保存原片（与滤镜版不同才存第二张）
+            if(state.captured&&state.captured!==url){
+                try{
+                    const ok2=await nativeSaveImage(state.captured);
+                    if(!ok2) downloadDataUrl(state.captured,`TikCam_Original_${Date.now()}.jpg`);
+                }catch(e){ console.warn('save original failed',e); downloadDataUrl(state.captured,`TikCam_Original_${Date.now()}.jpg`); }
+            }
             showSuccessHud(t('savedToAlbum'));
         };
         img.onerror=()=>showSuccessHud(t('saveFailed'));
