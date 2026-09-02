@@ -12,7 +12,7 @@
     </g>
     <circle cx="512" cy="548" r="166" fill="#FFC400"/>
     <circle cx="512" cy="548" r="146" fill="none" stroke="#FFFFFF" stroke-width="9"/>
-    <circle cx="512" cy="548" r="80" fill="#FFFFFF"/>
-    <circle cx="486" cy="522" r="25" fill="#E8960A" opacity="0.4"/>
+    <circle cx="512" cy="548" r="80" fill="#1A1A1A"/>
+    <circle cx="486" cy="522" r="25" fill="#FFFFFF"/>
   </g>
 </svg>
