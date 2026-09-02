@@ -1190,12 +1190,34 @@
             .dynamic-island { display:block; position:absolute; top:8px; left:50%; transform:translateX(-50%); width:88px; height:24px; background:#000; border-radius:13px; z-index:1000; }
         }
         @media (min-width:900px) { .feat-notes { display:flex; } }
+        /* RTL (Arabic) layout support */
+        body.rtl { direction: rtl; }
+        body.rtl .swipe-hint, body.rtl .r-hint { transform: scaleX(-1); }
+        body.rtl .mode-switch { flex-direction: row-reverse; }
+        body.rtl .gal-tab:first-child { border-right: none; border-left: 1px solid rgba(255,255,255,0.1); }
+        body.rtl .adj-tools { flex-direction: row-reverse; }
+        body.rtl .zoom-pills { flex-direction: row-reverse; }
+        body.rtl .fx-chips { flex-direction: row-reverse; }
+        body.rtl .share-apps { flex-direction: row-reverse; }
+        body.rtl .ratio-picker { flex-direction: row-reverse; }
+        body.rtl .bottom-bar .shoot-row { flex-direction: row-reverse; }
+        body.rtl .r-actions { flex-direction: row-reverse; }
+        body.rtl .pd-actions { flex-direction: row-reverse; }
+        body.rtl .feat { flex-direction: row-reverse; }
+        body.rtl .set-row { flex-direction: row-reverse; }
+        body.rtl .gal-top-row { flex-direction: row-reverse; }
+        body.rtl .gal-back svg { transform: scaleX(-1); }
+        body.rtl .pd-btn svg { transform: scaleX(-1); }
+        body.rtl .r-act-ic svg { transform: scaleX(-1); }
+        body.rtl .pd-act-ic svg { transform: scaleX(-1); }
+        body.rtl .top-btn svg { transform: scaleX(-1); }
+        body.rtl .gal-back svg { transform: scaleX(-1); }
     </style>
 </head>
 <body>
 <div class="prototype-wrap">
     <header class="proto-header">
-        <div class="proto-badge">AI BEAUTY CAMERA</div>
+        <div class="proto-badge" data-i18n="badge">AI BEAUTY CAMERA</div>
         <h1 class="proto-title">
             <svg class="brand-mark" viewBox="0 0 1024 1024" aria-hidden="true">
                 <g transform="translate(-17,-13)"><g fill="#25F4EE"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g></g>
@@ -1205,7 +1227,7 @@
             </svg>
             <span class="t1" data-t="TikCam">TikCam</span>
         </h1>
-        <p class="proto-sub">AI-generated · Infinite beauty filters</p>
+        <p class="proto-sub" data-i18n="appSubtitle">AI-generated · Infinite beauty filters</p>
     </header>
 
     <main class="proto-main">
@@ -1236,7 +1258,7 @@
                         </div>
 
                         <div class="ratio-picker" id="ratioPicker">
-                            <div class="ratio-opt" data-ratio="full">Full</div>
+                            <div class="ratio-opt" data-ratio="full" data-i18n="ratioFull">Full</div>
                             <div class="ratio-opt active" data-ratio="4-3">4:3</div>
                             <div class="ratio-opt" data-ratio="1-1">1:1</div>
                             <div class="ratio-opt" data-ratio="16-9">16:9</div>
@@ -1249,7 +1271,7 @@
                                         <video id="video" autoplay playsinline webkit-playsinline class="back"></video>
                                         <canvas id="canvas"></canvas>
                                     </div>
-                                    <div class="scene-badge" id="sceneBadge"><span class="sb-dot"></span><span id="sbText">SCANNING</span></div>
+                                    <div class="scene-badge" id="sceneBadge"><span class="sb-dot"></span><span id="sbText" data-i18n="scanning">SCANNING</span></div>
                                     <div class="flash-overlay" id="flashEl"></div>
 
                                     <!-- 三分构图网格线 -->
@@ -1285,8 +1307,8 @@
                                             <span id="recTime">00:00</span>
                                         </div>
                                         <div class="filter-display">
-                                            <div class="filter-name" id="fName">Original</div>
-                                            <div class="filter-tag" id="fTag">Analyzing</div>
+                                            <div class="filter-name" id="fName" data-i18n="filterOriginal">Original</div>
+                                            <div class="filter-tag" id="fTag" data-i18n="filterAnalyzing">Analyzing</div>
                                             <div class="filter-counter" id="fCount"></div>
                                         </div>
                                         <div class="auto-toast" id="autoToast"></div>
@@ -1298,7 +1320,7 @@
                         <div class="processing" id="procEl">
                             <div class="proc-box">
                                 <div class="proc-ring"></div>
-                                <div class="proc-text">AI MATCHING</div>
+                                <div class="proc-text" data-i18n="aiMatching">AI MATCHING</div>
                             </div>
                         </div>
 
@@ -1306,8 +1328,8 @@
                             <div class="swipe-hint" id="swipeHint">← back · swipe for new →</div>
                             <div class="mode-switch" id="modeSwitch">
                                 <div class="mode-indicator" id="modeIndicator"></div>
-                                <span class="mode-label" data-mode="video">VIDEO</span>
-                                <span class="mode-label active" data-mode="photo">PHOTO</span>
+                                <span class="mode-label" data-mode="video" data-i18n="modeVideo">VIDEO</span>
+                                <span class="mode-label active" data-mode="photo" data-i18n="modePhoto">PHOTO</span>
                             </div>
                             <div class="shoot-row">
                                 <button class="album-btn" id="btnAlbum" title="Gallery">
@@ -1333,10 +1355,10 @@
                                 <img id="resultImg" src="" alt="">
                                 <video id="resultVideo" playsinline webkit-playsinline loop muted style="display:none; max-width:100%; max-height:100%;"></video>
                                 <div class="r-filter-name">
-                                    <div class="filter-name" id="rName">Original</div>
+                                    <div class="filter-name" id="rName" data-i18n="filterOriginal">Original</div>
                                 </div>
-                                <div class="compare-lbl" id="rCompare">Original</div>
-                                <div class="gen-loading" id="rLoading"><div class="gen-spin"></div>Generating</div>
+                                <div class="compare-lbl" id="rCompare" data-i18n="compareOriginal">Original</div>
+                                <div class="gen-loading" id="rLoading"><div class="gen-spin"></div><span data-i18n="generating">Generating</span></div>
                                 <button class="play-btn" id="rPlayBtn" style="display:none;">
                                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                                 </button>
@@ -1344,15 +1366,15 @@
                             <div class="r-bottom">
                                 <div class="r-hint-row"><span class="r-hint">← back · long press to compare · swipe for new →</span></div>
                                 <div class="r-actions">
-                                    <button class="r-act" id="rRetake"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 1 1-1 6"/><path d="M4 4v5h5"/></svg></span><span>Retake</span></button>
-                                    <button class="r-act" id="rAdjust"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h9M18 6h1M5 12h1M10 12h9M5 18h13M10 18h4"/><circle cx="16" cy="6" r="2.2"/><circle cx="8" cy="12" r="2.2"/><circle cx="12" cy="18" r="2.2"/></svg></span><span>Edit</span></button>
+                                    <button class="r-act" id="rRetake"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 1 1-1 6"/><path d="M4 4v5h5"/></svg></span><span data-i18n="retake">Retake</span></button>
+                                    <button class="r-act" id="rAdjust"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h9M18 6h1M5 12h1M10 12h9M5 18h13M10 18h4"/><circle cx="16" cy="6" r="2.2"/><circle cx="8" cy="12" r="2.2"/><circle cx="12" cy="18" r="2.2"/></svg></span><span data-i18n="edit">Edit</span></button>
                                     <button class="r-act save" id="rSave"><span class="r-act-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M12 15l-4-4M12 15l4-4"/><path d="M5 17v1.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V17"/></svg></span></button>
                                 </div>
                             </div>
                             <div class="adjust-panel" id="adjPanel">
                                 <div class="adj-header">
-                                    <button class="adj-reset" id="adjReset">Reset</button>
-                                    <span class="adj-title">Edit</span>
+                                    <button class="adj-reset" id="adjReset" data-i18n="adjReset">Reset</button>
+                                    <span class="adj-title" data-i18n="adjEdit">Edit</span>
                                     <button class="adj-close" id="adjClose"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
                                 </div>
                                 <div class="adj-tools" id="adjTools"></div>
@@ -1376,13 +1398,13 @@
                                     <button class="gal-back" id="galBack">
                                         <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
                                     </button>
-                                    <div class="gal-title">Gallery</div>
+                                    <div class="gal-title" data-i18n="gallery">Gallery</div>
                                     <div class="gal-top-right"></div>
                                 </div>
                                 <div class="gal-tabs" id="galTabs">
                                     <div class="gal-tab-indicator" id="galIndicator"></div>
-                                    <button class="gal-tab active" data-gal-tab="photos">PHOTOS <span class="gal-count" id="photoCount">0</span></button>
-                                    <button class="gal-tab" data-gal-tab="filters">FILTERS <span class="gal-count" id="filterCount">0</span></button>
+                                    <button class="gal-tab active" data-gal-tab="photos"><span data-i18n="photos">PHOTOS</span> <span class="gal-count" id="photoCount">0</span></button>
+                                    <button class="gal-tab" data-gal-tab="filters"><span data-i18n="filters">FILTERS</span> <span class="gal-count" id="filterCount">0</span></button>
                                 </div>
                             </div>
                             <div class="gal-content" id="galContent">
@@ -1391,8 +1413,8 @@
                                     <div class="photo-grid" id="photoGrid"></div>
                                     <div class="gal-empty" id="photoEmpty">
                                         <div class="gal-empty-ic">◳</div>
-                                        <div class="gal-empty-title">No Photos Yet</div>
-                                        <div class="gal-empty-desc">Start shooting to build your collection<br>Heart photos to teach AI your style</div>
+                                        <div class="gal-empty-title" data-i18n="noPhotos">No Photos Yet</div>
+                                        <div class="gal-empty-desc" data-i18n="noPhotosDesc" data-i18n-html="true">Start shooting to build your collection<br>Heart photos to teach AI your style</div>
                                     </div>
                                 </div>
                                 <!-- 滤镜集 · AI Style Studio -->
@@ -1405,13 +1427,13 @@
                                         <div class="fx-rail" id="fxTrending"></div>
                                     </div>
                                     <div class="profile-collection" id="profileCollection">
-                                        <div class="profile-sec-title">Your Collection <span class="profile-sec-count" id="profileColCount">0</span></div>
+                                        <div class="profile-sec-title"><span data-i18n="yourCollection">Your Collection</span> <span class="profile-sec-count" id="profileColCount">0</span></div>
                                         <div class="filter-grid" id="filterGrid"></div>
                                     </div>
                                     <div class="gal-empty" id="filterEmpty">
                                         <div class="gal-empty-ic">✦</div>
-                                        <div class="gal-empty-title">Your Collection Awaits</div>
-                                        <div class="gal-empty-desc">Tap any look above to try it on your camera<br>Looks you love are saved here automatically</div>
+                                        <div class="gal-empty-title" data-i18n="collectionAwaits">Your Collection Awaits</div>
+                                        <div class="gal-empty-desc" data-i18n="collectionAwaitsDesc" data-i18n-html="true">Tap any look above to try it on your camera<br>Looks you love are saved here automatically</div>
                                     </div>
                                 </div>
                             </div>
@@ -1427,19 +1449,19 @@
                             </div>
                             <div class="pd-image-wrap">
                                 <img class="pd-image" id="pdImage" src="">
-                                <div class="compare-lbl" id="pdCompare">Original</div>
+                                <div class="compare-lbl" id="pdCompare" data-i18n="compareOriginal">Original</div>
                             </div>
                             <div class="pd-bottom">
                                 <div class="pd-info">
-                                    <div class="pd-filter-name" id="pdFilterName">Original</div>
+                                    <div class="pd-filter-name" id="pdFilterName" data-i18n="filterOriginal">Original</div>
                                     <div class="pd-filter-tag" id="pdFilterTag"></div>
                                     <div class="pd-date" id="pdDate"></div>
                                 </div>
                                 <div class="pd-actions">
-                                    <button class="pd-act" id="pdShare"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M12 3v12M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 11v7.5a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></span><span>Share</span></button>
-                                    <button class="pd-act" id="pdEdit"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg></span><span>Edit</span></button>
-                                    <button class="pd-act primary" id="pdSave"><span class="pd-act-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11M12 14l-4-4M12 14l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span><span>Save</span></button>
-                                    <button class="pd-act" id="pdDelete"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 .9h8a1 1 0 0 0 1-.9L18 7M10 11v6M14 11v6"/></svg></span><span>Delete</span></button>
+                                    <button class="pd-act" id="pdShare"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M12 3v12M12 3l-3.5 3.5M12 3l3.5 3.5"/><path d="M5 11v7.5a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5V11"/></svg></span><span data-i18n="share">Share</span></button>
+                                    <button class="pd-act" id="pdEdit"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg></span><span data-i18n="edit">Edit</span></button>
+                                    <button class="pd-act primary" id="pdSave"><span class="pd-act-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v11M12 14l-4-4M12 14l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span><span data-i18n="save">Save</span></button>
+                                    <button class="pd-act" id="pdDelete"><span class="pd-act-ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a1 1 0 0 0 1 .9h8a1 1 0 0 0 1-.9L18 7M10 11v6M14 11v6"/></svg></span><span data-i18n="delete">Delete</span></button>
                                 </div>
                             </div>
                         </div>
@@ -1449,10 +1471,10 @@
                             <div class="share-backdrop" id="shareBackdrop"></div>
                             <div class="share-panel">
                                 <div class="share-handle"></div>
-                                <div class="share-title">Share Photo</div>
+                                <div class="share-title" data-i18n="shareTitle">Share Photo</div>
                                 <div class="share-apps" id="shareGrid"></div>
                                 <div class="share-actions" id="shareActions"></div>
-                                <button class="share-cancel" id="shareCancel">Cancel</button>
+                                <button class="share-cancel" id="shareCancel" data-i18n="cancel">Cancel</button>
                             </div>
                         </div>
 
@@ -1463,7 +1485,7 @@
                                     <button class="gal-back" id="setBack">
                                         <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
                                     </button>
-                                    <div class="gal-title">AI Settings</div>
+                                    <div class="gal-title" data-i18n="aiSettings">AI Settings</div>
                                     <div class="gal-top-right"></div>
                                 </div>
                             </div>
@@ -1471,28 +1493,28 @@
                                 <div class="set-group">
                                     <div class="set-row">
                                         <div style="flex:1">
-                                            <div class="set-label">Vision Model Filters</div>
-                                            <div class="set-desc">Send the live frame to Doubao vision model to design each filter for the actual scene. Offline or errors fall back to on-device generation automatically.</div>
+                                            <div class="set-label" data-i18n="visionModel">Vision Model Filters</div>
+                                            <div class="set-desc" data-i18n="visionDesc">Send the live frame to Doubao vision model to design each filter for the actual scene. Offline or errors fall back to on-device generation automatically.</div>
                                         </div>
                                         <button class="set-switch" id="setAiSwitch" aria-label="Toggle vision model"></button>
                                     </div>
                                 </div>
                                 <div class="set-group" id="setAiGroup">
-                                    <div class="set-group-title">Volcengine Ark API</div>
-                                    <input class="set-input" id="setApiKey" type="password" placeholder="Paste the SECRET key (not the key name)" autocomplete="off" autocapitalize="off" spellcheck="false">
-                                    <input class="set-input" id="setModel" type="text" placeholder="Vision model ID" autocomplete="off" autocapitalize="off" spellcheck="false">
+                                    <div class="set-group-title" data-i18n="volcengineApi">Volcengine Ark API</div>
+                                    <input class="set-input" id="setApiKey" type="password" placeholder="Paste the SECRET key (not the key name)" data-i18n-ph="keyPlaceholder" autocomplete="off" autocapitalize="off" spellcheck="false">
+                                    <input class="set-input" id="setModel" type="text" placeholder="Vision model ID" data-i18n-ph="modelPlaceholder" autocomplete="off" autocapitalize="off" spellcheck="false">
                                     <div class="set-chips" id="setModelChips"></div>
                                     <div class="set-desc" style="margin:11px 2px 0">
                                         Two things to get right:<br>
                                         1. <b>Key</b>: create/copy it at the <a class="set-link" href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey" target="_blank" rel="noopener">Ark API Key page</a> — paste the full secret string. The label shown in the console (e.g. <i>api-key-2026…</i>) is the key's NAME and will not work.<br>
                                         2. <b>Model</b>: activate a <b>vision/chat</b> model such as <i>Doubao-Seed-1.6</i> in <a class="set-link" href="https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement" target="_blank" rel="noopener">Model Management</a>, then tap a chip above. Video models like <i>Seedance</i> cannot read images. The key stays only on this device.
                                     </div>
-                                    <button class="set-btn" id="setSave">Save &amp; Test</button>
+                                    <button class="set-btn" id="setSave" data-i18n="saveTest">Save &amp; Test</button>
                                     <div class="set-status" id="setStatus"></div>
                                 </div>
                                 <div class="set-group">
-                                    <div class="set-group-title">How it works</div>
-                                    <div class="set-desc" style="margin:0 2px">Swipe through a curated set of filters tuned to your current scene and personal taste. The first one appears the instant the camera opens. AI-crafted filters (marked with the purple dot) slide in silently as you use the app — no waiting, no loading.</div>
+                                    <div class="set-group-title" data-i18n="howItWorks">How it works</div>
+                                    <div class="set-desc" style="margin:0 2px" data-i18n="howItWorksDesc">Swipe through a curated set of filters tuned to your current scene and personal taste. The first one appears the instant the camera opens. AI-crafted filters (marked with the purple dot) slide in silently as you use the app — no waiting, no loading.</div>
                                 </div>
                             </div>
                         </div>
@@ -1500,24 +1522,24 @@
                         <!-- 偏好提示 -->
                         <div class="pref-toast" id="prefToast">
                             <span class="toast-heart">♥</span>
-                            <span id="prefText">Added to favorites</span>
+                            <span id="prefText" data-i18n="addedToFavorites">Added to favorites</span>
                         </div>
 
                         <div class="perm-modal" id="permModal">
                             <div class="perm-ic">◉</div>
-                            <div class="perm-t">Camera Access</div>
-                            <div class="perm-d">Allow camera access to start shooting<br>or try demo mode</div>
-                            <button class="perm-btn" id="permOk">Allow Access</button>
-                            <button class="perm-btn ghost" id="permDemo">Demo Mode</button>
+                            <div class="perm-t" data-i18n="cameraAccess">Camera Access</div>
+                            <div class="perm-d" data-i18n="cameraAccessDesc" data-i18n-html="true">Allow camera access to start shooting<br>or try demo mode</div>
+                            <button class="perm-btn" id="permOk" data-i18n="allowAccess">Allow Access</button>
+                            <button class="perm-btn ghost" id="permDemo" data-i18n="demoMode">Demo Mode</button>
                         </div>
 
                         <!-- 致命错误兜底：任何启动异常都给出可见反馈，绝不黑屏 -->
                         <div class="perm-modal" id="fatalModal">
                             <div class="perm-ic">!</div>
-                            <div class="perm-t">Something went wrong</div>
-                            <div class="perm-d">The camera didn't start. You can retry,<br>or explore TikCam in demo mode.</div>
-                            <button class="perm-btn" id="fatalRetry">Try Again</button>
-                            <button class="perm-btn ghost" id="fatalDemo">Demo Mode</button>
+                            <div class="perm-t" data-i18n="somethingWrong">Something went wrong</div>
+                            <div class="perm-d" data-i18n="cameraDidntStart" data-i18n-html="true">The camera didn't start. You can retry,<br>or explore TikCam in demo mode.</div>
+                            <button class="perm-btn" id="fatalRetry" data-i18n="tryAgain">Try Again</button>
+                            <button class="perm-btn ghost" id="fatalDemo" data-i18n="demoMode">Demo Mode</button>
                         </div>
                     </div>
                 </div>
@@ -1525,20 +1547,20 @@
         </div>
 
         <div class="feat-notes">
-            <div class="feat"><div class="feat-dot">▣</div><div class="feat-txt"><h4>Photo &amp; Video</h4><p>Tap or hold the shutter to record</p></div></div>
-            <div class="feat"><div class="feat-dot">✦</div><div class="feat-txt"><h4>AI Beauty Filters</h4><p>Infinite styles with adjustable strength</p></div></div>
-            <div class="feat"><div class="feat-dot">▦</div><div class="feat-txt"><h4>Grid &amp; Timer</h4><p>Rule-of-thirds grid · 3s / 10s countdown</p></div></div>
-            <div class="feat"><div class="feat-dot">⚡</div><div class="feat-txt"><h4>Flash Auto / On / Off</h4><p>Smart auto flash for low-light shots</p></div></div>
-            <div class="feat"><div class="feat-dot">●</div><div class="feat-txt"><h4>Zoom &amp; Exposure</h4><p>1×–3× zoom pills · swipe to set EV</p></div></div>
+            <div class="feat"><div class="feat-dot">▣</div><div class="feat-txt"><h4 data-i18n="featPhotoVideo">Photo &amp; Video</h4><p data-i18n="featPhotoVideoDesc">Tap or hold the shutter to record</p></div></div>
+            <div class="feat"><div class="feat-dot">✦</div><div class="feat-txt"><h4 data-i18n="featAiBeauty">AI Beauty Filters</h4><p data-i18n="featAiBeautyDesc">Infinite styles with adjustable strength</p></div></div>
+            <div class="feat"><div class="feat-dot">▦</div><div class="feat-txt"><h4 data-i18n="featGridTimer">Grid &amp; Timer</h4><p data-i18n="featGridTimerDesc">Rule-of-thirds grid · 3s / 10s countdown</p></div></div>
+            <div class="feat"><div class="feat-dot">⚡</div><div class="feat-txt"><h4 data-i18n="featFlash">Flash Auto / On / Off</h4><p data-i18n="featFlashDesc">Smart auto flash for low-light shots</p></div></div>
+            <div class="feat"><div class="feat-dot">●</div><div class="feat-txt"><h4 data-i18n="featZoom">Zoom &amp; Exposure</h4><p data-i18n="featZoomDesc">1×–3× zoom pills · swipe to set EV</p></div></div>
         </div>
     </main>
 
     <footer class="proto-footer">
         <div class="footer-hints">
-            <span class="hint-item"><span class="hint-k">Swipe</span> generate filter</span>
-            <span class="hint-item"><span class="hint-k">Tap</span> shutter to shoot</span>
+            <span class="hint-item"><span class="hint-k" data-i18n="hintSwipe">Swipe</span> <span data-i18n="hintSwipeDesc">generate filter</span></span>
+            <span class="hint-item"><span class="hint-k" data-i18n="hintTap">Tap</span> <span data-i18n="hintTapDesc">shutter to shoot</span></span>
             <span class="hint-item"><span class="hint-k">4:3</span> change ratio</span>
-            <span class="hint-item"><span class="hint-k">Demo</span> no camera needed</span>
+            <span class="hint-item"><span class="hint-k" data-i18n="hintDemo">Demo</span> <span data-i18n="hintDemoDesc">no camera needed</span></span>
         </div>
     </footer>
 </div>
@@ -1560,6 +1582,492 @@ const ED_ICONS = {
     tint:'<path d="M12 3a9 9 0 0 0 0 18c1.7 0 2.6-1.3 2-2.5-.5-1.2.3-2.5 1.8-2.5H17.6a3.1 3.1 0 0 0 3-3.1C20.5 7.6 16.7 3 12 3z"/><circle cx="7.6" cy="11" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.6" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="7.8" r="1.1" fill="currentColor" stroke="none"/>',
     fade:'<path d="M7 18a4.6 4.6 0 0 1-.5-9.1A6.1 6.1 0 0 1 18 9.4a3.9 3.9 0 0 1-1 8.6z"/>',
 };
+// ===== i18n Multi-Language System =====
+const I18N = {
+  en: {
+    dir: 'ltr',
+    // Camera & Viewfinder
+    badge: 'AI BEAUTY CAMERA',
+    appSubtitle: 'AI-generated · Infinite beauty filters',
+    scanning: 'SCANNING',
+    aiMatching: 'AI MATCHING',
+    modeVideo: 'VIDEO',
+    modePhoto: 'PHOTO',
+    filterOriginal: 'Original',
+    filterAnalyzing: 'Analyzing',
+    holdOriginal: 'HOLD · ORIGINAL',
+    // Adjustment tools
+    adjExposure: 'Exposure',
+    adjContrast: 'Contrast',
+    adjVivid: 'Vivid',
+    adjWarmth: 'Warmth',
+    adjTint: 'Tint',
+    adjFade: 'Fade',
+    adjAuto: 'Auto',
+    adjStrength: 'Filter',
+    adjEdit: 'Edit',
+    adjReset: 'Reset',
+    // Ratios
+    ratioFull: 'Full',
+    // Result view
+    retake: 'Retake',
+    edit: 'Edit',
+    video: 'Video',
+    compareOriginal: 'Original',
+    generating: 'Generating',
+    // Gallery
+    gallery: 'Gallery',
+    photos: 'PHOTOS',
+    filters: 'FILTERS',
+    noPhotos: 'No Photos Yet',
+    noPhotosDesc: 'Start shooting to build your collection<br>Heart photos to teach AI your style',
+    yourCollection: 'Your Collection',
+    collectionAwaits: 'Your Collection Awaits',
+    collectionAwaitsDesc: 'Tap any look above to try it on your camera<br>Looks you love are saved here automatically',
+    // Photo detail
+    share: 'Share',
+    save: 'Save',
+    delete: 'Delete',
+    // Share sheet
+    shareTitle: 'Share Photo',
+    cancel: 'Cancel',
+    saveImage: 'Save Image',
+    copyPhoto: 'Copy Photo',
+    moreApps: 'More Apps',
+    // Settings
+    aiSettings: 'AI Settings',
+    visionModel: 'Vision Model Filters',
+    visionDesc: 'Send the live frame to Doubao vision model to design each filter for the actual scene. Offline or errors fall back to on-device generation automatically.',
+    volcengineApi: 'Volcengine Ark API',
+    keyPlaceholder: 'Paste the SECRET key (not the key name)',
+    modelPlaceholder: 'Vision model ID',
+    setupTitle: 'Two things to get right:',
+    saveTest: 'Save & Test',
+    howItWorks: 'How it works',
+    howItWorksDesc: 'Swipe through a curated set of filters tuned to your current scene and personal taste. The first one appears the instant the camera opens. AI-crafted filters (marked with the purple dot) slide in silently as you use the app — no waiting, no loading.',
+    // Filter chips
+    chipForYou: 'For You',
+    chipFood: 'Food',
+    chipPortrait: 'Portrait',
+    chipNight: 'Night',
+    chipScenery: 'Scenery',
+    chipMono: 'Mono',
+    // FX page
+    yourStyleProfile: 'Your Style Profile',
+    yourAiStyle: 'YOUR AI STYLE',
+    whatYouShoot: 'What You Shoot',
+    signatureLooks: 'Signature Looks',
+    aiGeneratedMatched: 'AI-generated · matched to your taste',
+    trendingLooks: 'Trending Looks',
+    tryNow: 'Try now',
+    newBadge: 'NEW',
+    statsFilters: 'Filters',
+    statsPhotos: 'Photos',
+    statsLoved: 'Loved',
+    // Permissions
+    cameraAccess: 'Camera Access',
+    cameraAccessDesc: 'Allow camera access to start shooting<br>or try demo mode',
+    allowAccess: 'Allow Access',
+    demoMode: 'Demo Mode',
+    somethingWrong: 'Something went wrong',
+    cameraDidntStart: 'The camera didn\'t start. You can retry,<br>or explore TikCam in demo mode.',
+    tryAgain: 'Try Again',
+    // Onboarding features
+    featPhotoVideo: 'Photo & Video',
+    featPhotoVideoDesc: 'Tap or hold the shutter to record',
+    featAiBeauty: 'AI Beauty Filters',
+    featAiBeautyDesc: 'Infinite styles with adjustable strength',
+    featGridTimer: 'Grid & Timer',
+    featGridTimerDesc: 'Rule-of-thirds grid · 3s / 10s countdown',
+    featFlash: 'Flash Auto / On / Off',
+    featFlashDesc: 'Smart auto flash for low-light shots',
+    featZoom: 'Zoom & Exposure',
+    featZoomDesc: '1×–3× zoom pills · swipe to set EV',
+    // Hints
+    hintSwipe: 'Swipe',
+    hintSwipeDesc: 'generate filter',
+    hintTap: 'Tap',
+    hintTapDesc: 'shutter to shoot',
+    hintDemo: 'Demo',
+    hintDemoDesc: 'no camera needed',
+    // Toasts & messages
+    addedToFavorites: 'Added to favorites',
+    removedFromFavorites: 'Removed from favorites',
+    savedToAlbum: 'Saved to Photos',
+    saveFailed: 'Save failed',
+    copied: 'Copied',
+    autoLook: 'AUTO · {scene} LOOK',
+    // Share app names (brand names stay in English)
+    // Filter tags (style tags stay in English)
+  },
+  ja: {
+    dir: 'ltr',
+    badge: 'AI ビューティーカメラ',
+    appSubtitle: 'AIが生み出す 無限のフィルター',
+    scanning: 'スキャン中',
+    aiMatching: 'AI マッチング中',
+    modeVideo: '動画',
+    modePhoto: '写真',
+    filterOriginal: 'オリジナル',
+    filterAnalyzing: '分析中',
+    holdOriginal: '長押し · 比較',
+    adjExposure: '明るさ',
+    adjContrast: 'コントラスト',
+    adjVivid: '鮮やかさ',
+    adjWarmth: '色温度',
+    adjTint: '色かぶり',
+    adjFade: 'フェード',
+    adjAuto: 'オート',
+    adjStrength: 'フィルター',
+    adjEdit: '編集',
+    adjReset: 'リセット',
+    ratioFull: 'フル',
+    retake: '撮り直し',
+    edit: '編集',
+    video: '動画',
+    compareOriginal: 'オリジナル',
+    generating: '生成中',
+    gallery: 'ギャラリー',
+    photos: '写真',
+    filters: 'フィルター',
+    noPhotos: 'まだ写真がありません',
+    noPhotosDesc: '撮影を始めてコレクションを作りましょう<br>♡を付けてAIに好みを教えて',
+    yourCollection: 'あなたのコレクション',
+    collectionAwaits: 'コレクションを作ろう',
+    collectionAwaitsDesc: '上のルックをタップしてカメラで試せます<br>気に入ったルックは自動で保存されます',
+    share: 'シェア',
+    save: '保存',
+    delete: '削除',
+    shareTitle: '写真をシェア',
+    cancel: 'キャンセル',
+    saveImage: '画像を保存',
+    copyPhoto: '写真をコピー',
+    moreApps: 'その他のアプリ',
+    aiSettings: 'AI設定',
+    visionModel: 'AIフィルター',
+    visionDesc: 'ライブ映像をAIに送り、シーンに合わせたフィルターをデザインします。オフライン時やエラー時は自動的に端末内生成に切り替わります。',
+    volcengineApi: 'Volcengine Ark API',
+    keyPlaceholder: 'シークレットキーを貼り付け',
+    modelPlaceholder: 'ビジョンモデルID',
+    setupTitle: '確認することが2つあります：',
+    saveTest: '保存してテスト',
+    howItWorks: '使い方',
+    howItWorksDesc: '現在のシーンとあなたの好みに合わせて厳選されたフィルターをスワイプで選べます。カメラを開いた瞬間に最初のフィルターが表示されます。AIが生成したフィルター（紫のドット付き）は、アプリを使ううちに静かに追加されていきます — 待ち時間なし、読み込みなし。',
+    chipForYou: 'あなたへ',
+    chipFood: '料理',
+    chipPortrait: '人物',
+    chipNight: '夜景',
+    chipScenery: '風景',
+    chipMono: 'モノクロ',
+    yourStyleProfile: 'あなたのスタイル',
+    yourAiStyle: 'あなたのAIスタイル',
+    whatYouShoot: '撮影したもの',
+    signatureLooks: 'お気に入りルック',
+    aiGeneratedMatched: 'AI生成 · あなたの好みに合わせて',
+    trendingLooks: '話題のルック',
+    tryNow: '今すぐ試す',
+    newBadge: 'NEW',
+    statsFilters: 'フィルター',
+    statsPhotos: '写真',
+    statsLoved: 'お気に入り',
+    cameraAccess: 'カメラにアクセス',
+    cameraAccessDesc: '撮影を始めるにはカメラを許可してください<br>またはデモモードをお試しください',
+    allowAccess: 'アクセスを許可',
+    demoMode: 'デモモード',
+    somethingWrong: 'エラーが発生しました',
+    cameraDidntStart: 'カメラを起動できませんでした。<br>再試行するか、デモモードでお試しください。',
+    tryAgain: '再試行',
+    featPhotoVideo: '写真 & 動画',
+    featPhotoVideoDesc: 'タップで撮影、長押しで録画',
+    featAiBeauty: 'AI美顔フィルター',
+    featAiBeautyDesc: '無限のスタイル、強さ調整可能',
+    featGridTimer: 'グリッド & タイマー',
+    featGridTimerDesc: '三分割グリッド · 3秒 / 10秒カウントダウン',
+    featFlash: 'フラッシュ 自動/オン/オフ',
+    featFlashDesc: '暗い場所でスマート自動発光',
+    featZoom: 'ズーム & 露出',
+    featZoomDesc: '1×–3× ズーム · スワイプでEV調整',
+    hintSwipe: 'スワイプ',
+    hintSwipeDesc: 'でフィルター生成',
+    hintTap: 'タップ',
+    hintTapDesc: 'で撮影',
+    hintDemo: 'デモ',
+    hintDemoDesc: 'カメラ不要',
+    addedToFavorites: 'お気に入りに追加',
+    removedFromFavorites: 'お気に入りから削除',
+    savedToAlbum: 'アルバムに保存しました',
+    saveFailed: '保存に失敗しました',
+    copied: 'コピーしました',
+    autoLook: '自動 · {scene} ルック',
+  },
+  ko: {
+    dir: 'ltr',
+    badge: 'AI 뷰티 카메라',
+    appSubtitle: 'AI가 만드는 무한한 필터',
+    scanning: '스캔 중',
+    aiMatching: 'AI 매칭 중',
+    modeVideo: '동영상',
+    modePhoto: '사진',
+    filterOriginal: '원본',
+    filterAnalyzing: '분석 중',
+    holdOriginal: '길게 누르기 · 원본 비교',
+    adjExposure: '밝기',
+    adjContrast: '대비',
+    adjVivid: '선명도',
+    adjWarmth: '색온도',
+    adjTint: '색조',
+    adjFade: '페이드',
+    adjAuto: '자동',
+    adjStrength: '필터',
+    adjEdit: '편집',
+    adjReset: '초기화',
+    ratioFull: '전체',
+    retake: '다시 찍기',
+    edit: '편집',
+    video: '동영상',
+    compareOriginal: '원본',
+    generating: '생성 중',
+    gallery: '갤러리',
+    photos: '사진',
+    filters: '필터',
+    noPhotos: '아직 사진이 없어요',
+    noPhotosDesc: '촬영을 시작하고 컬렉션을 만들어 보세요<br>하트를 눌러 AI에게 취향을 알려주세요',
+    yourCollection: '내 컬렉션',
+    collectionAwaits: '컬렉션을 시작해 보세요',
+    collectionAwaitsDesc: '위의 룩을 탭하면 카메라로 바로 써볼 수 있어요<br>마음에 드는 룩은 자동으로 저장됩니다',
+    share: '공유',
+    save: '저장',
+    delete: '삭제',
+    shareTitle: '사진 공유',
+    cancel: '취소',
+    saveImage: '사진 저장',
+    copyPhoto: '사진 복사',
+    moreApps: '더 많은 앱',
+    aiSettings: 'AI 설정',
+    visionModel: 'AI 비전 필터',
+    visionDesc: '실시간 화면을 AI에 보내 장면에 맞는 필터를 디자인합니다. 오프라인이나 오류 시에는 자동으로 기기 내 생성으로 전환됩니다.',
+    volcengineApi: 'Volcengine Ark API',
+    keyPlaceholder: '시크릿 키를 붙여넣기',
+    modelPlaceholder: '비전 모델 ID',
+    setupTitle: '확인해야 할 두 가지:',
+    saveTest: '저장하고 테스트',
+    howItWorks: '작동 방식',
+    howItWorksDesc: '현재 장면과 당신의 취향에 맞춰 엄선된 필터를 스와이프로 고르세요. 카메라를 여는 순간 첫 번째 필터가 나타납니다. AI가 만든 필터(보라색 점 표시)는 앱을 쓰는 동안 조용히 추가돼요 — 기다림 없음, 로딩 없음.',
+    chipForYou: '추천',
+    chipFood: '음식',
+    chipPortrait: '인물',
+    chipNight: '야경',
+    chipScenery: '풍경',
+    chipMono: '흑백',
+    yourStyleProfile: '나의 스타일',
+    yourAiStyle: '나의 AI 스타일',
+    whatYouShoot: '촬영한 것들',
+    signatureLooks: '시그니처 룩',
+    aiGeneratedMatched: 'AI 생성 · 당신의 취향에 맞춰',
+    trendingLooks: '인기 룩',
+    tryNow: '지금 해보기',
+    newBadge: 'NEW',
+    statsFilters: '필터',
+    statsPhotos: '사진',
+    statsLoved: '좋아요',
+    cameraAccess: '카메라 접근',
+    cameraAccessDesc: '촬영하려면 카메라 접근을 허용해 주세요<br>또는 데모 모드를 사용해 보세요',
+    allowAccess: '접근 허용',
+    demoMode: '데모 모드',
+    somethingWrong: '문제가 발생했어요',
+    cameraDidntStart: '카메라를 시작할 수 없습니다.<br>다시 시도하거나 데모 모드를 사용해 보세요.',
+    tryAgain: '다시 시도',
+    featPhotoVideo: '사진 & 동영상',
+    featPhotoVideoDesc: '탭하면 촬영, 길게 누르면 녹화',
+    featAiBeauty: 'AI 뷰티 필터',
+    featAiBeautyDesc: '무한한 스타일, 강도 조절 가능',
+    featGridTimer: '그리드 & 타이머',
+    featGridTimerDesc: '삼분할 그리드 · 3초 / 10초 카운트다운',
+    featFlash: '플래시 자동/켬/끔',
+    featFlashDesc: '어두운 곳에서 스마트 자동 플래시',
+    featZoom: '줌 & 노출',
+    featZoomDesc: '1×–3× 줌 · 스와이프로 EV 조절',
+    hintSwipe: '스와이프',
+    hintSwipeDesc: '로 필터 생성',
+    hintTap: '탭',
+    hintTapDesc: '하면 촬영',
+    hintDemo: '데모',
+    hintDemoDesc: '카메라 불필요',
+    addedToFavorites: '즐겨찾기에 추가됨',
+    removedFromFavorites: '즐겨찾기에서 삭제됨',
+    savedToAlbum: '사진에 저장됨',
+    saveFailed: '저장 실패',
+    copied: '복사됨',
+    autoLook: '자동 · {scene} 룩',
+  },
+  ar: {
+    dir: 'rtl',
+    badge: 'كاميرا تجميل ذكية',
+    appSubtitle: 'فلاتر لا نهائية بالذكاء الاصطناعي',
+    scanning: 'جاري المسح',
+    aiMatching: 'مطابقة AI',
+    modeVideo: 'فيديو',
+    modePhoto: 'صورة',
+    filterOriginal: 'أصلي',
+    filterAnalyzing: 'جاري التحليل',
+    holdOriginal: 'اضغط باستمرار · مقارنة',
+    adjExposure: 'التعرض',
+    adjContrast: 'التباين',
+    adjVivid: 'الوضوح',
+    adjWarmth: 'درجة الحرارة',
+    adjTint: 'التلوين',
+    adjFade: 'التلاشي',
+    adjAuto: 'تلقائي',
+    adjStrength: 'الفلترة',
+    adjEdit: 'تعديل',
+    adjReset: 'إعادة ضبط',
+    ratioFull: 'كامل',
+    retake: 'إعادة التصوير',
+    edit: 'تعديل',
+    video: 'فيديو',
+    compareOriginal: 'أصلي',
+    generating: 'جاري الإنشاء',
+    gallery: 'المعرض',
+    photos: 'الصور',
+    filters: 'الفلاتر',
+    noPhotos: 'لا توجد صور بعد',
+    noPhotosDesc: 'ابدأ التصوير لبناء مجموعتك<br>أضف إعجاباً لتعليم AI ذوقك',
+    yourCollection: 'مجموعتك',
+    collectionAwaits: 'مجموعتك بانتظارك',
+    collectionAwaitsDesc: 'اضغط على أي ظاهر أعلاه لتجربته على الكاميرا<br>المظاهر التي تعجبك تحفظ هنا تلقائياً',
+    share: 'مشاركة',
+    save: 'حفظ',
+    delete: 'حذف',
+    shareTitle: 'مشاركة الصورة',
+    cancel: 'إلغاء',
+    saveImage: 'حفظ الصورة',
+    copyPhoto: 'نسخ الصورة',
+    moreApps: 'المزيد من التطبيقات',
+    aiSettings: 'إعدادات الذكاء الاصطناعي',
+    visionModel: 'فلاتر نموذج الرؤية',
+    visionDesc: 'إرسال اللقطة الحية لنموذج رؤية الدوباو لتصميم كل فلترة وفقاً للمشهد الفعلي. في حالة عدم الاتصال أو حدوث خطأ، ينتقل تلقائياً إلى التوليد على الجهاز.',
+    volcengineApi: 'واجهة Volcengine Ark API',
+    keyPlaceholder: 'الصق المفتاح السري (ليس اسم المفتاح)',
+    modelPlaceholder: 'معرف نموذج الرؤية',
+    setupTitle: 'شيئان يجب التأكد منهما:',
+    saveTest: 'حفظ واختبار',
+    howItWorks: 'كيف يعمل',
+    howItWorksDesc: 'مرر خلال مجموعة مختارة من الفلاتر المصممة وفقاً لمشهدك الحالي وذوقك الشخصي. تظهر الفلترة الأولى في اللحظة التي تفتح فيها الكاميرا. الفلاتر المصنوعة بواسطة الذكاء الاصطناعي (المحددة بالنقطة البنفسجية) تظهر بهدوء أثناء استخدامك للتطبيق — لا انتظار، لا تحميل.',
+    chipForYou: 'مخصص لك',
+    chipFood: 'طعام',
+    chipPortrait: 'بورتريه',
+    chipNight: 'ليل',
+    chipScenery: 'مناظر طبيعية',
+    chipMono: 'أبيض وأسود',
+    yourStyleProfile: 'ملف أسلوبك',
+    yourAiStyle: 'أسلوبك بالذكاء الاصطناعي',
+    whatYouShoot: 'ما تصوره',
+    signatureLooks: 'المظاهر المميزة',
+    aiGeneratedMatched: 'منشور بـ AI · مطابق لذوقك',
+    trendingLooks: 'المظاهر الرائجة',
+    tryNow: 'جرّب الآن',
+    newBadge: 'جديد',
+    statsFilters: 'فلاتر',
+    statsPhotos: 'صور',
+    statsLoved: 'مفضلة',
+    cameraAccess: 'الوصول للكاميرا',
+    cameraAccessDesc: 'اسمح بالوصول للكاميرا لبدء التصوير<br>أو جرّب الوضع التجريبي',
+    allowAccess: 'السماح بالوصول',
+    demoMode: 'الوضع التجريبي',
+    somethingWrong: 'حدث خطأ ما',
+    cameraDidntStart: 'لم تبدأ الكاميرا. يمكنك إعادة المحاولة،<br>أو استكشاف TikCam بالوضع التجريبي.',
+    tryAgain: 'إعادة المحاولة',
+    featPhotoVideo: 'صور & فيديوهات',
+    featPhotoVideoDesc: 'اضغط لتصوير، اضغط باستمرار للتسجيل',
+    featAiBeauty: 'فلاتر تجميل AI',
+    featAiBeautyDesc: 'أنماط لا نهائية مع شدة قابلة للتعديل',
+    featGridTimer: 'الشبكة & المؤقت',
+    featGridTimerDesc: 'شبكة الثلثين · عد تنازلي 3ث / 10ث',
+    featFlash: 'الفلاش تلقائي/تشغيل/إيقاف',
+    featFlashDesc: 'فلاش تلقائي ذكي للتصوير في الإضاءة المنخفضة',
+    featZoom: 'التكبير & التعرض',
+    featZoomDesc: 'تكبير 1×–3× · مرر لضبط EV',
+    hintSwipe: 'مرر',
+    hintSwipeDesc: 'لتوليد فلترة',
+    hintTap: 'اضغط',
+    hintTapDesc: 'للتصوير',
+    hintDemo: 'تجريبي',
+    hintDemoDesc: 'بدون كاميرا',
+    addedToFavorites: 'تمت الإضافة إلى المفضلة',
+    removedFromFavorites: 'تمت الإزالة من المفضلة',
+    savedToAlbum: 'تم الحفظ في الصور',
+    saveFailed: 'فشل الحفظ',
+    copied: 'تم النسخ',
+    autoLook: 'تلقائي · مظهر {scene}',
+  },
+};
+
+let _currentLang = 'en';
+function detectLang(){
+  const nav = (navigator.language || 'en').toLowerCase();
+  if(nav.startsWith('ja')) return 'ja';
+  if(nav.startsWith('ko')) return 'ko';
+  if(nav.startsWith('ar')) return 'ar';
+  // Capacitor iOS locale detection fallback
+  try{
+    if(window.Capacitor && window.Capacitor.getLocale){
+      const loc = window.Capacitor.getLocale().toLowerCase();
+      if(loc.startsWith('ja')) return 'ja';
+      if(loc.startsWith('ko')) return 'ko';
+      if(loc.startsWith('ar')) return 'ar';
+    }
+  }catch(e){}
+  return 'en';
+}
+function t(key, vars){
+  const dict = I18N[_currentLang] || I18N.en;
+  let str = dict[key] !== undefined ? dict[key] : (I18N.en[key] || key);
+  if(vars){
+    Object.keys(vars).forEach(k=>{ str = str.replace('{'+k+'}', vars[k]); });
+  }
+  return str;
+}
+function setLang(lang){
+  if(!I18N[lang]) lang = 'en';
+  _currentLang = lang;
+  const dict = I18N[lang];
+  document.documentElement.lang = lang;
+  document.documentElement.dir = dict.dir;
+  document.body.classList.toggle('rtl', dict.dir === 'rtl');
+  applyI18n();
+  // Re-render dynamic content
+  if(typeof renderAdjTools === 'function') renderAdjTools();
+  if(typeof renderShareSheet === 'function') renderShareSheet();
+  if(typeof renderFxChips === 'function') renderFxChips();
+  if(typeof renderGalleryPhotos === 'function' && state.photoLibrary.length===0) renderGalleryPhotos();
+  if(typeof renderGalleryFilters === 'function' && state.collectedFilters.length===0) renderGalleryFilters();
+}
+function applyI18n(){
+  // Static elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    const html = el.dataset.i18nHtml === 'true';
+    if(html) el.innerHTML = t(key);
+    else el.textContent = t(key);
+  });
+  // Input placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    el.placeholder = t(el.dataset.i18nPh);
+  });
+  // Adjustment tools label reference
+  if(window.ADJUST_TOOLS_LABELS === undefined){
+    window.ADJUST_TOOLS_LABELS = ADJUST_TOOLS.map(t=>t.name);
+  }
+  // Update page title
+  document.title = 'TikCam - AI Beauty Camera';
+}
+function initI18n(){
+  const saved = localStorage.getItem('tikcam_lang');
+  const lang = saved || detectLang();
+  setLang(lang);
+}
+// ===== End i18n =====
+
 const ADJUST_TOOLS = [
     { id:'brightness', name:'Exposure', icon:ED_ICONS.exposure, default:0, css:v=>`brightness(${1+v*0.004})` },
     { id:'contrast', name:'Contrast', icon:ED_ICONS.contrast, default:0, css:v=>`contrast(${1+v*0.004})` },
@@ -2276,8 +2784,9 @@ function fxDailyReason(){
 
 function renderFxChips(){
     const cur=state._fxChip||'foryou';
+    const chipKeyMap={foryou:'chipForYou',food:'chipFood',portrait:'chipPortrait',night:'chipNight',landscape:'chipScenery',mono:'chipMono'};
     $('fxChips').innerHTML=FX_CHIPS.map(c=>
-        `<button class="fx-chip${cur===c.key?' active':''}" data-chip="${c.key}">${c.label}</button>`).join('');
+        `<button class="fx-chip${cur===c.key?' active':''}" data-chip="${c.key}">${chipKeyMap[c.key]?t(chipKeyMap[c.key]):c.label}</button>`).join('');
     $('fxChips').querySelectorAll('.fx-chip').forEach(b=>{
         b.onclick=()=>{ state._fxChip=b.dataset.chip; renderFxChips(); renderFxForYou(); };
     });
@@ -2595,10 +3104,10 @@ async function nativeSaveImage(dataUrl){
         const Media=window.Capacitor.Plugins.Media;
         if(Media&&Media.savePhoto){ await Media.savePhoto({path:uri}); }
         else{ await window.Capacitor.Plugins.Share.share({files:[uri]}); } // 兜底：系统面板里选"存储图像"
-        showSaveToast('SAVED TO PHOTOS');
+        showSaveToast(t('savedToAlbum'));
     }catch(e){
         console.warn('native save failed',e);
-        showSaveToast('SAVE FAILED');
+        showSaveToast(t('saveFailed'));
     }
     return true;
 }
@@ -2610,12 +3119,12 @@ async function nativeSaveVideo(blobUrl){
         const uri=await writeNativeTempFile(dataUrl,'mp4');
         const Media=window.Capacitor.Plugins.Media;
         if(Media&&Media.saveVideo){
-            try{ await Media.saveVideo({path:uri}); showSaveToast('SAVED TO PHOTOS'); return true; }catch(e){}
+            try{ await Media.saveVideo({path:uri}); showSaveToast(t('savedToAlbum')); return true; }catch(e){}
         }
         await window.Capacitor.Plugins.Share.share({files:[uri]}); // 兜底：系统面板保存
     }catch(e){
         console.warn('native video save failed',e);
-        showSaveToast('SAVE FAILED');
+        showSaveToast(t('saveFailed'));
     }
     return true;
 }
@@ -2681,15 +3190,15 @@ function renderShareSheet(){
     $('shareActions').innerHTML=`
         <button class="share-row" data-act="save">
             <span class="share-row-ic save">${SAVE_ICON}</span>
-            <span class="share-row-lbl">Save Image</span>
+            <span class="share-row-lbl">${t('saveImage')}</span>
         </button>
         <button class="share-row" data-act="copy">
             <span class="share-row-ic copy">${COPY_ICON}</span>
-            <span class="share-row-lbl">Copy Photo</span>
+            <span class="share-row-lbl">${t('copyPhoto')}</span>
         </button>
         <button class="share-row" data-act="more">
             <span class="share-row-ic more">${MORE_ICON}</span>
-            <span class="share-row-lbl">More Apps</span>
+            <span class="share-row-lbl">${t('moreApps')}</span>
         </button>`;
     $('shareActions').querySelectorAll('.share-row').forEach(b=>{
         b.onclick=()=>shareAction(b.dataset.act);
@@ -3517,13 +4026,13 @@ function maybeAutoAdapt(){
 }
 
 function showAutoToast(sceneKey){
-    const t=$('autoToast');
-    if(!t)return;
+    const toastEl=$('autoToast');
+    if(!toastEl)return;
     const label=(SCENE_META[sceneKey]||SCENE_META.normal).label;
-    t.textContent='AUTO · '+label.toUpperCase()+' LOOK';
-    t.classList.add('show');
+    toastEl.textContent=t('autoLook',{scene:label.toUpperCase()});
+    toastEl.classList.add('show');
     clearTimeout(state._autoToastTimer);
-    state._autoToastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+    state._autoToastTimer=setTimeout(()=>toastEl.classList.remove('show'),2200);
 }
 
 async function initCam(){
@@ -3809,18 +4318,20 @@ function updateAlbum(){
 function toggleAdjust(s){state.adjustMode=s!==undefined?s:!state.adjustMode;$('adjPanel').classList.toggle('show',state.adjustMode);}
 function renderAdjTools(){
     const c=$('adjTools');c.innerHTML='';
+    const adjKeyMap={brightness:'adjExposure',contrast:'adjContrast',saturate:'adjVivid',temperature:'adjWarmth',tint:'adjTint',fade:'adjFade'};
     const mk=(id,label,icon,onClick)=>{
         const b=document.createElement('button');
         b.className='adj-tool'; b.dataset.tool=id;
-        b.innerHTML=`<span class="adj-tool-ic"><svg viewBox="0 0 24 24">${icon}</svg></span><span class="adj-tool-lbl" data-orig="${label}">${label}</span>`;
+        b.innerHTML=`<span class="adj-tool-ic"><svg viewBox="0 0 24 24">${icon}</svg></span><span class="adj-tool-lbl">${label}</span>`;
         b.onclick=onClick; c.appendChild(b);
     };
     // 一键自动增强
-    mk('auto','Auto',ED_ICONS.auto,()=>applyAutoAdjust());
+    mk('auto',t('adjAuto'),ED_ICONS.auto,()=>applyAutoAdjust());
     // 滤镜强度：0=原图 100=完整滤镜
-    mk('strength','Filter',ED_ICONS.filter,()=>{state.currentTool='strength';syncAdjActive();updateSlider();});
-    ADJUST_TOOLS.forEach(t=>{
-        mk(t.id,t.name,t.icon,()=>{state.currentTool=t.id;syncAdjActive();updateSlider();});
+    mk('strength',t('adjStrength'),ED_ICONS.filter,()=>{state.currentTool='strength';syncAdjActive();updateSlider();});
+    ADJUST_TOOLS.forEach(t2=>{
+        const lbl = adjKeyMap[t2.id] ? t(adjKeyMap[t2.id]) : t2.name;
+        mk(t2.id,lbl,t2.icon,()=>{state.currentTool=t2.id;syncAdjActive();updateSlider();});
     });
     syncAdjActive();
 }
@@ -4294,6 +4805,7 @@ window.addEventListener('error',()=>{ if(Date.now()-bootStart<5000)showFatal(); 
 window.addEventListener('unhandledrejection',()=>{ if(Date.now()-bootStart<5000)showFatal(); });
 
 try{
+    initI18n();
     setRatio('4-3');
     setMode('photo');
     renderAdjTools();updateSlider();
