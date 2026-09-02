@@ -4945,18 +4945,8 @@ photoArea.addEventListener('touchstart',swipeStart,{passive:true});photoArea.add
             evDrag={x:t.clientX,y:t.clientY,ev:state.ev};
         }
     },{passive:true});
-    // 单指上下滑动 = 调节曝光（EV）
-    vfInner.addEventListener('touchmove',e=>{
-        if(e.touches.length===1 && evDrag && !e.target.closest('button')){
-            const t=e.touches[0];
-            const dx=t.clientX-evDrag.x, dy=t.clientY-evDrag.y;
-            if(Math.abs(dy)>10 && Math.abs(dy)>Math.abs(dx)){
-                const r=vfInner.getBoundingClientRect();
-                if(typeof positionEVBadge==='function')positionEVBadge(evDrag.x-r.left, evDrag.y-r.top);
-                setEV(evDrag.ev - dy*0.45); // 上滑更亮、下滑更暗
-            }
-        }
-    },{passive:true});
+    // 上下滑已用于切换滤镜，不再单项调节曝光（隐藏亮度标记）
+    vfInner.addEventListener('touchmove',()=>{}, {passive:true});
     vfInner.addEventListener('touchend',e=>{
         evDrag=null;
         if(!tapStart)return;
