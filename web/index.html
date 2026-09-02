@@ -1236,9 +1236,8 @@
         <div class="proto-badge" data-i18n="badge">AI BEAUTY CAMERA</div>
         <h1 class="proto-title">
             <svg class="brand-mark" viewBox="0 0 1024 1024" aria-hidden="true">
-                <g transform="translate(-13,-10)"><g fill="#FFC400"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g></g>
-                <g transform="translate(13,12)"><g fill="#FF9F0A"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g></g>
-                <g fill="#fff"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g>
+                <g transform="translate(-13,-10)" opacity="0.35"><g fill="#000000"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g></g>
+                <g fill="#1A1A1A"><rect x="402" y="296" width="220" height="92" rx="40"/><rect x="186" y="352" width="652" height="388" rx="104"/></g>
                 <circle cx="512" cy="548" r="166" fill="#FFC400"/>
                 <circle cx="512" cy="548" r="146" fill="none" stroke="#FFFFFF" stroke-width="9"/>
                 <circle cx="512" cy="548" r="80" fill="#fff"/>
@@ -4147,7 +4146,7 @@ async function initCam(){
         // front → user(自拍), back → environment(后置)
         const facing=state.facing==='front'?'user':'environment';
         const baseConstraints={
-            video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},
+            video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080},videoStabilization:{ideal:true}},
             audio: state.mode==='video'
         };
         try{
