@@ -408,15 +408,15 @@
         .result-view { position:absolute; inset:0; background:#fff; z-index:200; display:none; flex-direction:column; }
         .result-view.show { display:flex; }
         .result-top-bar {
-            position:absolute; top:0; left:0; right:0; z-index:20;
+            position:relative; z-index:20;
             display:flex; justify-content:space-between; align-items:center;
-            padding:44px 16px 10px;
-            background:linear-gradient(to bottom,rgba(255,255,255,0.97),transparent);
+            padding:62px 24px 14px;
+            background:#fff;
         }
         .r-top-btn {
-            width:38px; height:38px; border-radius:50%;
-            background:rgba(255,255,255,0.85); backdrop-filter:blur(10px);
-            border:none; color:#111;
+            width:40px; height:40px; border-radius:50%;
+            background:transparent;
+            border:none; color:#222;
             display:flex; align-items:center; justify-content:center; cursor:pointer;
             transition:all 0.2s; font-size:20px;
         }
@@ -460,9 +460,9 @@
         }
 
         .r-bottom {
-            position:absolute; bottom:0; left:0; right:0; z-index:20;
-            background:linear-gradient(to top,rgba(255,255,255,0.97),transparent);
-            padding:20px 0 34px;
+            position:relative; z-index:20;
+            background:#fff;
+            padding:8px 0 34px;
         }
         .r-hint-row { text-align:center; padding-bottom:12px; }
         .r-hint { font-size:9px; color:rgba(0,0,0,0.45); letter-spacing:1px; }
@@ -3200,7 +3200,6 @@ async function nativeSaveImage(dataUrl){
         const Media=window.Capacitor.Plugins.Media;
         if(Media&&Media.savePhoto){ await Media.savePhoto({path:uri}); }
         else{ await window.Capacitor.Plugins.Share.share({files:[uri]}); } // 兜底：系统面板里选"存储图像"
-        showSaveToast(t('savedToAlbum'));
     }catch(e){
         console.warn('native save failed',e);
         showSaveToast(t('saveFailed'));
@@ -3215,7 +3214,7 @@ async function nativeSaveVideo(blobUrl){
         const uri=await writeNativeTempFile(dataUrl,'mp4');
         const Media=window.Capacitor.Plugins.Media;
         if(Media&&Media.saveVideo){
-            try{ await Media.saveVideo({path:uri}); showSaveToast(t('savedToAlbum')); return true; }catch(e){}
+            try{ await Media.saveVideo({path:uri}); return true; }catch(e){}
         }
         await window.Capacitor.Plugins.Share.share({files:[uri]}); // 兜底：系统面板保存
     }catch(e){
@@ -4000,6 +3999,87 @@ function bakeFilterToDataUrl(srcCanvas, filter){
     return{url:raw(),baked:false};
 }
 
+// ===== iOS 可靠的滤镜烘焙 =====
+// CanvasRenderingContext2D.filter 在 iOS Safari/WKWebView 稳定版不支持（静默 no-op），
+// 导致保存/下载的成片是原片。这里用 SVG feColorMatrix 滤镜兜底，跨平台可靠。
+function cssFilterToSvgChain(css){
+    if(!css||css==='none')return '';
+    const ops=[];
+    const re=/([a-z-]+)\((-?[\d.]+)(deg)?\)/g;
+    let m;
+    while((m=re.exec(css))){
+        const fn=m[1], v=parseFloat(m[2]);
+        if(!isFinite(v))continue;
+        if(fn==='brightness'){
+            ops.push(`<feColorMatrix type="matrix" values="${v} 0 0 0 0 0 ${v} 0 0 0 0 0 ${v} 0 0 0 0 0 1 0"/>`);
+        }else if(fn==='contrast'){
+            const k=(0.5*(1-v)).toFixed(6);
+            ops.push(`<feColorMatrix type="matrix" values="${v} 0 0 0 ${k} 0 ${v} 0 0 ${k} 0 0 ${v} 0 ${k} 0 0 0 1 0"/>`);
+        }else if(fn==='saturate'){
+            ops.push(`<feColorMatrix type="saturate" values="${v}"/>`);
+        }else if(fn==='grayscale'){
+            ops.push(`<feColorMatrix type="saturate" values="${(1-v).toFixed(6)}"/>`);
+        }else if(fn==='sepia'){
+            const M=[
+                (1+(0.393-1)*v).toFixed(6),(0.769*v).toFixed(6),(0.189*v).toFixed(6),'0','0',
+                (0.349*v).toFixed(6),(1+(0.686-1)*v).toFixed(6),(0.168*v).toFixed(6),'0','0',
+                (0.272*v).toFixed(6),(0.534*v).toFixed(6),(1+(0.131-1)*v).toFixed(6),'0','0',
+                '0','0','0','1','0'
+            ];
+            ops.push(`<feColorMatrix type="matrix" values="${M.join(' ')}"/>`);
+        }else if(fn==='hue-rotate'){
+            ops.push(`<feColorMatrix type="hueRotate" values="${v}"/>`);
+        }
+    }
+    if(!ops.length)return '';
+    let chain='';
+    ops.forEach((p,i)=>{
+        if(i===0)chain+=p.replace('<feColorMatrix','<feColorMatrix result="c0"');
+        else chain+=p.replace('<feColorMatrix',`<feColorMatrix in="c${i-1}" result="c${i}"`);
+    });
+    return chain;
+}
+async function bakeSvgFilter(srcCanvas, css){
+    const prims=cssFilterToSvgChain(css);
+    if(!prims)return null;
+    const W=srcCanvas.width, H=srcCanvas.height;
+    const srcData=srcCanvas.toDataURL('image/jpeg',0.92);
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><filter id="f" color-interpolation-filters="sRGB">${prims}</filter></defs><image href="${srcData}" x="0" y="0" width="${W}" height="${H}" filter="url(#f)"/></svg>`;
+    const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    return new Promise((resolve)=>{
+        const img=new Image();
+        img.onload=()=>{
+            try{
+                const out=document.createElement('canvas');
+                out.width=W;out.height=H;
+                out.getContext('2d').drawImage(img,0,0,W,H);
+                resolve(out.toDataURL('image/jpeg',0.92));
+            }catch(e){resolve(null);}
+            URL.revokeObjectURL(url);
+        };
+        img.onerror=()=>{URL.revokeObjectURL(url);resolve(null);};
+        img.src=url;
+    });
+}
+// 可靠烘焙：优先 SVG（iOS 也生效），失败退 canvas ctx.filter，再退原图
+async function bakeFilterReliable(srcCanvas, css){
+    if(!css||css==='none')return srcCanvas.toDataURL('image/jpeg',0.92);
+    const svgUrl=await bakeSvgFilter(srcCanvas,css);
+    if(svgUrl)return svgUrl;
+    if(canvasFilterSupported()){
+        try{
+            const out=document.createElement('canvas');
+            out.width=srcCanvas.width;out.height=srcCanvas.height;
+            const octx=out.getContext('2d');
+            octx.filter=css;
+            octx.drawImage(srcCanvas,0,0);
+            return out.toDataURL('image/jpeg',0.92);
+        }catch(e){}
+    }
+    return srcCanvas.toDataURL('image/jpeg',0.92);
+}
+
 function applyCurrentFilter(){
     if(!state.currentFilter)return;
     const f=state.currentFilter;
@@ -4769,20 +4849,25 @@ $('rGenBtn').onclick=()=>runFilterGeneration('next');
 $('rSave').onclick=async ()=>{
     if(state.capturedVideo){
         // 保存视频：原生写入系统相册，网页端下载
-        if(await nativeSaveVideo(state.capturedVideo)){ showSuccessHud('Saved'); return; }
+        if(await nativeSaveVideo(state.capturedVideo)){ showSuccessHud(t('savedToAlbum')); return; }
         const a=document.createElement('a');
         a.download=`TikCam_Video_${Date.now()}.webm`;
         a.href=state.capturedVideo;
         a.click();
-        showSuccessHud('Saved');
+        showSuccessHud(t('savedToAlbum'));
         return;
     }
-    const oc=document.createElement('canvas');const octx=oc.getContext('2d');const img=new Image();img.src=state.captured;
-    img.onload=async ()=>{oc.width=img.width;oc.height=img.height;octx.filter=buildFilter(state.currentFilter,state.adjustments);octx.drawImage(img,0,0);
-        const url=oc.toDataURL('image/jpeg',0.92);
-        if(await nativeSaveImage(url)){ showSuccessHud('Saved'); return; }
+    const img=new Image();img.src=state.captured;
+    img.onload=async ()=>{
+        // 用可靠烘焙（iOS 走 SVG 滤镜）确保保存的是带滤镜的成片
+        const sc=document.createElement('canvas');sc.width=img.width;sc.height=img.height;
+        sc.getContext('2d').drawImage(img,0,0);
+        const css=buildFilter(state.currentFilter,state.adjustments);
+        const url=await bakeFilterReliable(sc,css);
+        if(await nativeSaveImage(url)){ showSuccessHud(t('savedToAlbum')); return; }
         downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);
-        showSuccessHud('Saved');};
+        showSuccessHud(t('savedToAlbum'));
+    };
 };
 $('rAdjust').onclick=()=>toggleAdjust();
 $('adjClose').onclick=()=>toggleAdjust(false);
