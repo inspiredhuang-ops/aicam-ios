@@ -423,8 +423,14 @@
         .r-top-btn:active { transform:scale(0.9); opacity:0.6; }
         .r-top-btn svg { width:18px; height:18px; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none; }
         .result-photo { position:relative; flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#fff; }
-        #resultImg { max-width:100%; max-height:100%; object-fit:contain; transition:filter 0.4s cubic-bezier(0.25,0.46,0.45,0.94); box-shadow:0 8px 30px rgba(0,0,0,0.12); border-radius:2px; }
-        #resultVideo { max-width:100%; max-height:100%; object-fit:contain; transition:filter 0.4s cubic-bezier(0.25,0.46,0.45,0.94); box-shadow:0 8px 30px rgba(0,0,0,0.12); border-radius:2px; }
+        /* 结果页照片：复用拍摄界面的定比取景框，保证图片位置/留白与拍摄时一致 */
+        .r-frame { position:relative; width:100%; overflow:hidden; max-height:100%; }
+        .r-frame.ratio-4-3 { padding-bottom:133.33%; max-height:100%; }
+        .r-frame.ratio-1-1 { padding-bottom:100%; max-height:100%; }
+        .r-frame.ratio-16-9 { padding-bottom:56.25%; max-height:100%; }
+        .r-frame.ratio-full { position:absolute; inset:0; padding-bottom:0; width:100%; height:100%; }
+        #resultImg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:filter 0.4s cubic-bezier(0.25,0.46,0.45,0.94); background:#111; }
+        #resultVideo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:filter 0.4s cubic-bezier(0.25,0.46,0.45,0.94); background:#111; }
 
         .r-filter-name { display:none; }
 
@@ -1370,8 +1376,10 @@
                                 <button class="r-top-btn" id="rGenBtn">✦</button>
                             </div>
                             <div class="result-photo" id="rPhotoArea">
-                                <img id="resultImg" src="" alt="">
-                                <video id="resultVideo" playsinline webkit-playsinline loop muted style="display:none; max-width:100%; max-height:100%;"></video>
+                                <div class="r-frame" id="rFrame">
+                                    <img id="resultImg" src="" alt="">
+                                    <video id="resultVideo" playsinline webkit-playsinline loop muted style="display:none;"></video>
+                                </div>
                                 <div class="r-filter-name">
                                     <div class="filter-name" id="rName" data-i18n="filterOriginal">Original</div>
                                 </div>
@@ -3246,9 +3254,9 @@ function saveCurrentPhoto(){
 }
 async function savePhotoDataUrl(dataUrl){
     const nativeOk=await nativeSaveImage(dataUrl);
-    if(nativeOk){ showSuccessHud('Saved'); return; }
+    if(nativeOk){ showSaveToast(t('savedToAlbum')); return; }
     downloadDataUrl(dataUrl,`TikCam_${Date.now()}.jpg`);
-    showSuccessHud('Saved');
+    showSaveToast(t('savedToAlbum'));
 }
 async function shareCurrentPhoto(){
     const photo=state.currentDetailPhoto;
@@ -4480,6 +4488,8 @@ function doCapture(){
         const durLabel=document.getElementById('rVidDur');
         if(durLabel)durLabel.style.display='none';
         if(state.capturedVideo){URL.revokeObjectURL(state.capturedVideo);state.capturedVideo=null;}
+        const rf=$('rFrame');
+        if(rf)rf.className='r-frame '+(RATIOS[state.ratio]&&RATIOS[state.ratio].cls||'ratio-4-3');
         $('resultImg').src=imgData;
         $('resultView').classList.add('show');applyCurrentFilter();
         addPhotoToLibrary(baked.url, liveFilter, state.sceneInfo, baked.baked, imgData);
@@ -4849,12 +4859,12 @@ $('rGenBtn').onclick=()=>runFilterGeneration('next');
 $('rSave').onclick=async ()=>{
     if(state.capturedVideo){
         // 保存视频：原生写入系统相册，网页端下载
-        if(await nativeSaveVideo(state.capturedVideo)){ showSuccessHud(t('savedToAlbum')); return; }
+        if(await nativeSaveVideo(state.capturedVideo)){ showSaveToast(t('savedToAlbum')); return; }
         const a=document.createElement('a');
         a.download=`TikCam_Video_${Date.now()}.webm`;
         a.href=state.capturedVideo;
         a.click();
-        showSuccessHud(t('savedToAlbum'));
+        showSaveToast(t('savedToAlbum'));
         return;
     }
     const img=new Image();img.src=state.captured;
@@ -4864,9 +4874,9 @@ $('rSave').onclick=async ()=>{
         sc.getContext('2d').drawImage(img,0,0);
         const css=buildFilter(state.currentFilter,state.adjustments);
         const url=await bakeFilterReliable(sc,css);
-        if(await nativeSaveImage(url)){ showSuccessHud(t('savedToAlbum')); return; }
+        if(await nativeSaveImage(url)){ showSaveToast(t('savedToAlbum')); return; }
         downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);
-        showSuccessHud(t('savedToAlbum'));
+        showSaveToast(t('savedToAlbum'));
     };
 };
 $('rAdjust').onclick=()=>toggleAdjust();
