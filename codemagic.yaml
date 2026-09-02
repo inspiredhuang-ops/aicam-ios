@@ -42,6 +42,10 @@ workflows:
           # ios/ 目录被 gitignore，首次构建由 cap add ios 生成原生工程。
           npm run add:ios || true
           npm run sync:ios
+      - name: 提升最低 iOS 版本到 15.0（消除 ITMS-90068 警告）
+        script: |
+          chmod +x scripts/bump-ios-min.sh
+          bash scripts/bump-ios-min.sh
       - name: 注入相机/麦克风/相册权限说明
         script: |
           chmod +x scripts/inject-plist.sh
