@@ -3144,11 +3144,12 @@ function showConfirmModal(title,message,okText,cancelText,callback){
         .cm-cancel{color:#007aff;border-right:0.5px solid rgba(0,0,0,0.1);}
         .cm-ok{color:#ff3b30;font-weight:600;}
         .cm-ok.cm-normal{color:#007aff;font-weight:600;}
-        .success-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:14px;padding:32px 36px;background:rgba(40,40,40,0.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-radius:16px;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;}
+        .success-hud{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);z-index:1000;display:flex;flex-direction:column;align-items:center;gap:16px;padding:36px 46px;background:rgba(255,255,255,0.9);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.6);opacity:0;pointer-events:none;transition:opacity .28s cubic-bezier(.25,.8,.4,1), transform .28s cubic-bezier(.25,.8,.4,1);}
         .success-hud.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
-        .success-hud .sh-icon{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;}
-        .success-hud .sh-icon svg{width:32px;height:32px;color:#fff;}
-        .success-hud .sh-text{color:#fff;font-size:16px;font-weight:500;white-space:nowrap;}`;
+        .success-hud .sh-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#34c759,#22c04b);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 22px rgba(52,199,89,0.4);animation:shPop .55s cubic-bezier(.2,1.4,.4,1);}
+        @keyframes shPop{0%{transform:scale(.2);opacity:0;}60%{transform:scale(1.18);}100%{transform:scale(1);opacity:1;}}
+        .success-hud .sh-icon svg{width:34px;height:34px;stroke:currentColor;stroke-width:3;fill:none;}
+        .success-hud .sh-text{color:#1a1a1a;font-size:17px;font-weight:700;letter-spacing:.3px;white-space:nowrap;}`;
         document.head.appendChild(st);
     }
     modal.querySelector('.cm-title').textContent=title;
@@ -3254,9 +3255,9 @@ function saveCurrentPhoto(){
 }
 async function savePhotoDataUrl(dataUrl){
     const nativeOk=await nativeSaveImage(dataUrl);
-    if(nativeOk){ showSaveToast(t('savedToAlbum')); return; }
+    if(nativeOk){ showSuccessHud(t('savedToAlbum')); return; }
     downloadDataUrl(dataUrl,`TikCam_${Date.now()}.jpg`);
-    showSaveToast(t('savedToAlbum'));
+    showSuccessHud(t('savedToAlbum'));
 }
 async function shareCurrentPhoto(){
     const photo=state.currentDetailPhoto;
@@ -4193,12 +4194,15 @@ function maybeAutoAdapt(){
     if(!state._filterScene){ state._filterScene={...cur}; return; }
     const base=state._filterScene;
     const labelChanged=cur.scene!==base.scene;
-    // 场景变了 → 重建池子（无论用户是否手动过，池子都要跟上新场景）
+    // 场景稳定判定：连续 3 次(约1s)分析出同一新场景才真正切换，抑制抖动导致的反复切滤镜
     if(labelChanged){
+        if(state._pendingScene===cur.scene){ state._sceneStableCount=(state._sceneStableCount||0)+1; }
+        else{ state._pendingScene=cur.scene; state._sceneStableCount=1; }
+        if(state._sceneStableCount<3)return; // 抖动中的候选，继续观察
         updateSceneBadge(cur.scene);
-        // 重建池子（新场景的最优解）
         buildFilterPool(cur);
         state._filterScene={...cur};
+        state._pendingScene=null; state._sceneStableCount=0;
         // 如果用户还没手动过（在自动模式），自动切到新池第一个
         if(!state._userTookControl){
             state._poolIndex=0;
@@ -4859,12 +4863,12 @@ $('rGenBtn').onclick=()=>runFilterGeneration('next');
 $('rSave').onclick=async ()=>{
     if(state.capturedVideo){
         // 保存视频：原生写入系统相册，网页端下载
-        if(await nativeSaveVideo(state.capturedVideo)){ showSaveToast(t('savedToAlbum')); return; }
+        if(await nativeSaveVideo(state.capturedVideo)){ showSuccessHud(t('savedToAlbum')); return; }
         const a=document.createElement('a');
         a.download=`TikCam_Video_${Date.now()}.webm`;
         a.href=state.capturedVideo;
         a.click();
-        showSaveToast(t('savedToAlbum'));
+        showSuccessHud(t('savedToAlbum'));
         return;
     }
     const img=new Image();img.src=state.captured;
@@ -4874,9 +4878,9 @@ $('rSave').onclick=async ()=>{
         sc.getContext('2d').drawImage(img,0,0);
         const css=buildFilter(state.currentFilter,state.adjustments);
         const url=await bakeFilterReliable(sc,css);
-        if(await nativeSaveImage(url)){ showSaveToast(t('savedToAlbum')); return; }
+        if(await nativeSaveImage(url)){ showSuccessHud(t('savedToAlbum')); return; }
         downloadDataUrl(url,`TikCam_${Date.now()}.jpg`);
-        showSaveToast(t('savedToAlbum'));
+        showSuccessHud(t('savedToAlbum'));
     };
 };
 $('rAdjust').onclick=()=>toggleAdjust();
